@@ -1,0 +1,7 @@
+.vscode
+.idea
+*.egg-info
+*.pyc
+.pytest_cache
+.coverage
+htmlcov
