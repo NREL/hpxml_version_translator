@@ -35,7 +35,7 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
     hpxml2_schema = etree.XMLSchema(hpxml2_schema_doc)
     hpxml3_schema_doc = etree.parse(str(schemas_dir / 'v3.0' / 'HPXML.xsd'))
     hpxml3_ns = hpxml3_schema_doc.getroot().attrib['targetNamespace']
-    hpxml3_schema = etree.XMLSchema(hpxml2_schema_doc)
+    hpxml3_schema = etree.XMLSchema(hpxml3_schema_doc)
 
     # Ensure we're working with valid HPXML v2.x (earlier versions should validate against v2.3 schema)
     hpxml2_doc = objectify.parse(pathobj_to_str(hpxml2_file))
@@ -93,5 +93,5 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
     # https://github.com/hpxmlwg/hpxml/pull/210
 
     # Write out new file
-    # hpxml3_schema.assertValid(hpxml3_doc)
     hpxml3_doc.write(pathobj_to_str(hpxml3_file), pretty_print=True, encoding='utf-8')
+    hpxml3_schema.assertValid(hpxml3_doc)
