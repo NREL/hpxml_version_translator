@@ -14,6 +14,9 @@ setuptools.setup(
     long_description_content_type='text/markdown',
     url='https://github.com/NREL/hpxml2to3',
     packages=setuptools.find_packages(include=['resstock_cambium']),
+    package_data={
+        'hpxml2to3': ['schemas/*/*.xsd', '*.xsl']
+    }
     install_requires=[
         'lxml',
     ],
