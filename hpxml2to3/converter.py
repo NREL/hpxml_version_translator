@@ -1,3 +1,5 @@
+from copy import deepcopy
+import datetime as dt
 from lxml import etree, objectify
 import pathlib
 
@@ -37,6 +39,20 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
     hpxml3_ns = hpxml3_schema_doc.getroot().attrib['targetNamespace']
     hpxml3_schema = etree.XMLSchema(hpxml3_schema_doc)
 
+    E = objectify.ElementMaker(namespace=hpxml3_ns, nsmap={None: hpxml3_ns}, annotate=False)
+    xpkw = {'namespaces': {'h': hpxml3_ns}}
+
+    def add_after(parent_el, list_of_el_names, el_to_add):
+        for sibling_name in reversed(list_of_el_names):
+            try:
+                sibling = getattr(parent_el, sibling_name)
+            except AttributeError:
+                continue
+            else:
+                sibling.addnext(el_to_add)
+                return
+        parent_el.insert(0, el_to_add)
+
     # Ensure we're working with valid HPXML v2.x (earlier versions should validate against v2.3 schema)
     hpxml2_doc = objectify.parse(pathobj_to_str(hpxml2_file))
     hpxml2_schema.assertValid(hpxml2_doc)
@@ -50,8 +66,44 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
     # Change version
     root.attrib['schemaVersion'] = '3.0'
 
-    # TODO: Green Building Verification
+    # Green Building Verification
     # https://github.com/hpxmlwg/hpxml/pull/66
+
+    energy_score_els = root.xpath(
+        'h:Building/h:BuildingDetails/h:BuildingSummary/h:BuildingConstruction/h:EnergyScore', **xpkw
+    )
+    for i, es in enumerate(energy_score_els, 1):
+        bldg_details = es.getparent().getparent().getparent()
+        if not hasattr(bldg_details, 'GreenBuildingVerifications'):
+            add_after(
+                bldg_details,
+                ['BuildingSummary', 'ClimateandRiskZones'],
+                E.GreenBuildingVerifications()
+            )
+        gbv = E.GreenBuildingVerification(
+            E.SystemIdentifier(id=f'energy-score-{i}'),
+            E.Type({
+                'US DOE Home Energy Score': 'Home Energy Score',
+                'RESNET HERS': 'HERS Index Score',
+                'other': 'other'
+            }[str(es.ScoreType)]),
+            E.Body({
+                'US DOE Home Energy Score': 'US DOE',
+                'RESNET HERS': 'RESNET',
+                'other': 'other'
+            }[str(es.ScoreType)]),
+            E.Metric(str(es.Score))
+        )
+        if hasattr(es, 'OtherScoreType'):
+            gbv.Type.addnext(E.OtherType(str(es.OtherScoreType)))
+        if hasattr(es, 'ScoreDate'):
+            gbv.append(E.Year(dt.datetime.strptime(str(es.ScoreDate), '%Y-%m-%d').year))
+        if hasattr(es, 'extension'):
+            gbv.append(deepcopy(es.extension))
+        bldg_details.GreenBuildingVerifications.append(gbv)
+        es.getparent().remove(es)
+
+    print(energy_score_els)
 
     # TODO: Addressing Inconsistencies
     # https://github.com/hpxmlwg/hpxml/pull/124

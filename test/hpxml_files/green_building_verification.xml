@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<HPXML xmlns="http://hpxmlonline.com/2014/6" schemaVersion="2.3">
+    <XMLTransactionHeaderInformation>
+        <XMLType></XMLType>
+        <XMLGeneratedBy></XMLGeneratedBy>
+        <CreatedDateAndTime>2021-04-05T14:17:07.685077</CreatedDateAndTime>
+        <Transaction>create</Transaction>
+    </XMLTransactionHeaderInformation>
+    <SoftwareInfo/>
+    <Building>
+        <BuildingID id="bldg1"></BuildingID>
+        <ProjectStatus>
+            <EventType>audit</EventType>
+        </ProjectStatus>
+        <BuildingDetails>
+            <BuildingSummary>
+                <BuildingConstruction>
+                    <EnergyScore>
+                        <ScoreType>US DOE Home Energy Score</ScoreType>
+                        <ScoreDate>2021-04-05</ScoreDate>
+                        <Score>5</Score>
+                        <extension>
+                            <asdf>jkl</asdf>
+                        </extension>
+                    </EnergyScore>
+                    <EnergyScore>
+                        <ScoreType>RESNET HERS</ScoreType>
+                        <Score>62</Score>
+                    </EnergyScore>
+                    <EnergyScore>
+                        <ScoreType>other</ScoreType>
+                        <OtherScoreType>My own special scoring system</OtherScoreType>
+                        <Score>11</Score>
+                    </EnergyScore>
+                </BuildingConstruction>
+            </BuildingSummary>
+        </BuildingDetails>
+    </Building>
+</HPXML>
