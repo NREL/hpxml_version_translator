@@ -1,7 +1,11 @@
+from collections import defaultdict
 from copy import deepcopy
 import datetime as dt
 from lxml import etree, objectify
 import pathlib
+import re
+
+from hpxml2to3 import exceptions as exc
 
 
 def pathobj_to_str(x):
@@ -66,6 +70,87 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
     # Change version
     root.attrib['schemaVersion'] = '3.0'
 
+    # Fixing project ids
+    # https://github.com/hpxmlwg/hpxml/pull/197
+    # This is really messy. I can see why we fixed it.
+
+    def get_event_type_from_building_id(building_id):
+        event_type = root.xpath(
+            'h:Building[h:BuildingID/@id=$bldgid]/h:ProjectStatus/h:EventType/text()',
+            smart_strings=False,
+            bldgid=building_id,
+            **xpkw
+        )
+        if len(event_type) == 1:
+            return event_type[0]
+        else:
+            return None
+
+    for i, project in enumerate(root.xpath('h:Project', **xpkw), 1):
+
+        # Add the ProjectID element if it isn't there
+        if not hasattr(project, 'ProjectID'):
+            add_after(project, ['BuildingID'], E.ProjectID(id=f'project-{i}'))
+        building_ids_by_event_type = defaultdict(set)
+
+        # Gather together the buildings in BuildingID and ProjectSystemIdentifiers
+        building_id = project.BuildingID.attrib['id']
+        building_ids_by_event_type[get_event_type_from_building_id(building_id)].add(building_id)
+        for psi in project.xpath('h:ProjectDetails/h:ProjectSystemIdentifiers', **xpkw):
+            building_id = psi.attrib['id']
+            building_ids_by_event_type[get_event_type_from_building_id(building_id)].add(building_id)
+
+        # Separate the buildings into pre and post retrofit buildings by their EventType
+        pre_building_ids = set()
+        for event_type in ('audit', 'preconstruction'):
+            pre_building_ids.update(building_ids_by_event_type[event_type])
+        post_building_ids = set()
+        for event_type in ('proposed workscope', 'approved workscope', 'construction-period testing/daily test out',
+                           'job completion testing/final inspection', 'quality assurance/monitoring'):
+            post_building_ids.update(building_ids_by_event_type[event_type])
+
+        # If there are more than one of each pre and post, throw an error
+        if len(pre_building_ids) == 0:
+            raise exc.HpxmlTranslationError(
+                f"Project[{i}] has no references to Building nodes with an 'audit' or 'preconstruction' EventType."
+            )
+        elif len(pre_building_ids) > 1:
+            raise exc.HpxmlTranslationError(
+                f"Project[{i}] has more than one reference to Building nodes with an "
+                "'audit' or 'preconstruction' EventType."
+            )
+        if len(post_building_ids) == 0:
+            raise exc.HpxmlTranslationError(
+                f"Project[{i}] has no references to Building nodes with a post retrofit EventType."
+            )
+        elif len(post_building_ids) > 1:
+            raise exc.HpxmlTranslationError(
+                f"Project[{i}] has more than one reference to Building nodes with a post retrofit EventType."
+            )
+        pre_building_id = pre_building_ids.pop()
+        post_building_id = post_building_ids.pop()
+
+        # Add the pre building
+        project.ProjectID.addnext(E.PreBuildingID(id=pre_building_id))
+        for el in root.xpath('h:Building/h:BuildingID[@id=$bldgid]/*', bldgid=pre_building_id, **xpkw):
+            project.PreBuildingID.append(deepcopy(el))
+
+        # Add the post building
+        project.PreBuildingID.addnext(E.PostBuildingID(id=post_building_id))
+        for el in root.xpath('h:Building/h:BuildingID[@id=$bldgid]/*', bldgid=post_building_id, **xpkw):
+            project.PostBuildingID.append(deepcopy(el))
+
+        # Move the ambiguous BuildingID to an extension
+        if not hasattr(project, 'extension'):
+            project.append(E.extension())
+        project.extension.append(deepcopy(project.BuildingID))
+        project.remove(project.BuildingID)
+
+        # Move the ProjectSystemIdentifiers to an extension
+        for psi in project.xpath('h:ProjectDetails/h:ProjectSystemIdentifiers', **xpkw):
+            project.extension.append(deepcopy(psi))
+            project.ProjectDetails.remove(psi)
+
     # Green Building Verification
     # https://github.com/hpxmlwg/hpxml/pull/66
 
@@ -103,7 +188,58 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
         bldg_details.GreenBuildingVerifications.append(gbv)
         es.getparent().remove(es)
 
-    print(energy_score_els)
+    for i, prog_cert in enumerate(root.xpath('h:Project/h:ProjectDetails/h:ProgramCertificate', **xpkw), 1):
+        project_details = prog_cert.getparent()
+        bldg_id = project_details.getparent().PostBuildingID.attrib['id']
+        bldg_details = root.xpath('h:Building[h:BuildingID/@id=$bldgid]/h:BuildingDetails', bldgid=bldg_id, **xpkw)[0]
+        if not hasattr(bldg_details, 'GreenBuildingVerifications'):
+            add_after(
+                bldg_details,
+                ['BuildingSummary', 'ClimateandRiskZones'],
+                E.GreenBuildingVerifications()
+            )
+        gbv = E.GreenBuildingVerification(
+            E.SystemIdentifier(id=f'program-certificate-{i}'),
+            E.Type({
+                'Home Performance with Energy Star': 'Home Performance with ENERGY STAR',
+                'LEED Certified': 'LEED For Homes',
+                'LEED Silver': 'LEED For Homes',
+                'LEED Gold': 'LEED For Homes',
+                'LEED Platinum': 'LEED For Homes',
+                'other': 'other'
+            }[str(prog_cert)])
+        )
+        if hasattr(project_details, 'CertifyingOrganization'):
+            gbv.append(E.Body(str(project_details.CertifyingOrganization)))
+        m = re.match('LEED (\w+)$', str(prog_cert))
+        if m:
+            gbv.append(E.Rating(m.group(1)))
+        if hasattr(project_details, 'CertifyingOrganizationURL'):
+            gbv.append(E.URL(str(project_details.CertifyingOrganizationURL)))
+        if hasattr(project_details, 'YearCertified'):
+            gbv.append(E.Year(int(project_details.YearCertified)))
+        bldg_details.GreenBuildingVerifications.append(gbv)
+
+    for i, es_home_ver in enumerate(root.xpath('h:Project/h:ProjectDetails/h:EnergyStarHomeVersion', **xpkw)):
+        bldg_id = es_home_ver.getparent().getparent().PostBuildingID.attrib['id']
+        bldg_details = root.xpath('h:Building[h:BuildingID/@id=$bldgid]/h:BuildingDetails', bldgid=bldg_id, **xpkw)[0]
+        if not hasattr(bldg_details, 'GreenBuildingVerifications'):
+            add_after(
+                bldg_details,
+                ['BuildingSummary', 'ClimateandRiskZones'],
+                E.GreenBuildingVerifications()
+            )
+        gbv = E.GreenBuildingVerification(
+            E.SystemIdentifier(id=f'energy-star-home-{i}'),
+            E.Type('ENERGY STAR Certified Homes'),
+            E.Version(str(es_home_ver))
+        )
+        bldg_details.GreenBuildingVerifications.append(gbv)
+
+    for el_name in ('CertifyingOrganization', 'CertifyingOrganizationURL', 'YearCertified', 'ProgramCertificate',
+                    'EnergyStarHomeVersion'):
+        for el in root.xpath(f'//h:ProjectDetails/h:{el_name}', **xpkw):
+            el.getparent().remove(el)
 
     # TODO: Addressing Inconsistencies
     # https://github.com/hpxmlwg/hpxml/pull/124
@@ -131,9 +267,6 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
 
     # TODO: Window/Skylight Interior Shading Fraction
     # https://github.com/hpxmlwg/hpxml/pull/189
-
-    # TODO: Fixing project ids
-    # https://github.com/hpxmlwg/hpxml/pull/197
 
     # TODO: Window sub-components
     # https://github.com/hpxmlwg/hpxml/pull/202

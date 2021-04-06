@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<HPXML xmlns="http://hpxmlonline.com/2014/6" schemaVersion="2.3">
+    <XMLTransactionHeaderInformation>
+        <XMLType></XMLType>
+        <XMLGeneratedBy></XMLGeneratedBy>
+        <CreatedDateAndTime>2021-04-06T11:41:07.728818</CreatedDateAndTime>
+        <Transaction>create</Transaction>
+    </XMLTransactionHeaderInformation>
+    <SoftwareInfo/>
+    <Building>
+        <BuildingID id="bldg1">
+            <SendingSystemIdentifierType>asdf</SendingSystemIdentifierType>
+            <SendingSystemIdentifierValue>jkl</SendingSystemIdentifierValue>
+        </BuildingID>
+        <ProjectStatus>
+            <EventType>audit</EventType>
+        </ProjectStatus>
+        <BuildingDetails/>
+    </Building>
+    <Building>
+        <BuildingID id="bldg2"></BuildingID>
+        <ProjectStatus>
+            <EventType>proposed workscope</EventType>
+        </ProjectStatus>
+        <BuildingDetails></BuildingDetails>
+    </Building>
+    <Project>
+        <BuildingID id="bldg2"/>
+        <ProjectDetails>
+            <ProjectSystemIdentifiers id="bldg1"/>
+            <ProjectSystemIdentifiers id="bldg2"/>
+        </ProjectDetails>
+    </Project>
+</HPXML>

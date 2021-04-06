@@ -36,4 +36,33 @@
             </BuildingSummary>
         </BuildingDetails>
     </Building>
+    <Building>
+        <BuildingID id="bldg2"/>
+        <ProjectStatus>
+            <EventType>proposed workscope</EventType>
+        </ProjectStatus>
+        <BuildingDetails/>
+    </Building>
+    <Project>
+        <BuildingID id="bldg1"/>
+        <ProjectDetails>
+            <ProjectSystemIdentifiers id="bldg1"/>
+            <ProjectSystemIdentifiers id="bldg2"/>
+            <CertifyingOrganization>local program</CertifyingOrganization>
+            <CertifyingOrganizationURL>http://energy.gov</CertifyingOrganizationURL>
+            <YearCertified>2020</YearCertified>
+            <ProgramCertificate>Home Performance with Energy Star</ProgramCertificate>
+            <EnergyStarHomeVersion>3.1</EnergyStarHomeVersion>
+        </ProjectDetails>
+    </Project>
+    <Project>
+        <BuildingID id="bldg2"/>
+        <ProjectDetails>
+            <ProjectSystemIdentifiers id="bldg1"/>
+            <CertifyingOrganization>USGBC</CertifyingOrganization>
+            <CertifyingOrganizationURL>http://usgbc.org</CertifyingOrganizationURL>
+            <YearCertified>2019</YearCertified>
+            <ProgramCertificate>LEED Gold</ProgramCertificate>            
+        </ProjectDetails>
+    </Project>
 </HPXML>
