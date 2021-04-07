@@ -2,7 +2,7 @@ from lxml import objectify
 import pathlib
 import tempfile
 
-from hpxml2to3.converter import convert_hpxml2_to_3
+from hpxml_version_translator.converter import convert_hpxml2_to_3
 
 
 hpxml_dir = pathlib.Path(__file__).resolve().parent / 'hpxml_files'

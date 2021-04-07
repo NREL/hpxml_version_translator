@@ -5,7 +5,7 @@ from lxml import etree, objectify
 import pathlib
 import re
 
-from hpxml2to3 import exceptions as exc
+from hpxml_version_translator import exceptions as exc
 
 
 def pathobj_to_str(x):

@@ -1,8 +1,8 @@
-# HPXML 2 to 3 Converter
+# HPXML Version Translator
 
-This package converts an HPXML file from version 2 to 3.0. 
+This package converts an HPXML file from version 2 to 3. 
 
-## Installation
+## Developer Installation
 
 Clone this repo.
 
@@ -10,4 +10,3 @@ Clone this repo.
 cd path/to/repo
 pip install -e .
 ```
-
