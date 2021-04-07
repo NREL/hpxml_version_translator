@@ -1,4 +1,4 @@
-name: Test resstock-cambium
+name: Test hpxml2to3
 
 on: [push]
 
@@ -20,7 +20,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install -e ".[dev]"
       - name: PyTest and Coverage
-        run: python -m pytest --cov=resstock_cambium --cov-report=html:htmlcov -n auto
+        run: python -m pytest --cov=hpxml2to3 --cov-report=html:htmlcov -n auto
       - name: Upload Coverage
         if: ${{ matrix.python-version == 3.9 }}
         uses: actions/upload-artifact@v2

@@ -16,7 +16,7 @@ setuptools.setup(
     packages=setuptools.find_packages(include=['resstock_cambium']),
     package_data={
         'hpxml2to3': ['schemas/*/*.xsd', '*.xsl']
-    }
+    },
     install_requires=[
         'lxml',
     ],
