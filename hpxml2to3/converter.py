@@ -16,7 +16,7 @@ def pathobj_to_str(x):
 
     :param x: filepath
     :type x: pathlib.Path or str or file-like object
-    :return: file path string 
+    :return: file path string
     :rtype: str or whatever was passed in
     """
     if isinstance(x, pathlib.PurePath):
@@ -211,7 +211,7 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
         )
         if hasattr(project_details, 'CertifyingOrganization'):
             gbv.append(E.Body(str(project_details.CertifyingOrganization)))
-        m = re.match('LEED (\w+)$', str(prog_cert))
+        m = re.match(r'LEED (\w+)$', str(prog_cert))
         if m:
             gbv.append(E.Rating(m.group(1)))
         if hasattr(project_details, 'CertifyingOrganizationURL'):
