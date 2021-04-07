@@ -1,6 +1,6 @@
-# ResStock-Cambium
+# HPXML 2 to 3 Converter
 
-The ResStock-Cambium package allows you to query and combine ResStock results with Cambium emissions factors.
+This package converts an HPXML file from version 2 to 3.0. 
 
 ## Installation
 
