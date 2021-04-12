@@ -247,6 +247,16 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
     # TODO: Clothes Dryer CEF
     # https://github.com/hpxmlwg/hpxml/pull/145
 
+    clothes_dryer_els = root.xpath('h:Building/h:BuildingDetails/h:Appliances/h:ClothesDryer', **xpkw)
+    for i, dryer in enumerate(clothes_dryer_els, 1):
+        if hasattr(dryer, 'EfficiencyFactor'):
+            add_after(
+                dryer,
+                ['Type', 'Location', 'FuelType', 'Usage'],
+                E.EnergyFactor(float(dryer.EfficiencyFactor))
+            )
+        dryer.remove(dryer.EfficiencyFactor)
+
     # TODO: Standardize Locations
     # https://github.com/hpxmlwg/hpxml/pull/156
 
