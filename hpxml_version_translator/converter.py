@@ -244,6 +244,35 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
     # TODO: Addressing Inconsistencies
     # https://github.com/hpxmlwg/hpxml/pull/124
 
+    heatpump_els = root.xpath('h:Building/h:BuildingDetails/h:Systems/h:HVAC/h:HVACPlant/h:HeatPump', **xpkw)
+    for i, htpump in enumerate(heatpump_els, 1):
+        if hasattr(htpump, 'AnnualCoolEfficiency'):
+            add_after(
+                htpump,
+                ['AnnualCoolEfficiency'],
+                E.AnnualCoolingEfficiency(
+                    E.Units(str(htpump.AnnualCoolEfficiency.Units)),
+                    E.Value(float(htpump.AnnualCoolEfficiency.Value))
+                )
+            )
+        if hasattr(htpump, 'AnnualHeatEfficiency'):
+            add_after(
+                htpump,
+                ['AnnualHeatEfficiency'],
+                E.AnnualHeatingEfficiency(
+                    E.Units(str(htpump.AnnualHeatEfficiency.Units)),
+                    E.Value(float(htpump.AnnualHeatEfficiency.Value))
+                )
+            )
+        htpump.remove(htpump.AnnualCoolEfficiency)
+        htpump.remove(htpump.AnnualHeatEfficiency)
+
+    #Replaces Measure/InstalledComponent with Measure/InstalledComponents/InstalledComponent (now consistent with Measure/ReplacedComponents/ReplacedComponent)
+    #Renames FoundationWall/BelowGradeDepth to FoundationWall/DepthBelowGrade (now consistent with Slab/DepthBelowGrade)
+    #Replaces WeatherStation/SystemIdentifiersInfo with WeatherStation/SystemIdentifier (now consistent with all other elements)
+    #Renames "central air conditioning" to "central air conditioner" for CoolingSystemType (now consistent with "room air conditioner")
+    #Renames HeatPump/BackupAFUE to BackupAnnualHeatingEfficiency, accepts 0-1 instead of 1-100 (now consistent with AnnualEfficiency elements)
+
     # TODO: Clothes Dryer CEF
     # https://github.com/hpxmlwg/hpxml/pull/145
 
