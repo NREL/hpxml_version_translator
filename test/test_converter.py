@@ -68,6 +68,26 @@ def test_green_building_verification():
     assert gbv6.Year == 2019
 
 
+def test_clothes_dryer():
+    root = convert_hpxml_and_parse(hpxml_dir / 'clothes_dryer.xml')
+
+    dryer1 = root.Building.BuildingDetails.Appliances.ClothesDryer[0]
+    assert dryer1.Type == 'dryer'
+    assert dryer1.Location == 'laundry room'
+    assert dryer1.FuelType == 'natural gas'
+    assert dryer1.EnergyFactor == 2.5
+    assert dryer1.ControlType == 'timer'
+    assert not hasattr(dryer1, 'EfficiencyFactor')
+
+    dryer2 = root.Building.BuildingDetails.Appliances.ClothesDryer[1]
+    assert dryer2.Type == 'all-in-one combination washer/dryer'
+    assert dryer2.Location == 'basement'
+    assert dryer2.FuelType == 'electricity'
+    assert dryer2.EnergyFactor == 5.0
+    assert dryer2.ControlType == 'temperature'
+    assert not hasattr(dryer2, 'EfficiencyFactor')
+
+
 def test_inconsistencies():
     root = convert_hpxml_and_parse(hpxml_dir / 'inconsistencies.xml')
 

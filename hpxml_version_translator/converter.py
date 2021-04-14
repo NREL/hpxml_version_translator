@@ -297,6 +297,9 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
     # TODO: Clothes Dryer CEF
     # https://github.com/hpxmlwg/hpxml/pull/145
 
+    for el in root.xpath('//h:ClothesDryer/h:EfficiencyFactor', **xpkw):
+        el.tag = f'{{{hpxml3_ns}}}EnergyFactor'
+
     # TODO: Standardize Locations
     # https://github.com/hpxmlwg/hpxml/pull/156
 
