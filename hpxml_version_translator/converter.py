@@ -244,34 +244,55 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
     # TODO: Addressing Inconsistencies
     # https://github.com/hpxmlwg/hpxml/pull/124
 
-    heatpump_els = root.xpath('h:Building/h:BuildingDetails/h:Systems/h:HVAC/h:HVACPlant/h:HeatPump', **xpkw)
-    for i, htpump in enumerate(heatpump_els, 1):
-        if hasattr(htpump, 'AnnualCoolEfficiency'):
-            add_after(
-                htpump,
-                ['AnnualCoolEfficiency'],
-                E.AnnualCoolingEfficiency(
-                    E.Units(str(htpump.AnnualCoolEfficiency.Units)),
-                    E.Value(float(htpump.AnnualCoolEfficiency.Value))
-                )
-            )
-        if hasattr(htpump, 'AnnualHeatEfficiency'):
-            add_after(
-                htpump,
-                ['AnnualHeatEfficiency'],
-                E.AnnualHeatingEfficiency(
-                    E.Units(str(htpump.AnnualHeatEfficiency.Units)),
-                    E.Value(float(htpump.AnnualHeatEfficiency.Value))
-                )
-            )
-        htpump.remove(htpump.AnnualCoolEfficiency)
-        htpump.remove(htpump.AnnualHeatEfficiency)
+    for el in root.xpath('//h:HeatPump/h:AnnualCoolEfficiency', **xpkw):
+        el.tag = f'{{{hpxml3_ns}}}AnnualCoolingEfficiency'
+    for el in root.xpath('//h:HeatPump/h:AnnualHeatEfficiency', **xpkw):
+        el.tag = f'{{{hpxml3_ns}}}AnnualHeatingEfficiency'
 
-    #Replaces Measure/InstalledComponent with Measure/InstalledComponents/InstalledComponent (now consistent with Measure/ReplacedComponents/ReplacedComponent)
-    #Renames FoundationWall/BelowGradeDepth to FoundationWall/DepthBelowGrade (now consistent with Slab/DepthBelowGrade)
-    #Replaces WeatherStation/SystemIdentifiersInfo with WeatherStation/SystemIdentifier (now consistent with all other elements)
-    #Renames "central air conditioning" to "central air conditioner" for CoolingSystemType (now consistent with "room air conditioner")
-    #Renames HeatPump/BackupAFUE to BackupAnnualHeatingEfficiency, accepts 0-1 instead of 1-100 (now consistent with AnnualEfficiency elements)
+    # Replaces Measure/InstalledComponent with Measure/InstalledComponents/InstalledComponent
+    for i, ms in enumerate(root.xpath('h:Project/h:ProjectDetails/h:Measures/h:Measure', **xpkw)):
+        if not hasattr(ms, 'InstalledComponents'):
+            try:
+                sibling = getattr(ms, 'extension')
+            except AttributeError:
+                ms.append(E.InstalledComponents())
+            else:
+                sibling.addprevious(E.InstalledComponents())
+        ic = E.InstalledComponent(id=str(ms.InstalledComponent.attrib['id']))
+        ms.InstalledComponents.append(ic)
+        ms.remove(ms.InstalledComponent)
+
+    # Renames FoundationWall/BelowGradeDepth to FoundationWall/DepthBelowGrade
+    # for el in root.xpath('//h:FoundationWall/h:BelowGradeDepth', **xpkw):
+    #     el.tag = f'{{{hpxml3_ns}}}DepthBelowGrade'
+
+    # Replaces WeatherStation/SystemIdentifiersInfo with WeatherStation/SystemIdentifier
+    for el in root.xpath('//h:WeatherStation/h:SystemIdentifiersInfo', **xpkw):
+        el.tag = f'{{{hpxml3_ns}}}SystemIdentifier'
+
+    # Renames "central air conditioning" to "central air conditioner" for CoolingSystemType
+    for el in root.xpath('//h:CoolingSystem/h:CoolingSystemType', **xpkw):
+        if el.text == 'central air conditioning':
+            el._setText('central air conditioner')
+
+    # Renames HeatPump/BackupAFUE to BackupAnnualHeatingEfficiency, accepts 0-1 instead of 1-100
+    for htpump in root.xpath('h:Building/h:BuildingDetails/h:Systems/h:HVAC/h:HVACPlant/h:HeatPump', **xpkw):
+        if not hasattr(htpump, 'BackupAnnualHeatingEfficiency'):
+            add_after(
+                htpump,
+                ['HeatPumpType',
+                 'HeatingCapacity',
+                 'HeatingCapacity17F',
+                 'CoolingCapacity',
+                 'CoolingSensibleHeatFraction',
+                 'BackupType',
+                 'BackupSystem',
+                 'BackupSystemFuel'],
+                E.BackupAnnualHeatingEfficiency()
+            )
+        htpump.BackupAnnualHeatingEfficiency.append(E.Units('AFUE'))
+        htpump.BackupAnnualHeatingEfficiency.append(E.Value(f'{float(htpump.BackupAFUE.text) / 100}'))
+        htpump.remove(htpump.BackupAFUE)
 
     # TODO: Clothes Dryer CEF
     # https://github.com/hpxmlwg/hpxml/pull/145

@@ -71,9 +71,21 @@ def test_green_building_verification():
 def test_inconsistencies():
     root = convert_hpxml_and_parse(hpxml_dir / 'inconsistencies.xml')
 
+    ws = root.Building.BuildingDetails.ClimateandRiskZones.WeatherStation[0]
+    assert ws.SystemIdentifier.attrib['id'] == 'weather-station-1'
+
+    clgsys = root.Building.BuildingDetails.Systems.HVAC.HVACPlant.CoolingSystem[0]
+    assert clgsys.CoolingSystemType.text == 'central air conditioner'
+
     htpump = root.Building.BuildingDetails.Systems.HVAC.HVACPlant.HeatPump[0]
     assert htpump.AnnualCoolingEfficiency.Units == 'SEER'
     assert htpump.AnnualCoolingEfficiency.Value == 13.0
     assert htpump.AnnualHeatingEfficiency.Units == 'HSPF'
     assert htpump.AnnualHeatingEfficiency.Value == 7.7
+    assert htpump.BackupAnnualHeatingEfficiency.Units == 'AFUE'
+    assert htpump.BackupAnnualHeatingEfficiency.Value == 0.98
 
+    measure = root.Project.ProjectDetails.Measures.Measure[0]
+    assert measure.InstalledComponents.InstalledComponent.attrib['id'] == 'installed-component-1'
+    assert not hasattr(measure, 'InstalledComponent')
+    assert measure.InstalledComponents.getnext() == measure.extension
