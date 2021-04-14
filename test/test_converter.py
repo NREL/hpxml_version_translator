@@ -109,3 +109,29 @@ def test_inconsistencies():
     assert measure.InstalledComponents.InstalledComponent.attrib['id'] == 'installed-component-1'
     assert not hasattr(measure, 'InstalledComponent')
     assert measure.InstalledComponents.getnext() == measure.extension
+
+    fw1 = root.Building.BuildingDetails.Enclosure.FoundationWalls.FoundationWall[0]
+    assert fw1.Type == 'concrete block'
+    assert fw1.Length == 120
+    assert fw1.Height == 8
+    assert fw1.Area == 960
+    assert fw1.Thickness == 4
+    assert fw1.DepthBelowGrade == 6
+    assert fw1.Insulation.InsulationGrade == 3
+    assert fw1.Insulation.InsulationCondition == 'good'
+    assert fw1.Insulation.AssemblyEffectiveRValue == 5.0
+
+    fw2 = root.Building.BuildingDetails.Enclosure.FoundationWalls.FoundationWall[1]
+    assert fw2.Type == 'concrete block'
+    assert fw2.Length == 60
+    assert fw2.Height == 8
+    assert fw2.Area == 480
+    assert fw2.Thickness == 7
+    assert fw2.DepthBelowGrade == 8
+    assert fw2.Insulation.InsulationGrade == 1
+    assert fw2.Insulation.InsulationCondition == 'poor'
+    assert fw2.Insulation.Layer.InstallationType == 'continuous' # FIXME: should it be either 'continuous - exterior' or 'continuous - interior'?
+    assert fw2.Insulation.Layer.NominalRValue == 8.9
+    assert fw2.Insulation.Layer.extension.DistanceToTopOfInsulation == 0.0
+    assert fw2.Insulation.Layer.extension.DistanceToBottomOfInsulation == 8.0
+    
