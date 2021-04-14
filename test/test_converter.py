@@ -130,8 +130,8 @@ def test_inconsistencies():
     assert fw2.DepthBelowGrade == 8
     assert fw2.Insulation.InsulationGrade == 1
     assert fw2.Insulation.InsulationCondition == 'poor'
-    assert fw2.Insulation.Layer.InstallationType == 'continuous' # FIXME: should it be either 'continuous - exterior' or 'continuous - interior'?
+    # FIXME: should InstallationType be either 'continuous - exterior' or 'continuous - interior'?
+    assert fw2.Insulation.Layer.InstallationType == 'continuous'
     assert fw2.Insulation.Layer.NominalRValue == 8.9
     assert fw2.Insulation.Layer.extension.DistanceToTopOfInsulation == 0.0
     assert fw2.Insulation.Layer.extension.DistanceToBottomOfInsulation == 8.0
-    

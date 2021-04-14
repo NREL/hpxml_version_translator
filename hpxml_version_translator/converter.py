@@ -263,7 +263,9 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
         ms.remove(ms.InstalledComponent)
 
     # Renames FoundationWall/BelowGradeDepth to FoundationWall/DepthBelowGrade
-    for i, fw in enumerate(root.xpath('h:Building/h:BuildingDetails/h:Enclosure/h:Foundations/h:Foundation/h:FoundationWall', **xpkw)):
+    for i, fw in enumerate(root.xpath(
+        'h:Building/h:BuildingDetails/h:Enclosure/h:Foundations/h:Foundation/h:FoundationWall', **xpkw
+    )):
         enclosure = fw.getparent().getparent().getparent()
         foundation = fw.getparent()
         if not hasattr(enclosure, 'FoundationWalls'):
@@ -281,7 +283,7 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
         fw_new = E.FoundationWall(
             E.SystemIdentifier(id=str(fw.SystemIdentifier.attrib['id'])),
             E.ExteriorAdjacentTo('ground'),
-            E.InteriorAdjacentTo('basement') # FIXME: assumption
+            E.InteriorAdjacentTo('basement')  # FIXME: assumption
         )
         if hasattr(fw, 'Type'):
             fw_new.append(E.Type(fw.Type.text))
@@ -308,7 +310,7 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
             if hasattr(fw.Insulation, 'AssemblyEffectiveRValue'):
                 fw_ins.append(E.AssemblyEffectiveRValue(fw.Insulation.AssemblyEffectiveRValue.text))
             if hasattr(fw.Insulation, 'Layer'):
-                fw_ins.append(deepcopy(fw.Insulation.Layer)) # FIXME: need to be able to handle multiple layers
+                fw_ins.append(deepcopy(fw.Insulation.Layer))  # FIXME: need to be able to handle multiple layers
             if hasattr(fw.Insulation, 'extension'):
                 fw_ins.append(deepcopy(fw.Insulation.extension))
             fw_new.append(fw_ins)
@@ -316,7 +318,7 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
             fw_new.append(deepcopy(fw.extension))
         enclosure.FoundationWalls.append(fw_new)
         foundation.remove(fw)
-    
+
     # Replaces WeatherStation/SystemIdentifiersInfo with WeatherStation/SystemIdentifier
     for el in root.xpath('//h:WeatherStation/h:SystemIdentifiersInfo', **xpkw):
         el.tag = f'{{{hpxml3_ns}}}SystemIdentifier'
