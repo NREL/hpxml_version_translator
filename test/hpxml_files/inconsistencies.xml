@@ -20,7 +20,7 @@
                 </WeatherStation>
             </ClimateandRiskZones>
             <Enclosure>
-                <Foundations>
+                <!--<Foundations>
                     <Foundation>
                         <SystemIdentifier id='foundation-1'/>
                         <FoundationType>
@@ -42,31 +42,8 @@
                                 <AssemblyEffectiveRValue>5.0</AssemblyEffectiveRValue>
                             </Insulation>
                         </FoundationWall>
-                        <FoundationWall>
-                            <SystemIdentifier id='foundationwall-2'/>
-                            <Type>concrete block</Type>
-                            <Length>60</Length>
-                            <Height>8</Height>
-                            <Area>480</Area>
-                            <Thickness>7</Thickness>
-                            <BelowGradeDepth>8</BelowGradeDepth>
-                            <AdjacentToFoundation idref='foundation-1'/>
-                            <Insulation>
-                                <SystemIdentifier id='foundationwall-insulation-2'/>
-                                <InsulationGrade>1</InsulationGrade>
-                                <InsulationCondition>poor</InsulationCondition>
-                                <Layer>
-                                    <InstallationType>continuous</InstallationType>
-                                    <NominalRValue>8.9</NominalRValue>
-                                    <extension>
-                                        <DistanceToTopOfInsulation>0.0</DistanceToTopOfInsulation>
-                                        <DistanceToBottomOfInsulation>8.0</DistanceToBottomOfInsulation>
-                                    </extension>
-                                </Layer>
-                            </Insulation>
-                        </FoundationWall>
                     </Foundation>
-                </Foundations>
+                </Foundations>-->
             </Enclosure>
             <Systems>
                 <HVAC>

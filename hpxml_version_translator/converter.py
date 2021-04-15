@@ -263,61 +263,11 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
         ms.remove(ms.InstalledComponent)
 
     # Renames FoundationWall/BelowGradeDepth to FoundationWall/DepthBelowGrade
-    for i, fw in enumerate(root.xpath(
-        'h:Building/h:BuildingDetails/h:Enclosure/h:Foundations/h:Foundation/h:FoundationWall', **xpkw
-    )):
-        enclosure = fw.getparent().getparent().getparent()
-        foundation = fw.getparent()
-        if not hasattr(enclosure, 'FoundationWalls'):
-            add_after(
-                enclosure,
-                ['AirInfiltration',
-                 'Attics',
-                 'Foundations',
-                 'Garages',
-                 'Roofs',
-                 'RimJoists',
-                 'Walls'],
-                E.FoundationWalls()
-            )
-        fw_new = E.FoundationWall(
-            E.SystemIdentifier(id=str(fw.SystemIdentifier.attrib['id'])),
-            E.ExteriorAdjacentTo('ground'),
-            E.InteriorAdjacentTo('basement')  # FIXME: assumption
-        )
-        if hasattr(fw, 'Type'):
-            fw_new.append(E.Type(fw.Type.text))
-        if hasattr(fw, 'Length'):
-            fw_new.append(E.Length(fw.Length.text))
-        if hasattr(fw, 'Height'):
-            fw_new.append(E.Height(fw.Height.text))
-        if hasattr(fw, 'Area'):
-            fw_new.append(E.Area(fw.Area.text))
-        if hasattr(fw, 'Thickness'):
-            fw_new.append(E.Thickness(fw.Thickness.text))
-        if hasattr(fw, 'BelowGradeDepth'):
-            fw_new.append(E.DepthBelowGrade(fw.BelowGradeDepth.text))
-        if hasattr(fw, 'AdjacentToFoundation'):
-            fw_new.append(E.AdjacentToFoundation(idref=str(fw.AdjacentToFoundation.attrib['idref'])))
-        if hasattr(fw, 'Insulation'):
-            fw_ins = E.Insulation(
-                E.SystemIdentifier(id=str(fw.Insulation.SystemIdentifier.attrib['id']))
-            )
-            if hasattr(fw.Insulation, 'InsulationGrade'):
-                fw_ins.append(E.InsulationGrade(fw.Insulation.InsulationGrade.text))
-            if hasattr(fw.Insulation, 'InsulationCondition'):
-                fw_ins.append(E.InsulationCondition(fw.Insulation.InsulationCondition.text))
-            if hasattr(fw.Insulation, 'AssemblyEffectiveRValue'):
-                fw_ins.append(E.AssemblyEffectiveRValue(fw.Insulation.AssemblyEffectiveRValue.text))
-            if hasattr(fw.Insulation, 'Layer'):
-                fw_ins.append(deepcopy(fw.Insulation.Layer))  # FIXME: need to be able to handle multiple layers
-            if hasattr(fw.Insulation, 'extension'):
-                fw_ins.append(deepcopy(fw.Insulation.extension))
-            fw_new.append(fw_ins)
-        if hasattr(fw, 'extension'):
-            fw_new.append(deepcopy(fw.extension))
-        enclosure.FoundationWalls.append(fw_new)
-        foundation.remove(fw)
+    # TODO: This tag name change will fail HPXML v3 validation. 
+    # Uncomment this change after Enclosure element rearrangement.
+    # for el in root.xpath('//h:FoundationWall/h:BelowGradeDepth', **xpkw):
+    #     el.tag = f'{{{hpxml3_ns}}}DepthBelowGrade'
+
 
     # Replaces WeatherStation/SystemIdentifiersInfo with WeatherStation/SystemIdentifier
     for el in root.xpath('//h:WeatherStation/h:SystemIdentifiersInfo', **xpkw):
@@ -325,8 +275,8 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
 
     # Renames "central air conditioning" to "central air conditioner" for CoolingSystemType
     for el in root.xpath('//h:CoolingSystem/h:CoolingSystemType', **xpkw):
-        if el.text == 'central air conditioning':
-            el._setText('central air conditioner')
+        if el == 'central air conditioning':
+            el.getparent().CoolingSystemType = E.CoolingSystemType('central air conditioner')
 
     # Renames HeatPump/BackupAFUE to BackupAnnualHeatingEfficiency, accepts 0-1 instead of 1-100
     for htpump in root.xpath('h:Building/h:BuildingDetails/h:Systems/h:HVAC/h:HVACPlant/h:HeatPump', **xpkw):
