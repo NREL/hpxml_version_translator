@@ -86,3 +86,40 @@ def test_clothes_dryer():
     assert dryer2.EnergyFactor == 5.0
     assert dryer2.ControlType == 'temperature'
     assert not hasattr(dryer2, 'EfficiencyFactor')
+
+
+def test_enclosure_foundation_walls():
+    root = convert_hpxml_and_parse(hpxml_dir / 'enclosure_foundation_walls.xml')
+
+    fw1 = root.Building.BuildingDetails.Enclosure.FoundationWalls.FoundationWall[0]
+    assert fw1.Type == 'concrete block'
+    assert fw1.Length == 120
+    assert fw1.Height == 8
+    assert fw1.Area == 960
+    assert fw1.Thickness == 4
+    # assert fw1.DepthBelowGrade == 6  # TODO: uncomment it when "Address inconsistencies #14" is merged.
+    assert not hasattr(fw1, 'AdjacentTo')
+    assert fw1.Insulation.InsulationGrade == 3
+    assert fw1.Insulation.InsulationCondition == 'good'
+    assert fw1.Insulation.AssemblyEffectiveRValue == 5.0
+    assert not hasattr(fw1.Insulation, 'Location')
+
+    fw2 = root.Building.BuildingDetails.Enclosure.FoundationWalls.FoundationWall[1]
+    assert fw2.Type == 'concrete block'
+    assert fw2.Length == 60
+    assert fw2.Height == 8
+    assert fw2.Area == 480
+    assert fw2.Thickness == 7
+    # assert fw2.DepthBelowGrade == 8  # TODO: uncomment it when "Address inconsistencies #14" is merged.
+    assert not hasattr(fw2, 'AdjacentTo')
+    assert fw2.Insulation.InsulationGrade == 1
+    assert fw2.Insulation.InsulationCondition == 'poor'
+    assert not hasattr(fw2.Insulation, 'Location')
+    assert fw2.Insulation.Layer[0].InstallationType == 'continuous'
+    assert fw2.Insulation.Layer[0].InsulationMaterial.Batt == 'fiberglass'
+    assert fw2.Insulation.Layer[0].NominalRValue == 8.9
+    assert fw2.Insulation.Layer[0].Thickness == 1.5
+    assert fw2.Insulation.Layer[1].InstallationType == 'cavity'
+    assert fw2.Insulation.Layer[1].InsulationMaterial.Rigid == 'eps'
+    assert fw2.Insulation.Layer[1].NominalRValue == 15.0
+    assert fw2.Insulation.Layer[1].Thickness == 3.0

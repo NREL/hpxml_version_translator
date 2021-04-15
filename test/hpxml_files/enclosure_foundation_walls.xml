@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<HPXML xmlns="http://hpxmlonline.com/2014/6" schemaVersion="2.3">
+    <XMLTransactionHeaderInformation>
+        <XMLType></XMLType>
+        <XMLGeneratedBy></XMLGeneratedBy>
+        <CreatedDateAndTime>2021-04-05T14:17:07.685077</CreatedDateAndTime>
+        <Transaction>create</Transaction>
+    </XMLTransactionHeaderInformation>
+    <SoftwareInfo/>
+    <Building>
+        <BuildingID id="bldg1"></BuildingID>
+        <ProjectStatus>
+            <EventType>audit</EventType>
+        </ProjectStatus>
+        <BuildingDetails>
+            <Enclosure>
+                <Foundations>
+                    <Foundation>
+                        <SystemIdentifier id='foundation-1'/>
+                        <FoundationType>
+                            <Basement/>
+                        </FoundationType>
+                        <FoundationWall>
+                            <SystemIdentifier id='foundationwall-1'/>
+                            <Type>concrete block</Type>
+                            <Length>120</Length>
+                            <Height>8</Height>
+                            <Area>960</Area>
+                            <Thickness>4</Thickness>
+                            <BelowGradeDepth>6</BelowGradeDepth>
+                            <AdjacentToFoundation idref='foundation-1'/>
+                            <AdjacentTo>unconditioned basement</AdjacentTo>
+                            <Insulation>
+                                <SystemIdentifier id='foundationwall-insulation-1'/>
+                                <InsulationGrade>3</InsulationGrade>
+                                <InsulationCondition>good</InsulationCondition>
+                                <AssemblyEffectiveRValue>5.0</AssemblyEffectiveRValue>
+                            </Insulation>
+                        </FoundationWall>
+                        <FoundationWall>
+                            <SystemIdentifier id='foundationwall-2'/>
+                            <Type>concrete block</Type>
+                            <Length>60</Length>
+                            <Height>8</Height>
+                            <Area>480</Area>
+                            <Thickness>7</Thickness>
+                            <BelowGradeDepth>8</BelowGradeDepth>
+                            <AdjacentToFoundation idref='foundation-1'/>
+                            <AdjacentTo>unconditioned basement</AdjacentTo>
+                            <Insulation>
+                                <SystemIdentifier id='foundationwall-insulation-2'/>
+                                <InsulationGrade>1</InsulationGrade>
+                                <InsulationCondition>poor</InsulationCondition>
+                                <Layer>
+                                    <InstallationType>continuous</InstallationType>
+                                    <InsulationMaterial>
+                                        <Batt>fiberglass</Batt>
+                                    </InsulationMaterial>
+                                    <NominalRValue>8.9</NominalRValue>
+                                    <Thickness>1.5</Thickness>
+                                </Layer>
+                                <Layer>
+                                    <InstallationType>cavity</InstallationType>
+                                    <InsulationMaterial>
+                                        <Rigid>eps</Rigid>
+                                    </InsulationMaterial>
+                                    <NominalRValue>15.0</NominalRValue>
+                                    <Thickness>3.0</Thickness>
+                                </Layer>
+                            </Insulation>
+                        </FoundationWall>
+                    </Foundation>
+                </Foundations>
+            </Enclosure>
+        </BuildingDetails>
+    </Building>
+</HPXML>

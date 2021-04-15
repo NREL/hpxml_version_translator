@@ -241,10 +241,41 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
         for el in root.xpath(f'//h:ProjectDetails/h:{el_name}', **xpkw):
             el.getparent().remove(el)
 
+    # TODO: Enclosure
+    # https://github.com/hpxmlwg/hpxml/pull/181
+
+    for i, fw in enumerate(root.xpath(
+        'h:Building/h:BuildingDetails/h:Enclosure/h:Foundations/h:Foundation/h:FoundationWall', **xpkw
+    )):
+        enclosure = fw.getparent().getparent().getparent()
+        foundation = fw.getparent()
+        if not hasattr(enclosure, 'FoundationWalls'):
+            add_after(
+                enclosure,
+                ['AirInfiltration',
+                 'Attics',
+                 'Foundations',
+                 'Garages',
+                 'Roofs',
+                 'RimJoists',
+                 'Walls'],
+                E.FoundationWalls()
+            )
+        if hasattr(fw, 'AdjacentTo'):
+            fw.remove(fw.AdjacentTo)
+        if hasattr(fw.Insulation, 'InsulationLocation'):
+            fw.remove(fw.Insulation.InsulationLocation)
+        # TODO: Remove the code below when "Address inconsistencies #14" is merged.
+        if hasattr(fw, 'BelowGradeDepth'):
+            fw.remove(fw.BelowGradeDepth)
+        enclosure.FoundationWalls.append(deepcopy(fw))
+
+        foundation.remove(fw)
+
     # TODO: Addressing Inconsistencies
     # https://github.com/hpxmlwg/hpxml/pull/124
 
-    # TODO: Clothes Dryer CEF
+    # Clothes Dryer CEF
     # https://github.com/hpxmlwg/hpxml/pull/145
 
     for el in root.xpath('//h:ClothesDryer/h:EfficiencyFactor', **xpkw):
@@ -258,9 +289,6 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
 
     # TODO: Deprecated items
     # https://github.com/hpxmlwg/hpxml/pull/167
-
-    # TODO: Enclosure
-    # https://github.com/hpxmlwg/hpxml/pull/181
 
     # TODO: Adds desuperheater flexibility
     # https://github.com/hpxmlwg/hpxml/pull/184
