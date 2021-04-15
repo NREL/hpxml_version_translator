@@ -275,7 +275,7 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
     # Renames "central air conditioning" to "central air conditioner" for CoolingSystemType
     for el in root.xpath('//h:CoolingSystem/h:CoolingSystemType', **xpkw):
         if el == 'central air conditioning':
-            el.getparent().CoolingSystemType = E.CoolingSystemType('central air conditioner')
+            el._setText('central air conditioner')
 
     # Renames HeatPump/BackupAFUE to BackupAnnualHeatingEfficiency, accepts 0-1 instead of 1-100
     for bkupafue in root.xpath(
