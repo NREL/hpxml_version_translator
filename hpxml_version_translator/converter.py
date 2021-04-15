@@ -263,11 +263,10 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
         ms.remove(ms.InstalledComponent)
 
     # Renames FoundationWall/BelowGradeDepth to FoundationWall/DepthBelowGrade
-    # TODO: This tag name change will fail HPXML v3 validation. 
+    # TODO: This tag name change will fail HPXML v3 validation.
     # Uncomment this change after Enclosure element rearrangement.
     # for el in root.xpath('//h:FoundationWall/h:BelowGradeDepth', **xpkw):
     #     el.tag = f'{{{hpxml3_ns}}}DepthBelowGrade'
-
 
     # Replaces WeatherStation/SystemIdentifiersInfo with WeatherStation/SystemIdentifier
     for el in root.xpath('//h:WeatherStation/h:SystemIdentifiersInfo', **xpkw):
@@ -279,7 +278,9 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
             el.getparent().CoolingSystemType = E.CoolingSystemType('central air conditioner')
 
     # Renames HeatPump/BackupAFUE to BackupAnnualHeatingEfficiency, accepts 0-1 instead of 1-100
-    for bkupafue in root.xpath('h:Building/h:BuildingDetails/h:Systems/h:HVAC/h:HVACPlant/h:HeatPump/h:BackupAFUE', **xpkw):
+    for bkupafue in root.xpath(
+        'h:Building/h:BuildingDetails/h:Systems/h:HVAC/h:HVACPlant/h:HeatPump/h:BackupAFUE', **xpkw
+    ):
         bkupafue.addnext(E.BackupAnnualHeatingEfficiency(
             E.Units('AFUE'),
             E.Value(f'{float(bkupafue.text) / 100}')
