@@ -279,23 +279,12 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
             el.getparent().CoolingSystemType = E.CoolingSystemType('central air conditioner')
 
     # Renames HeatPump/BackupAFUE to BackupAnnualHeatingEfficiency, accepts 0-1 instead of 1-100
-    for htpump in root.xpath('h:Building/h:BuildingDetails/h:Systems/h:HVAC/h:HVACPlant/h:HeatPump', **xpkw):
-        if not hasattr(htpump, 'BackupAnnualHeatingEfficiency'):
-            add_after(
-                htpump,
-                ['HeatPumpType',
-                 'HeatingCapacity',
-                 'HeatingCapacity17F',
-                 'CoolingCapacity',
-                 'CoolingSensibleHeatFraction',
-                 'BackupType',
-                 'BackupSystem',
-                 'BackupSystemFuel'],
-                E.BackupAnnualHeatingEfficiency()
-            )
-        htpump.BackupAnnualHeatingEfficiency.append(E.Units('AFUE'))
-        htpump.BackupAnnualHeatingEfficiency.append(E.Value(f'{float(htpump.BackupAFUE.text) / 100}'))
-        htpump.remove(htpump.BackupAFUE)
+    for bkupafue in root.xpath('h:Building/h:BuildingDetails/h:Systems/h:HVAC/h:HVACPlant/h:HeatPump/h:BackupAFUE', **xpkw):
+        bkupafue.addnext(E.BackupAnnualHeatingEfficiency(
+            E.Units('AFUE'),
+            E.Value(f'{float(bkupafue.text) / 100}')
+        ))
+        bkupafue.getparent().remove(bkupafue)
 
     # TODO: Clothes Dryer CEF
     # https://github.com/hpxmlwg/hpxml/pull/145
