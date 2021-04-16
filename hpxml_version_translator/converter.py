@@ -241,7 +241,7 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
         for el in root.xpath(f'//h:ProjectDetails/h:{el_name}', **xpkw):
             el.getparent().remove(el)
 
-    # TODO: Enclosure
+    # Enclosure
     # https://github.com/hpxmlwg/hpxml/pull/181
 
     for i, fw in enumerate(root.xpath(
@@ -261,14 +261,17 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
                  'Walls'],
                 E.FoundationWalls()
             )
-        if hasattr(fw, 'AdjacentTo'):
-            fw.remove(fw.AdjacentTo)
-        if hasattr(fw.Insulation, 'InsulationLocation'):
-            fw.remove(fw.Insulation.InsulationLocation)
-        # TODO: Remove the code below when "Address inconsistencies #14" is merged.
-        if hasattr(fw, 'BelowGradeDepth'):
-            fw.remove(fw.BelowGradeDepth)
         enclosure.FoundationWalls.append(deepcopy(fw))
+        this_fw = enclosure.FoundationWalls.FoundationWall[i]
+
+        el_not_in_v3 = [
+            'AdjacentTo',
+            'InsulationLocation',
+            'BelowGradeDepth'  # TODO: Remove the code below when "Address inconsistencies #14" is merged.
+        ]
+        for el in el_not_in_v3:
+            if hasattr(this_fw, el):
+                this_fw.remove(this_fw[el])
 
         foundation.remove(fw)
 
