@@ -265,7 +265,7 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
     # Attics
     for i, attic in enumerate(root.xpath(
         'h:Building/h:BuildingDetails/h:Enclosure/h:AtticAndRoof/h:Attics/h:Attic', **xpkw
-    ), 1):
+    )):
         enclosure = attic.getparent().getparent().getparent()
         if not hasattr(enclosure, 'Attics'):
             add_after(
@@ -304,7 +304,7 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
             elif this_attic.AtticType in ['other', 'venting unknown attic']:
                 this_attic.AtticType = E.AtticType(E.Attic(E.Other()))
 
-        if i == len(root.xpath(
+        if (i + 1) == len(root.xpath(
             'h:Building/h:BuildingDetails/h:Enclosure/h:AtticAndRoof/h:Attics/h:Attic', **xpkw
         )):  # remove AtticAndRoof after rearranging all attics
             enclosure.remove(enclosure.AtticAndRoof)
