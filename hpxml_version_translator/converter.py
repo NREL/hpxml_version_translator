@@ -259,8 +259,55 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
     # TODO: Deprecated items
     # https://github.com/hpxmlwg/hpxml/pull/167
 
-    # TODO: Enclosure
+    # Enclosure
     # https://github.com/hpxmlwg/hpxml/pull/181
+
+    # Attics
+    for i, attic in enumerate(root.xpath(
+        'h:Building/h:BuildingDetails/h:Enclosure/h:AtticAndRoof/h:Attics/h:Attic', **xpkw
+    ), 1):
+        enclosure = attic.getparent().getparent().getparent()
+        if not hasattr(enclosure, 'Attics'):
+            add_after(
+                enclosure,
+                ['AirInfiltration'],
+                E.Attics()
+            )
+        enclosure.Attics.append(deepcopy(attic))
+        this_attic = enclosure.Attics.Attic[i]
+
+        el_not_in_v3 = [
+            'AttachedToRoof',
+            'ExteriorAdjacentTo',
+            'InteriorAdjacentTo',
+            'AtticKneeWall',
+            'AtticFloorInsulation',
+            'AtticRoofInsulation',
+            'Area',
+            'Rafters'
+        ]
+        for el in el_not_in_v3:
+            if hasattr(this_attic, el):
+                this_attic.remove(this_attic[el])
+
+        if hasattr(this_attic, 'AtticType'):
+            if this_attic.AtticType == 'vented attic':
+                this_attic.AtticType = E.AtticType(E.Attic(E.Vented(True)))
+            elif this_attic.AtticType == 'unvented attic':
+                this_attic.AtticType = E.AtticType(E.Attic(E.Vented(False)))
+            elif this_attic.AtticType == 'flat roof':
+                this_attic.AtticType = E.AtticType(E.FlatRoof())
+            elif this_attic.AtticType == 'cathedral ceiling':
+                this_attic.AtticType = E.AtticType(E.CathedralCeiling())
+            elif this_attic.AtticType == 'cape cod':
+                this_attic.AtticType = E.AtticType(E.Attic(E.CapeCod(True)))
+            elif this_attic.AtticType in ['other', 'venting unknown attic']:
+                this_attic.AtticType = E.AtticType(E.Attic(E.Other()))
+
+        if i == len(root.xpath(
+            'h:Building/h:BuildingDetails/h:Enclosure/h:AtticAndRoof/h:Attics/h:Attic', **xpkw
+        )):  # remove AtticAndRoof after rearranging all attics
+            enclosure.remove(enclosure.AtticAndRoof)
 
     # TODO: Adds desuperheater flexibility
     # https://github.com/hpxmlwg/hpxml/pull/184

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<HPXML xmlns="http://hpxmlonline.com/2014/6" schemaVersion="2.3">
+    <XMLTransactionHeaderInformation>
+        <XMLType></XMLType>
+        <XMLGeneratedBy></XMLGeneratedBy>
+        <CreatedDateAndTime>2021-04-05T14:17:07.685077</CreatedDateAndTime>
+        <Transaction>create</Transaction>
+    </XMLTransactionHeaderInformation>
+    <SoftwareInfo/>
+    <Building>
+        <BuildingID id="bldg1"></BuildingID>
+        <ProjectStatus>
+            <EventType>audit</EventType>
+        </ProjectStatus>
+        <BuildingDetails>
+            <Enclosure>
+                <AtticAndRoof>
+                    <Attics>
+                        <Attic>
+                            <SystemIdentifier id='attic-1'/>
+                            <ExteriorAdjacentTo>ambient</ExteriorAdjacentTo>
+                            <InteriorAdjacentTo>attic</InteriorAdjacentTo>
+                            <AtticType>unvented attic</AtticType>
+                            <Area>1000</Area>
+                            <Rafters>
+                                <Size>2x4</Size>
+                                <Material>wood</Material>
+                            </Rafters>
+                        </Attic>
+                        <Attic>
+                            <SystemIdentifier id='attic-2'/>
+                            <AtticType>vented attic</AtticType>
+                        </Attic>
+                    </Attics>
+                </AtticAndRoof>
+            </Enclosure>
+        </BuildingDetails>
+    </Building>
+</HPXML>

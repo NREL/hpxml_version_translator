@@ -86,3 +86,16 @@ def test_clothes_dryer():
     assert dryer2.EnergyFactor == 5.0
     assert dryer2.ControlType == 'temperature'
     assert not hasattr(dryer2, 'EfficiencyFactor')
+
+
+def test_enclosure_attics():
+    root = convert_hpxml_and_parse(hpxml_dir / 'enclosure_attics.xml')
+
+    attic1 = root.Building.BuildingDetails.Enclosure.Attics.Attic[0]
+    enclosure = attic1.getparent().getparent()
+    assert not attic1.AtticType.Attic.Vented  # unvented attic
+    assert not hasattr(enclosure, 'AtticAndRoof')
+    assert not hasattr(enclosure, 'ExteriorAdjacentTo')
+
+    attic2 = root.Building.BuildingDetails.Enclosure.Attics.Attic[1]
+    assert attic2.AtticType.Attic.Vented  # vented attic
