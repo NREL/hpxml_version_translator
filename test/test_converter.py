@@ -86,3 +86,22 @@ def test_clothes_dryer():
     assert dryer2.EnergyFactor == 5.0
     assert dryer2.ControlType == 'temperature'
     assert not hasattr(dryer2, 'EfficiencyFactor')
+
+
+def test_frame_floors():
+    root = convert_hpxml_and_parse(hpxml_dir / 'enclosure_frame_floors.xml')
+
+    ff1 = root.Building.BuildingDetails.Enclosure.FrameFloors.FrameFloor[0]
+    assert ff1.FloorCovering == 'hardwood'
+    assert ff1.Area == 1350.0
+    assert ff1.Insulation.AssemblyEffectiveRValue == 39.3
+
+    ff2 = root.Building.BuildingDetails.Enclosure.FrameFloors.FrameFloor[1]
+    assert ff2.FloorCovering == 'carpet'
+    assert ff2.Area == 1350.0
+    assert ff2.Insulation.InsulationGrade == 1
+    assert ff2.Insulation.InsulationCondition == 'poor'
+    assert ff2.Insulation.Layer.InstallationType == 'continuous'
+    assert ff2.Insulation.Layer.NominalRValue == 30.0
+    assert ff2.Insulation.Layer.Thickness == 1.5
+    assert not hasattr(ff1.Insulation, 'InsulationLocation')

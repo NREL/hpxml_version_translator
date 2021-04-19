@@ -259,8 +259,36 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
     # TODO: Deprecated items
     # https://github.com/hpxmlwg/hpxml/pull/167
 
-    # TODO: Enclosure
+    # Enclosure
     # https://github.com/hpxmlwg/hpxml/pull/181
+
+    # Frame Floors
+    for i, ff in enumerate(root.xpath(
+        'h:Building/h:BuildingDetails/h:Enclosure/h:Foundations/h:Foundation/h:FrameFloor', **xpkw
+    )):
+        enclosure = ff.getparent().getparent().getparent()
+        foundation = ff.getparent()
+        if not hasattr(enclosure, 'FrameFloors'):
+            add_after(
+                enclosure,
+                ['AirInfiltration',
+                 'Attics',
+                 'Foundations',
+                 'Garages',
+                 'Roofs',
+                 'RimJoists',
+                 'Walls',
+                 'FoundationWalls'],
+                E.FrameFloors()
+            )
+        enclosure.FrameFloors.append(deepcopy(ff))
+        foundation.remove(ff)
+
+    # Remove 'Insulation/InsulationLocation'
+    # TODO: Use it for other enclosure types
+    for ins_loc in root.xpath('//h:Insulation/h:InsulationLocation', **xpkw):
+        ins = ins_loc.getparent()
+        ins.remove(ins.InsulationLocation)
 
     # TODO: Adds desuperheater flexibility
     # https://github.com/hpxmlwg/hpxml/pull/184
