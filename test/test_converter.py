@@ -92,6 +92,8 @@ def test_enclosure_foundation_walls():
     root = convert_hpxml_and_parse(hpxml_dir / 'enclosure_foundation_walls.xml')
 
     fw1 = root.Building.BuildingDetails.Enclosure.FoundationWalls.FoundationWall[0]
+    assert fw1.getparent().getparent().Foundations.Foundation.AttachedToFoundationWall[0].attrib['idref']\
+        == 'foundationwall-1'
     assert fw1.Type == 'concrete block'
     assert fw1.Length == 120
     assert fw1.Height == 8
@@ -105,6 +107,8 @@ def test_enclosure_foundation_walls():
     assert not hasattr(fw1.Insulation, 'Location')
 
     fw2 = root.Building.BuildingDetails.Enclosure.FoundationWalls.FoundationWall[1]
+    assert fw2.getparent().getparent().Foundations.Foundation.AttachedToFoundationWall[1].attrib['idref']\
+        == 'foundationwall-2'
     assert fw2.Type == 'concrete block'
     assert fw2.Length == 60
     assert fw2.Height == 8

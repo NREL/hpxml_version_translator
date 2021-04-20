@@ -249,6 +249,8 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
     )):
         enclosure = fw.getparent().getparent().getparent()
         foundation = fw.getparent()
+
+        fw.addnext(E.AttachedToFoundationWall(idref=fw.SystemIdentifier.attrib['id']))
         if not hasattr(enclosure, 'FoundationWalls'):
             add_after(
                 enclosure,
