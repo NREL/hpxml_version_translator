@@ -92,6 +92,7 @@ def test_slabs():
     root = convert_hpxml_and_parse(hpxml_dir / 'enclosure_slabs.xml')
 
     slab1 = root.Building.BuildingDetails.Enclosure.Slabs.Slab[0]
+    assert slab1.getparent().getparent().Foundations.Foundation.AttachedToSlab.attrib['idref'] == 'slab-1'
     assert slab1.Area == 1350.0
     assert slab1.Thickness == 4.0
     assert slab1.ExposedPerimeter == 150.0

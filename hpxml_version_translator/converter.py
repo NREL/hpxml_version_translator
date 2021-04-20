@@ -268,6 +268,8 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
     )):
         enclosure = slab.getparent().getparent().getparent()
         foundation = slab.getparent()
+
+        slab.addnext(E.AttachedToSlab(idref=slab.SystemIdentifier.attrib['id']))
         if not hasattr(enclosure, 'Slabs'):
             add_after(
                 enclosure,
