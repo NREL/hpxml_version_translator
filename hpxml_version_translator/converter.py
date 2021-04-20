@@ -346,7 +346,10 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
             enclosure.Roofs.Roof.remove(enclosure.Roofs.Roof.RoofType[1])  # remove the RoofType of HPXML v2
 
     # remove AtticAndRoof after rearranging all attics and roofs
-    enclosure.remove(enclosure.AtticAndRoof)
+    try:
+        root.Building.BuildingDetails.Enclosure.remove(root.Building.BuildingDetails.Enclosure.AtticAndRoof)
+    except AttributeError:
+        pass
 
     # TODO: Adds desuperheater flexibility
     # https://github.com/hpxmlwg/hpxml/pull/184
