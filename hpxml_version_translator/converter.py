@@ -268,6 +268,8 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
     )):
         enclosure = ff.getparent().getparent().getparent()
         foundation = ff.getparent()
+        
+        ff.addnext(E.AttachedToFrameFloor(idref=ff.SystemIdentifier.attrib['id']))
         if not hasattr(enclosure, 'FrameFloors'):
             add_after(
                 enclosure,

@@ -92,11 +92,13 @@ def test_frame_floors():
     root = convert_hpxml_and_parse(hpxml_dir / 'enclosure_frame_floors.xml')
 
     ff1 = root.Building.BuildingDetails.Enclosure.FrameFloors.FrameFloor[0]
+    assert ff1.getparent().getparent().Foundations.Foundation.AttachedToFrameFloor[0].attrib['idref'] == 'framefloor-1'
     assert ff1.FloorCovering == 'hardwood'
     assert ff1.Area == 1350.0
     assert ff1.Insulation.AssemblyEffectiveRValue == 39.3
 
     ff2 = root.Building.BuildingDetails.Enclosure.FrameFloors.FrameFloor[1]
+    assert ff2.getparent().getparent().Foundations.Foundation.AttachedToFrameFloor[1].attrib['idref'] == 'framefloor-2'
     assert ff2.FloorCovering == 'carpet'
     assert ff2.Area == 1350.0
     assert ff2.Insulation.InsulationGrade == 1
