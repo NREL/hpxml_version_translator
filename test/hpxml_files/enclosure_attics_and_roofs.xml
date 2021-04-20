@@ -15,6 +15,17 @@
         <BuildingDetails>
             <Enclosure>
                 <AtticAndRoof>
+                    <Roofs>
+                        <Roof>
+                            <SystemIdentifier id='roof-1'/>
+                            <RoofColor>dark</RoofColor>
+                            <SolarAbsorptance>0.7</SolarAbsorptance>
+                            <Emittance>0.9</Emittance>
+                            <RoofType>shingles</RoofType>
+                            <Pitch>6.0</Pitch>
+                            <RoofArea>1118.5</RoofArea>
+                        </Roof>
+                    </Roofs>
                     <Attics>
                         <Attic>
                             <SystemIdentifier id='attic-1'/>

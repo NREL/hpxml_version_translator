@@ -89,7 +89,7 @@ def test_clothes_dryer():
 
 
 def test_enclosure_attics():
-    root = convert_hpxml_and_parse(hpxml_dir / 'enclosure_attics.xml')
+    root = convert_hpxml_and_parse(hpxml_dir / 'enclosure_attics_and_roofs.xml')
 
     attic1 = root.Building.BuildingDetails.Enclosure.Attics.Attic[0]
     enclosure = attic1.getparent().getparent()
@@ -99,3 +99,18 @@ def test_enclosure_attics():
 
     attic2 = root.Building.BuildingDetails.Enclosure.Attics.Attic[1]
     assert attic2.AtticType.Attic.Vented  # vented attic
+
+
+def test_enclosure_roofs():
+    root = convert_hpxml_and_parse(hpxml_dir / 'enclosure_attics_and_roofs.xml')
+
+    roof1 = root.Building.BuildingDetails.Enclosure.Roofs.Roof[0]
+    enclosure = roof1.getparent().getparent()
+    assert roof1.Area == 1118.5
+    assert roof1.RoofType == 'shingles'
+    assert roof1.RoofColor == 'dark'
+    assert roof1.SolarAbsorptance == 0.7
+    assert roof1.Emittance == 0.9
+    assert roof1.Pitch == 6.0
+    assert not hasattr(roof1, 'RoofArea')
+    assert not hasattr(enclosure, 'AtticAndRoof')

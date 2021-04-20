@@ -304,10 +304,49 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
             elif this_attic.AtticType in ['other', 'venting unknown attic']:
                 this_attic.AtticType = E.AtticType(E.Attic(E.Other()))
 
-        if (i + 1) == len(root.xpath(
-            'h:Building/h:BuildingDetails/h:Enclosure/h:AtticAndRoof/h:Attics/h:Attic', **xpkw
-        )):  # remove AtticAndRoof after rearranging all attics
-            enclosure.remove(enclosure.AtticAndRoof)
+    # Roofs
+    for i, roof in enumerate(root.xpath(
+        'h:Building/h:BuildingDetails/h:Enclosure/h:AtticAndRoof/h:Roofs/h:Roof', **xpkw
+    )):
+        enclosure = roof.getparent().getparent().getparent()
+        if not hasattr(enclosure, 'Roofs'):
+            add_after(
+                enclosure,
+                ['AirInfiltration',
+                 'Attics',
+                 'Foundations',
+                 'Garages'],
+                E.Roofs()
+            )
+        enclosure.Roofs.append(deepcopy(roof))
+
+        if hasattr(roof, 'RoofArea'):
+            add_after(
+                enclosure.Roofs.Roof,
+                ['SystemIdentifier',
+                 'ExternalResource',
+                 'AttachedToSpace',
+                 'InteriorAdjacentTo'],
+                E.Area(float(roof.RoofArea))
+            )
+            enclosure.Roofs.Roof.remove(enclosure.Roofs.Roof.RoofArea)
+
+        if hasattr(roof, 'RoofType'):
+            add_after(
+                enclosure.Roofs.Roof,
+                ['SystemIdentifier',
+                 'ExternalResource',
+                 'AttachedToSpace',
+                 'InteriorAdjacentTo',
+                 'Area',
+                 'Orientation',
+                 'Azimuth'],
+                E.RoofType(str(roof.RoofType))
+            )
+            enclosure.Roofs.Roof.remove(enclosure.Roofs.Roof.RoofType[1])  # remove the RoofType of HPXML v2
+
+    # remove AtticAndRoof after rearranging all attics and roofs
+    enclosure.remove(enclosure.AtticAndRoof)
 
     # TODO: Adds desuperheater flexibility
     # https://github.com/hpxmlwg/hpxml/pull/184
