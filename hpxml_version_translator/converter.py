@@ -259,8 +259,65 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
     # TODO: Deprecated items
     # https://github.com/hpxmlwg/hpxml/pull/167
 
-    # TODO: Enclosure
+    # Enclosure
     # https://github.com/hpxmlwg/hpxml/pull/181
+
+    # Windows
+    for i, win in enumerate(root.xpath(
+        'h:Building/h:BuildingDetails/h:Enclosure/h:Windows/h:Window', **xpkw
+    )):
+        if hasattr(win, 'Treatments'):
+            win.remove(win.Treatments)
+        if hasattr(win, 'VisibleTransmittance'):
+            add_after(
+                win,
+                ['UFactor',
+                 'SHGC'],
+                E.VisibleTransmittance(float(win.VisibleTransmittance))
+            )
+            win.remove(win.VisibleTransmittance[1])  # remove VisibleTransmittance of HPXML v2
+        if hasattr(win, 'ExteriorShading'):
+            add_after(
+                win,
+                ['UFactor',
+                 'SHGC',
+                 'VisibleTransmittance',
+                 'NFRCCertified',
+                 'ThirdPartyCertification'],
+                E.ExteriorShading(
+                    E.SystemIdentifier(id=f'exterior-shading-{i}'),
+                    E.Type(str(win.ExteriorShading))
+                )
+            )
+            win.remove(win.ExteriorShading[1])  # remove ExteriorShading of HPXML v2
+        if hasattr(win, 'InteriorShading'):
+            win.InteriorShading.addnext(
+                E.InteriorShading(
+                    E.SystemIdentifier(id=f'interior-shading-{i}'),
+                    E.Type(str(win.InteriorShading)),
+                    E.SummerShadingCoefficient(float(win.InteriorShadingFactor)),
+                    E.WinterShadingCoefficient(float(win.InteriorShadingFactor))
+                )
+            )
+            win.remove(win.InteriorShading[0])  # remove InteriorShading of HPXML v2
+            win.remove(win.InteriorShadingFactor)
+        if hasattr(win, 'MovableInsulationRValue'):
+            add_after(
+                win,
+                ['UFactor',
+                 'SHGC',
+                 'VisibleTransmittance',
+                 'NFRCCertified',
+                 'ThirdPartyCertification',
+                 'ExteriorShading',
+                 'InteriorShading',
+                 'StormWindow'],
+                E.MoveableInsulation(
+                    E.SystemIdentifier(id=f'movable-insulation-{i}'),
+                    E.RValue(float(win.MovableInsulationRValue))
+                )
+            )
+            win.remove(win.MovableInsulationRValue)
 
     # TODO: Adds desuperheater flexibility
     # https://github.com/hpxmlwg/hpxml/pull/184

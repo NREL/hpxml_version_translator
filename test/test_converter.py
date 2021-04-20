@@ -86,3 +86,24 @@ def test_clothes_dryer():
     assert dryer2.EnergyFactor == 5.0
     assert dryer2.ControlType == 'temperature'
     assert not hasattr(dryer2, 'EfficiencyFactor')
+
+
+def test_windows():
+    root = convert_hpxml_and_parse(hpxml_dir / 'enclosure_windows.xml')
+
+    win1 = root.Building.BuildingDetails.Enclosure.Windows.Window[0]
+    assert win1.Area == 108.0
+    assert win1.Azimuth == 0
+    assert win1.UFactor == 0.33
+    assert win1.SHGC == 0.45
+    assert win1.NFRCCertified
+    assert win1.VisibleTransmittance == 0.9
+    assert win1.ExteriorShading.Type == 'evergreen tree'
+    assert win1.InteriorShading.Type == 'light shades'
+    assert win1.InteriorShading.SummerShadingCoefficient == 0.7
+    assert win1.InteriorShading.WinterShadingCoefficient == 0.7
+    assert win1.MoveableInsulation.RValue == 5.5
+    assert win1.AttachedToWall.attrib['idref'] == 'wall-1'
+    assert not hasattr(win1, 'Treatments')
+    assert not hasattr(win1, 'InteriorShadingFactor')
+    assert not hasattr(win1, 'MovableInsulationRValue')
