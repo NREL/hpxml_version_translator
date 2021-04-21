@@ -46,7 +46,7 @@
                             <Thickness>7</Thickness>
                             <BelowGradeDepth>8</BelowGradeDepth>
                             <AdjacentToFoundation idref='foundation-1'/>
-                            <AdjacentTo>unconditioned basement</AdjacentTo>
+                            <AdjacentTo>ground</AdjacentTo>
                             <Insulation>
                                 <SystemIdentifier id='foundationwall-insulation-2'/>
                                 <InsulationGrade>1</InsulationGrade>

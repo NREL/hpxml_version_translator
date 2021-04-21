@@ -263,13 +263,34 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
                  'Walls'],
                 E.FoundationWalls()
             )
-        this_fw = deepcopy(fw)
-        enclosure.FoundationWalls.append(this_fw)
+        enclosure.FoundationWalls.append(deepcopy(fw))
+        this_fw = enclosure.FoundationWalls.FoundationWall[i]
+
+        boundary_v3 = {'other housing unit': E.ExteriorAdjacentTo(str(fw.AdjacentTo)),
+                       # FUTURE: change it when issue #3 is addressed
+                       'unconditioned basement': E.InteriorAdjacentTo('basement - unconditioned'),  
+                       'living space': E.InteriorAdjacentTo(str(fw.AdjacentTo)),
+                       'ground': E.ExteriorAdjacentTo(str(fw.AdjacentTo)),
+                       'crawlspace': E.InteriorAdjacentTo(str(fw.AdjacentTo)),
+                       'attic': E.InteriorAdjacentTo(str(fw.AdjacentTo)),  # FIXME: double-check
+                       'garage': E.InteriorAdjacentTo(str(fw.AdjacentTo)),
+                       # FUTURE: change it when issue #3 is addressed
+                       'ambient': E.ExteriorAdjacentTo('outside')}[fw.AdjacentTo]
+        try:
+            add_after(
+                this_fw,
+                ['SystemIdentifier',
+                 'ExternalResource',
+                 'AttachedToSpace'],
+                boundary_v3
+            )
+        except KeyError:
+            pass
 
         el_not_in_v3 = [
             'AdjacentTo',
             'InsulationLocation',
-            'BelowGradeDepth'  # TODO: Remove the code below when "Address inconsistencies #14" is merged.
+            'BelowGradeDepth'  # TODO: Remove it when "Address inconsistencies #14" is merged.
         ]
         for el in el_not_in_v3:
             if hasattr(this_fw, el):
