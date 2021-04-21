@@ -263,8 +263,8 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
                  'Walls'],
                 E.FoundationWalls()
             )
-        enclosure.FoundationWalls.append(deepcopy(fw))
-        this_fw = enclosure.FoundationWalls.FoundationWall[i]
+        this_fw = deepcopy(fw)
+        enclosure.FoundationWalls.append(this_fw)
 
         el_not_in_v3 = [
             'AdjacentTo',
