@@ -266,17 +266,17 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
         enclosure.FoundationWalls.append(deepcopy(fw))
         this_fw = enclosure.FoundationWalls.FoundationWall[i]
 
-        boundary_v3 = {'other housing unit': E.ExteriorAdjacentTo(str(fw.AdjacentTo)),
-                       # FUTURE: change it when issue #3 is addressed
-                       'unconditioned basement': E.InteriorAdjacentTo('basement - unconditioned'),
-                       'living space': E.InteriorAdjacentTo(str(fw.AdjacentTo)),
-                       'ground': E.ExteriorAdjacentTo(str(fw.AdjacentTo)),
-                       'crawlspace': E.InteriorAdjacentTo(str(fw.AdjacentTo)),
-                       'attic': E.InteriorAdjacentTo(str(fw.AdjacentTo)),  # FIXME: double-check
-                       'garage': E.InteriorAdjacentTo(str(fw.AdjacentTo)),
-                       # FUTURE: change it when issue #3 is addressed
-                       'ambient': E.ExteriorAdjacentTo('outside')}[fw.AdjacentTo]
         try:
+            boundary_v3 = {'other housing unit': E.ExteriorAdjacentTo(str(fw.AdjacentTo)),
+                           # FUTURE: change it when issue #3 is addressed
+                           'unconditioned basement': E.InteriorAdjacentTo('basement - unconditioned'),
+                           'living space': E.InteriorAdjacentTo(str(fw.AdjacentTo)),
+                           'ground': E.ExteriorAdjacentTo(str(fw.AdjacentTo)),
+                           'crawlspace': E.InteriorAdjacentTo(str(fw.AdjacentTo)),
+                           'attic': E.InteriorAdjacentTo(str(fw.AdjacentTo)),  # FIXME: double-check
+                           'garage': E.InteriorAdjacentTo(str(fw.AdjacentTo)),
+                           # FUTURE: change it when issue #3 is addressed
+                           'ambient': E.ExteriorAdjacentTo('outside')}[fw.AdjacentTo]
             add_after(
                 this_fw,
                 ['SystemIdentifier',

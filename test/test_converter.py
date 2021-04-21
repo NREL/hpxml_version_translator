@@ -110,7 +110,8 @@ def test_enclosure_foundation_walls():
     fw2 = root.Building.BuildingDetails.Enclosure.FoundationWalls.FoundationWall[1]
     assert fw2.getparent().getparent().Foundations.Foundation.AttachedToFoundationWall[1].attrib['idref']\
         == 'foundationwall-2'
-    assert fw2.ExteriorAdjacentTo == 'ground'
+    assert not hasattr(fw2, 'ExteriorAdjacentTo')
+    assert not hasattr(fw2, 'InteriorAdjacentTo')
     assert fw2.Type == 'concrete block'
     assert fw2.Length == 60
     assert fw2.Height == 8
