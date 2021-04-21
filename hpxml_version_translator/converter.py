@@ -268,7 +268,7 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
 
         boundary_v3 = {'other housing unit': E.ExteriorAdjacentTo(str(fw.AdjacentTo)),
                        # FUTURE: change it when issue #3 is addressed
-                       'unconditioned basement': E.InteriorAdjacentTo('basement - unconditioned'),  
+                       'unconditioned basement': E.InteriorAdjacentTo('basement - unconditioned'),
                        'living space': E.InteriorAdjacentTo(str(fw.AdjacentTo)),
                        'ground': E.ExteriorAdjacentTo(str(fw.AdjacentTo)),
                        'crawlspace': E.InteriorAdjacentTo(str(fw.AdjacentTo)),
