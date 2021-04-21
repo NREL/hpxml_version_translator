@@ -273,8 +273,8 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
                 ['AirInfiltration'],
                 E.Attics()
             )
-        enclosure.Attics.append(deepcopy(attic))
-        this_attic = enclosure.Attics.Attic[i]
+        this_attic = deepcopy(attic)
+        enclosure.Attics.append(this_attic)
 
         el_not_in_v3 = [
             'AttachedToRoof',
