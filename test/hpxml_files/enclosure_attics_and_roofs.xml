@@ -40,7 +40,7 @@
                         </Attic>
                         <Attic>
                             <SystemIdentifier id='attic-2'/>
-                            <AtticType>vented attic</AtticType>
+                            <AtticType>venting unknown attic</AtticType>
                         </Attic>
                     </Attics>
                 </AtticAndRoof>

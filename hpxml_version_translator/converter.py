@@ -273,8 +273,7 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
                 ['AirInfiltration'],
                 E.Attics()
             )
-        enclosure.Attics.append(deepcopy(attic))
-        this_attic = enclosure.Attics.Attic[i]
+        this_attic = deepcopy(attic)
 
         el_not_in_v3 = [
             'AttachedToRoof',
@@ -301,8 +300,12 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
                 this_attic.AtticType = E.AtticType(E.CathedralCeiling())
             elif this_attic.AtticType == 'cape cod':
                 this_attic.AtticType = E.AtticType(E.Attic(E.CapeCod(True)))
-            elif this_attic.AtticType in ['other', 'venting unknown attic']:
-                this_attic.AtticType = E.AtticType(E.Attic(E.Other()))
+            elif this_attic.AtticType == 'other':
+                this_attic.AtticType = E.AtticType(E.Other())
+            elif this_attic.AtticType == 'venting unknown attic':
+                this_attic.AtticType = E.AtticType(E.Other(E.extension(E.Attic(E.Vented('unknown')))))
+
+        enclosure.Attics.append(this_attic)
 
     # Roofs
     for i, roof in enumerate(root.xpath(
