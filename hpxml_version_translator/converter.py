@@ -275,20 +275,6 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
             )
         this_attic = deepcopy(attic)
 
-        el_not_in_v3 = [
-            'AttachedToRoof',
-            'ExteriorAdjacentTo',
-            'InteriorAdjacentTo',
-            'AtticKneeWall',
-            'AtticFloorInsulation',
-            'AtticRoofInsulation',
-            'Area',
-            'Rafters'
-        ]
-        for el in el_not_in_v3:
-            if hasattr(this_attic, el):
-                this_attic.remove(this_attic[el])
-
         if hasattr(this_attic, 'AtticType'):
             if this_attic.AtticType == 'vented attic':
                 this_attic.AtticType = E.AtticType(E.Attic(E.Vented(True)))
@@ -303,7 +289,21 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
             elif this_attic.AtticType == 'other':
                 this_attic.AtticType = E.AtticType(E.Other())
             elif this_attic.AtticType == 'venting unknown attic':
-                this_attic.AtticType = E.AtticType(E.Other(E.extension(E.Attic(E.Vented('unknown')))))
+                this_attic.AtticType = E.AtticType(E.Attic(E.extension(E.Vented('unknown'))))
+
+        el_not_in_v3 = [
+            'AttachedToRoof',
+            'ExteriorAdjacentTo',
+            'InteriorAdjacentTo',
+            'AtticKneeWall',
+            'AtticFloorInsulation',
+            'AtticRoofInsulation',
+            'Area',
+            'Rafters'
+        ]
+        for el in el_not_in_v3:
+            if hasattr(this_attic, el):
+                this_attic.remove(this_attic[el])
 
         enclosure.Attics.append(this_attic)
 

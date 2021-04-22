@@ -98,7 +98,7 @@ def test_enclosure_attics():
     assert not hasattr(enclosure, 'ExteriorAdjacentTo')
 
     attic2 = root.Building.BuildingDetails.Enclosure.Attics.Attic[1]
-    assert attic2.AtticType.Other.extension.Attic.Vented == 'unknown'  # venting unknown attic
+    assert attic2.AtticType.Attic.extension.Vented == 'unknown'  # venting unknown attic
 
 
 def test_enclosure_roofs():
