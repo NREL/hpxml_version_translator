@@ -96,6 +96,17 @@ def test_enclosure_attics():
     assert not attic1.AtticType.Attic.Vented  # unvented attic
     assert not hasattr(enclosure, 'AtticAndRoof')
     assert not hasattr(enclosure, 'ExteriorAdjacentTo')
+    assert enclosure.Walls.Wall[0].AtticWallType == 'knee wall'
+    assert enclosure.Roofs.Roof[0].Rafters.Size == '2x4'
+    assert enclosure.Roofs.Roof[0].Rafters.Material == 'wood'
+    assert enclosure.Roofs.Roof[0].Insulation.InsulationGrade == 3
+    assert enclosure.Roofs.Roof[0].Insulation.InsulationCondition == 'good'
+    assert enclosure.Roofs.Roof[0].Insulation.Layer.InstallationType == 'cavity'
+    assert enclosure.Roofs.Roof[0].Insulation.Layer.NominalRValue == 7.5
+    assert enclosure.FrameFloors.FrameFloor[0].InteriorAdjacentTo == 'attic'
+    assert enclosure.FrameFloors.FrameFloor[0].Insulation.InsulationGrade == 1
+    assert enclosure.FrameFloors.FrameFloor[0].Insulation.InsulationCondition == 'poor'
+    assert enclosure.FrameFloors.FrameFloor[0].Insulation.AssemblyEffectiveRValue == 5.5
 
     attic2 = root.Building.BuildingDetails.Enclosure.Attics.Attic[1]
     assert attic2.AtticType.Attic.extension.Vented == 'unknown'  # venting unknown attic

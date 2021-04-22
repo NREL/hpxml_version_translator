@@ -31,6 +31,7 @@
                             <SystemIdentifier id='attic-1'/>
                             <ExteriorAdjacentTo>ambient</ExteriorAdjacentTo>
                             <InteriorAdjacentTo>attic</InteriorAdjacentTo>
+                            <AtticKneeWall idref='wall-1'/>
                             <AtticType>unvented attic</AtticType>
                             <Area>1000</Area>
                             <Rafters>
@@ -41,9 +42,29 @@
                         <Attic>
                             <SystemIdentifier id='attic-2'/>
                             <AtticType>venting unknown attic</AtticType>
+                            <AtticFloorInsulation>
+                                <SystemIdentifier id='attic-floor-insulation'/>
+                                <InsulationGrade>1</InsulationGrade>
+                                <InsulationCondition>poor</InsulationCondition>
+                                <AssemblyEffectiveRValue>5.5</AssemblyEffectiveRValue>
+                            </AtticFloorInsulation>
+                            <AtticRoofInsulation>
+                                <SystemIdentifier id='attic-roof-insulation'/>
+                                <InsulationGrade>3</InsulationGrade>
+                                <InsulationCondition>good</InsulationCondition>
+                                <Layer>
+                                    <InstallationType>cavity</InstallationType>
+                                    <NominalRValue>7.5</NominalRValue>
+                                </Layer>
+                            </AtticRoofInsulation>
                         </Attic>
                     </Attics>
                 </AtticAndRoof>
+                <Walls>
+                    <Wall>
+                        <SystemIdentifier id='wall-1'/>
+                    </Wall>
+                </Walls>
             </Enclosure>
         </BuildingDetails>
     </Building>
