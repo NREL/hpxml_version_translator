@@ -26,6 +26,7 @@
                             <Area>1350.0</Area>
                             <Insulation>
                                 <SystemIdentifier id='framefloor-insulation-1'/>
+                                <InsulationLocation>exterior</InsulationLocation>
                                 <AssemblyEffectiveRValue>39.3</AssemblyEffectiveRValue>
                             </Insulation>
                         </FrameFloor>
@@ -42,6 +43,11 @@
                                     <InstallationType>continuous</InstallationType>
                                     <NominalRValue>30.0</NominalRValue>
                                     <Thickness>1.5</Thickness>
+                                </Layer>
+                                <Layer>
+                                    <InstallationType>continuous</InstallationType>
+                                    <NominalRValue>8.0</NominalRValue>
+                                    <Thickness>0.25</Thickness>
                                 </Layer>
                             </Insulation>
                         </FrameFloor>

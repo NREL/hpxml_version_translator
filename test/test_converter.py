@@ -96,6 +96,8 @@ def test_frame_floors():
     assert ff1.FloorCovering == 'hardwood'
     assert ff1.Area == 1350.0
     assert ff1.Insulation.AssemblyEffectiveRValue == 39.3
+    assert not hasattr(ff1.Insulation, 'InsulationLocation')
+    assert not hasattr(ff1.Insulation, 'Layer')
 
     ff2 = root.Building.BuildingDetails.Enclosure.FrameFloors.FrameFloor[1]
     assert ff2.getparent().getparent().Foundations.Foundation.AttachedToFrameFloor[1].attrib['idref'] == 'framefloor-2'
@@ -103,7 +105,10 @@ def test_frame_floors():
     assert ff2.Area == 1350.0
     assert ff2.Insulation.InsulationGrade == 1
     assert ff2.Insulation.InsulationCondition == 'poor'
-    assert ff2.Insulation.Layer.InstallationType == 'continuous'
-    assert ff2.Insulation.Layer.NominalRValue == 30.0
-    assert ff2.Insulation.Layer.Thickness == 1.5
-    assert not hasattr(ff1.Insulation, 'InsulationLocation')
+    assert ff2.Insulation.Layer[0].InstallationType == 'continuous - exterior'
+    assert ff2.Insulation.Layer[0].NominalRValue == 30.0
+    assert ff2.Insulation.Layer[0].Thickness == 1.5
+    assert ff2.Insulation.Layer[1].InstallationType == 'continuous - exterior'
+    assert ff2.Insulation.Layer[1].NominalRValue == 8.0
+    assert ff2.Insulation.Layer[1].Thickness == 0.25
+    assert not hasattr(ff2.Insulation, 'InsulationLocation')

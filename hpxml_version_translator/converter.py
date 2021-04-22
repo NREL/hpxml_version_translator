@@ -283,7 +283,14 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
                  'FoundationWalls'],
                 E.FrameFloors()
             )
-        enclosure.FrameFloors.append(deepcopy(ff))
+        this_ff = deepcopy(ff)
+        # Preserve insulation location for each insulation layer
+        if hasattr(this_ff.Insulation, 'InsulationLocation') and hasattr(this_ff.Insulation, 'Layer'):
+            for i, layer in enumerate(this_ff.Insulation.Layer):
+                if layer.InstallationType == 'continuous':
+                    layer.InstallationType._setText(f'continuous - {str(this_ff.Insulation.InsulationLocation)}')
+
+        enclosure.FrameFloors.append(this_ff)
         foundation.remove(ff)
 
     # Remove 'Insulation/InsulationLocation'
