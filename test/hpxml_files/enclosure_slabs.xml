@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<HPXML xmlns="http://hpxmlonline.com/2014/6" schemaVersion="2.3">
+    <XMLTransactionHeaderInformation>
+        <XMLType></XMLType>
+        <XMLGeneratedBy></XMLGeneratedBy>
+        <CreatedDateAndTime>2021-04-05T14:17:07.685077</CreatedDateAndTime>
+        <Transaction>create</Transaction>
+    </XMLTransactionHeaderInformation>
+    <SoftwareInfo/>
+    <Building>
+        <BuildingID id="bldg1"></BuildingID>
+        <ProjectStatus>
+            <EventType>audit</EventType>
+        </ProjectStatus>
+        <BuildingDetails>
+            <Enclosure>
+                <Foundations>
+                    <Foundation>
+                        <SystemIdentifier id='foundation-1'/>
+                        <FoundationType>
+                            <SlabOnGrade/>
+                        </FoundationType>
+                        <Slab>
+                            <SystemIdentifier id='slab-1'/>
+                            <Area>1350.0</Area>
+                            <Thickness>4.0</Thickness>
+                            <ExposedPerimeter>150.0</ExposedPerimeter>
+                            <PerimeterInsulationDepth>0.0</PerimeterInsulationDepth>
+                            <UnderSlabInsulationWidth>0.0</UnderSlabInsulationWidth>
+                            <PerimeterInsulation>
+                                <SystemIdentifier id='SlabPerimeterInsulation'/>
+                                <Layer>
+                                    <NominalRValue>0.0</NominalRValue>
+                                </Layer>
+                            </PerimeterInsulation>
+                            <UnderSlabInsulation>
+                                <SystemIdentifier id='SlabUnderSlabInsulation'/>
+                                <Layer>
+                                    <NominalRValue>0.0</NominalRValue>
+                                </Layer>
+                            </UnderSlabInsulation>
+                            <extension>
+                                <CarpetFraction>0.0</CarpetFraction>
+                                <CarpetRValue>0.0</CarpetRValue>
+                            </extension>
+                        </Slab>
+                    </Foundation>
+                </Foundations>
+            </Enclosure>
+        </BuildingDetails>
+    </Building>
+</HPXML>
