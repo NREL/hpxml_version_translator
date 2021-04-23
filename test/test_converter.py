@@ -112,3 +112,19 @@ def test_frame_floors():
     assert ff2.Insulation.Layer[1].NominalRValue == 8.0
     assert ff2.Insulation.Layer[1].Thickness == 0.25
     assert not hasattr(ff2.Insulation, 'InsulationLocation')
+
+
+def test_slabs():
+    root = convert_hpxml_and_parse(hpxml_dir / 'enclosure_slabs.xml')
+
+    slab1 = root.Building.BuildingDetails.Enclosure.Slabs.Slab[0]
+    assert slab1.getparent().getparent().Foundations.Foundation.AttachedToSlab.attrib['idref'] == 'slab-1'
+    assert slab1.Area == 1350.0
+    assert slab1.Thickness == 4.0
+    assert slab1.ExposedPerimeter == 150.0
+    assert slab1.PerimeterInsulationDepth == 0.0
+    assert slab1.UnderSlabInsulationWidth == 0.0
+    assert slab1.PerimeterInsulation.Layer.NominalRValue == 0.0
+    assert slab1.UnderSlabInsulation.Layer.NominalRValue == 0.0
+    assert slab1.extension.CarpetFraction == 0.0
+    assert slab1.extension.CarpetRValue == 0.0

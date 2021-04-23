@@ -299,6 +299,31 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
         ins = ins_loc.getparent()
         ins.remove(ins.InsulationLocation)
 
+    # Slabs
+    for i, slab in enumerate(root.xpath(
+        'h:Building/h:BuildingDetails/h:Enclosure/h:Foundations/h:Foundation/h:Slab', **xpkw
+    )):
+        enclosure = slab.getparent().getparent().getparent()
+        foundation = slab.getparent()
+
+        slab.addnext(E.AttachedToSlab(idref=slab.SystemIdentifier.attrib['id']))
+        if not hasattr(enclosure, 'Slabs'):
+            add_after(
+                enclosure,
+                ['AirInfiltration',
+                 'Attics',
+                 'Foundations',
+                 'Garages',
+                 'Roofs',
+                 'RimJoists',
+                 'Walls',
+                 'FoundationWalls',
+                 'FrameFloors'],
+                E.Slabs()
+            )
+        enclosure.Slabs.append(deepcopy(slab))
+        foundation.remove(slab)
+
     # TODO: Adds desuperheater flexibility
     # https://github.com/hpxmlwg/hpxml/pull/184
 
