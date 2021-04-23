@@ -291,6 +291,18 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
             elif this_attic.AtticType == 'venting unknown attic':
                 this_attic.AtticType = E.AtticType(E.Attic(E.extension(E.Vented('unknown'))))
 
+        # move AttachedToRoof to after VentilationRate
+        if hasattr(this_attic, 'AttachedToRoof'):
+            attached_to_roof = deepcopy(this_attic.AttachedToRoof)
+            add_after(
+                this_attic,
+                ['SystemIdentifier',
+                 'AttachedToSpace',
+                 'AtticType',
+                 'VentilationRate'],
+                 attached_to_roof
+            )
+            this_attic.remove(this_attic.AttachedToRoof[0])  # remove the AttachedToRoof of HPXML v2
         # find the wall with the same id and add AtticWallType = knee wall
         if hasattr(this_attic, 'AtticKneeWall'):
             knee_wall_id = this_attic.AtticKneeWall.attrib['idref']
@@ -355,7 +367,6 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
                 )
 
         el_not_in_v3 = [
-            'AttachedToRoof',
             'ExteriorAdjacentTo',
             'InteriorAdjacentTo',
             'AtticKneeWall',

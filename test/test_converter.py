@@ -94,6 +94,7 @@ def test_enclosure_attics():
     attic1 = root.Building.BuildingDetails.Enclosure.Attics.Attic[0]
     enclosure = attic1.getparent().getparent()
     assert not attic1.AtticType.Attic.Vented  # unvented attic
+    assert attic1.AttachedToRoof.attrib['idref'] == 'roof-1'
     assert not hasattr(enclosure, 'AtticAndRoof')
     assert not hasattr(enclosure, 'ExteriorAdjacentTo')
     assert enclosure.Walls.Wall[0].AtticWallType == 'knee wall'

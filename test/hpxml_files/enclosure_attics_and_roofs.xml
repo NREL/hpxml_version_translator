@@ -29,6 +29,7 @@
                     <Attics>
                         <Attic>
                             <SystemIdentifier id='attic-1'/>
+                            <AttachedToRoof idref='roof-1'/>
                             <ExteriorAdjacentTo>ambient</ExteriorAdjacentTo>
                             <InteriorAdjacentTo>attic</InteriorAdjacentTo>
                             <AtticKneeWall idref='wall-1'/>
