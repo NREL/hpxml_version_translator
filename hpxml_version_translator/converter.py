@@ -300,7 +300,7 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
                  'AttachedToSpace',
                  'AtticType',
                  'VentilationRate'],
-                 attached_to_roof
+                attached_to_roof
             )
             this_attic.remove(this_attic.AttachedToRoof[0])  # remove the AttachedToRoof of HPXML v2
         # find the wall with the same id and add AtticWallType = knee wall
