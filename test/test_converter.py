@@ -110,6 +110,32 @@ def test_windows():
     assert not hasattr(win1, 'MovableInsulationRValue')
 
 
+def test_frame_floors():
+    root = convert_hpxml_and_parse(hpxml_dir / 'enclosure_frame_floors.xml')
+
+    ff1 = root.Building.BuildingDetails.Enclosure.FrameFloors.FrameFloor[0]
+    assert ff1.getparent().getparent().Foundations.Foundation.AttachedToFrameFloor[0].attrib['idref'] == 'framefloor-1'
+    assert ff1.FloorCovering == 'hardwood'
+    assert ff1.Area == 1350.0
+    assert ff1.Insulation.AssemblyEffectiveRValue == 39.3
+    assert not hasattr(ff1.Insulation, 'InsulationLocation')
+    assert not hasattr(ff1.Insulation, 'Layer')
+
+    ff2 = root.Building.BuildingDetails.Enclosure.FrameFloors.FrameFloor[1]
+    assert ff2.getparent().getparent().Foundations.Foundation.AttachedToFrameFloor[1].attrib['idref'] == 'framefloor-2'
+    assert ff2.FloorCovering == 'carpet'
+    assert ff2.Area == 1350.0
+    assert ff2.Insulation.InsulationGrade == 1
+    assert ff2.Insulation.InsulationCondition == 'poor'
+    assert ff2.Insulation.Layer[0].InstallationType == 'continuous - exterior'
+    assert ff2.Insulation.Layer[0].NominalRValue == 30.0
+    assert ff2.Insulation.Layer[0].Thickness == 1.5
+    assert ff2.Insulation.Layer[1].InstallationType == 'continuous - exterior'
+    assert ff2.Insulation.Layer[1].NominalRValue == 8.0
+    assert ff2.Insulation.Layer[1].Thickness == 0.25
+    assert not hasattr(ff2.Insulation, 'InsulationLocation')
+
+
 def test_slabs():
     root = convert_hpxml_and_parse(hpxml_dir / 'enclosure_slabs.xml')
 
