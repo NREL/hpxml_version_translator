@@ -52,6 +52,7 @@
                                 <SystemIdentifier id='foundationwall-insulation-2'/>
                                 <InsulationGrade>1</InsulationGrade>
                                 <InsulationCondition>poor</InsulationCondition>
+                                <InsulationLocation>exterior</InsulationLocation>
                                 <Layer>
                                     <InstallationType>continuous</InstallationType>
                                     <InsulationMaterial>

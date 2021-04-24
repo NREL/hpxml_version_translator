@@ -289,7 +289,6 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
 
         el_not_in_v3 = [
             'AdjacentTo',
-            'InsulationLocation',
             'BelowGradeDepth'  # TODO: Remove it when "Address inconsistencies #14" is merged.
         ]
         for el in el_not_in_v3:
@@ -329,12 +328,6 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
         enclosure.FrameFloors.append(this_ff)
         foundation.remove(ff)
 
-    # Remove 'Insulation/InsulationLocation'
-    # TODO: Use it for other enclosure types
-    for ins_loc in root.xpath('//h:Insulation/h:InsulationLocation', **xpkw):
-        ins = ins_loc.getparent()
-        ins.remove(ins.InsulationLocation)
-
     # Slabs
     for i, slab in enumerate(root.xpath(
         'h:Building/h:BuildingDetails/h:Enclosure/h:Foundations/h:Foundation/h:Slab', **xpkw
@@ -359,6 +352,12 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
             )
         enclosure.Slabs.append(deepcopy(slab))
         foundation.remove(slab)
+
+    # Remove 'Insulation/InsulationLocation'
+    # TODO: Use it for other enclosure types
+    for ins_loc in root.xpath('//h:Insulation/h:InsulationLocation', **xpkw):
+        ins = ins_loc.getparent()
+        ins.remove(ins.InsulationLocation)
 
     # TODO: Addressing Inconsistencies
     # https://github.com/hpxmlwg/hpxml/pull/124
