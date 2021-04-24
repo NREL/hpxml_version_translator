@@ -109,6 +109,10 @@ def test_windows():
     assert not hasattr(win1, 'InteriorShadingFactor')
     assert not hasattr(win1, 'MovableInsulationRValue')
 
+    win2 = root.Building.BuildingDetails.Enclosure.Windows.Window[1]
+    assert win2.GlassLayers == 'single-pane'
+    assert win2.StormWindow.GlassType == 'low-e'
+
 
 def test_frame_floors():
     root = convert_hpxml_and_parse(hpxml_dir / 'enclosure_frame_floors.xml')

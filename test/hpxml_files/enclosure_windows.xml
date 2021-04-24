@@ -35,6 +35,13 @@
                         <MovableInsulationRValue>5.5</MovableInsulationRValue>
                         <AttachedToWall idref='wall-1'/>
                     </Window>
+                    <Window>
+                        <SystemIdentifier id='window-2'/>
+                        <GlassLayers>single-paned with low-e storms</GlassLayers>
+                        <UFactor>0.45</UFactor>
+                        <SHGC>0.6</SHGC>
+                        <VisibleTransmittance>0.8</VisibleTransmittance>
+                    </Window>
                 </Windows>
             </Enclosure>
         </BuildingDetails>

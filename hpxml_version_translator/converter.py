@@ -338,6 +338,25 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
                 )
             )
             win.remove(win.MovableInsulationRValue)
+        if hasattr(win, 'GlassLayers'):
+            if win.GlassLayers in ['single-paned with low-e storms', 'single-paned with storms']:
+                storm_window = E.StormWindow(
+                    E.SystemIdentifier(id=f'storm-window-{i}')
+                )
+                if win.GlassLayers == 'single-paned with low-e storms':
+                    storm_window.append(E.GlassType('low-e'))
+                win.GlassLayers._setText('single-pane')
+                add_after(
+                    win,
+                    ['UFactor',
+                     'SHGC',
+                     'VisibleTransmittance',
+                     'NFRCCertified',
+                     'ThirdPartyCertification',
+                     'ExteriorShading',
+                     'InteriorShading'],
+                    storm_window
+                )
 
     # Frame Floors
     for i, ff in enumerate(root.xpath(
