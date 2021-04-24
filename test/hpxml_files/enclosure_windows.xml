@@ -24,7 +24,7 @@
                         <SystemIdentifier id='window-1'/>
                         <Area>108.0</Area>
                         <Azimuth>0</Azimuth>
-                        <Treatments>window film</Treatments>
+                        <Treatments>solar screen</Treatments>
                         <UFactor>0.33</UFactor>
                         <SHGC>0.45</SHGC>
                         <NFRCCertified>true</NFRCCertified>

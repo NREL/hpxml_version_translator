@@ -98,7 +98,8 @@ def test_windows():
     assert win1.SHGC == 0.45
     assert win1.NFRCCertified
     assert win1.VisibleTransmittance == 0.9
-    assert win1.ExteriorShading.Type == 'evergreen tree'
+    assert win1.ExteriorShading[0].Type == 'solar screens'
+    assert win1.ExteriorShading[1].Type == 'evergreen tree'
     assert win1.InteriorShading.Type == 'light shades'
     assert win1.InteriorShading.SummerShadingCoefficient == 0.7
     assert win1.InteriorShading.WinterShadingCoefficient == 0.7

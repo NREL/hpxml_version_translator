@@ -266,40 +266,60 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
     for i, win in enumerate(root.xpath(
         'h:Building/h:BuildingDetails/h:Enclosure/h:Windows/h:Window', **xpkw
     )):
-        if hasattr(win, 'Treatments'):
-            win.remove(win.Treatments)
-        if hasattr(win, 'VisibleTransmittance'):
-            add_after(
-                win,
-                ['UFactor',
-                 'SHGC'],
-                E.VisibleTransmittance(float(win.VisibleTransmittance))
-            )
-            win.remove(win.VisibleTransmittance[1])  # remove VisibleTransmittance of HPXML v2
+        if hasattr(win, 'VisibleTransmittance'):  # insert VisibleTransmittance right after SHGC
+            if hasattr(win, 'SHGC'):
+                vis_trans_idx = win.index(win.SHGC) + 1
+                win.insert(vis_trans_idx, win.VisibleTransmittance)
         if hasattr(win, 'ExteriorShading'):
-            add_after(
-                win,
-                ['UFactor',
-                 'SHGC',
-                 'VisibleTransmittance',
-                 'NFRCCertified',
-                 'ThirdPartyCertification'],
-                E.ExteriorShading(
-                    E.SystemIdentifier(id=f'exterior-shading-{i}'),
-                    E.Type(str(win.ExteriorShading))
+            ext_shade = str(win.ExteriorShading)
+            win.ExteriorShading.clear()
+            win.ExteriorShading.extend([
+                E.SystemIdentifier(id=f'exterior-shading-{i}'),
+                E.Type(ext_shade)
+            ])
+            if hasattr(win, 'InteriorShading'):  # insert ExteriorShading right before InteriorShading
+                int_shade_idx = win.index(win.InteriorShading)
+                win.insert(int_shade_idx, win.ExteriorShading)
+        if hasattr(win, 'Treatments'):
+            if win.Treatments in ['shading', 'solar screen']:
+                treatment_shade = E.ExteriorShading(
+                    E.SystemIdentifier(id=f'treatment-shading-{i}'),
                 )
-            )
-            win.remove(win.ExteriorShading[1])  # remove ExteriorShading of HPXML v2
+                if win.Treatments == 'solar screen':
+                    treatment_shade.append(E.Type('solar screens'))
+                add_after(
+                    win,
+                    ['UFactor',
+                     'SHGC',
+                     'VisibleTransmittance',
+                     'NFRCCertified',
+                     'ThirdPartyCertification',
+                     'WindowFilm'],
+                    treatment_shade
+                )
+            elif win.Treatments == 'window film':
+                add_after(
+                    win,
+                    ['UFactor',
+                     'SHGC',
+                     'VisibleTransmittance',
+                     'NFRCCertified',
+                     'ThirdPartyCertification'],
+                    E.WindowFilm(
+                        E.SystemIdentifier(id=f'window-film-{i}')
+                    )
+                )
+            win.remove(win.Treatments)
         if hasattr(win, 'InteriorShading'):
-            win.InteriorShading.addnext(
-                E.InteriorShading(
-                    E.SystemIdentifier(id=f'interior-shading-{i}'),
-                    E.Type(str(win.InteriorShading)),
-                    E.SummerShadingCoefficient(float(win.InteriorShadingFactor)),
-                    E.WinterShadingCoefficient(float(win.InteriorShadingFactor))
-                )
-            )
-            win.remove(win.InteriorShading[0])  # remove InteriorShading of HPXML v2
+            int_shading = str(win.InteriorShading)
+            int_shading_factor = float(win.InteriorShadingFactor)
+            win.InteriorShading.clear()
+            win.InteriorShading.extend([
+                E.SystemIdentifier(id=f'interior-shading-{i}'),
+                E.Type(int_shading),
+                E.SummerShadingCoefficient(int_shading_factor),
+                E.WinterShadingCoefficient(int_shading_factor)
+            ])
             win.remove(win.InteriorShadingFactor)
         if hasattr(win, 'MovableInsulationRValue'):
             add_after(
