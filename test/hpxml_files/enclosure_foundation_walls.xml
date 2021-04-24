@@ -34,6 +34,7 @@
                                 <SystemIdentifier id='foundationwall-insulation-1'/>
                                 <InsulationGrade>3</InsulationGrade>
                                 <InsulationCondition>good</InsulationCondition>
+                                <InsulationLocation>exterior</InsulationLocation>
                                 <AssemblyEffectiveRValue>5.0</AssemblyEffectiveRValue>
                             </Insulation>
                         </FoundationWall>
