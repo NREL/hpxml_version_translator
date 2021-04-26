@@ -42,6 +42,12 @@
                         <SHGC>0.6</SHGC>
                         <VisibleTransmittance>0.8</VisibleTransmittance>
                     </Window>
+                    <Window>
+                        <SystemIdentifier id='window-3'/>
+                        <Treatments>window film</Treatments>
+                        <UFactor>0.45</UFactor>
+                        <SHGC>0.6</SHGC>
+                    </Window>
                 </Windows>
                 <Skylights>
                     <Skylight>

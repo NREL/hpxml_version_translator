@@ -113,6 +113,9 @@ def test_windows():
     assert win2.GlassLayers == 'single-pane'
     assert win2.StormWindow.GlassType == 'low-e'
 
+    win3 = root.Building.BuildingDetails.Enclosure.Windows.Window[2]
+    assert hasattr(win3, 'WindowFilm')
+
     skylight1 = root.Building.BuildingDetails.Enclosure.Skylights.Skylight[0]
     assert skylight1.Area == 20.0
     assert skylight1.UFactor == 0.25
