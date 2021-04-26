@@ -110,11 +110,6 @@ def test_inconsistencies():
     assert not hasattr(measure, 'InstalledComponent')
     assert measure.InstalledComponents.getnext() == measure.extension
 
-    # TODO: This test will fail HPXML v3 validation. This test will be activated after Enclosure element rearrangement.
-    # Note that fw1 xpath will have to be updated.
-    # fw1 = root.Building.BuildingDetails.Enclosure.Foundations.Foundation.FoundationWall[0]
-    # assert fw1.DepthBelowGrade == 6
-
 
 def test_slabs():
     root = convert_hpxml_and_parse(hpxml_dir / 'enclosure_slabs.xml')

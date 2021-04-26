@@ -262,12 +262,6 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
         ms.InstalledComponents.append(ic)
         ms.remove(ms.InstalledComponent)
 
-    # Renames FoundationWall/BelowGradeDepth to FoundationWall/DepthBelowGrade
-    # TODO: This tag name change will fail HPXML v3 validation.
-    # Uncomment this change after Enclosure element rearrangement.
-    # for el in root.xpath('//h:FoundationWall/h:BelowGradeDepth', **xpkw):
-    #     el.tag = f'{{{hpxml3_ns}}}DepthBelowGrade'
-
     # Replaces WeatherStation/SystemIdentifiersInfo with WeatherStation/SystemIdentifier
     for el in root.xpath('//h:WeatherStation/h:SystemIdentifiersInfo', **xpkw):
         el.tag = f'{{{hpxml3_ns}}}SystemIdentifier'
