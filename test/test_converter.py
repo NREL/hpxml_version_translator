@@ -100,7 +100,7 @@ def test_enclosure_foundation_walls():
     assert fw1.Height == 8
     assert fw1.Area == 960
     assert fw1.Thickness == 4
-    # assert fw1.DepthBelowGrade == 6  # TODO: uncomment it when "Address inconsistencies #14" is merged.
+    assert fw1.DepthBelowGrade == 6
     assert not hasattr(fw1, 'AdjacentTo')
     assert fw1.Insulation.InsulationGrade == 3
     assert fw1.Insulation.InsulationCondition == 'good'
@@ -117,7 +117,7 @@ def test_enclosure_foundation_walls():
     assert fw2.Height == 8
     assert fw2.Area == 480
     assert fw2.Thickness == 7
-    # assert fw2.DepthBelowGrade == 8  # TODO: uncomment it when "Address inconsistencies #14" is merged.
+    assert fw2.DepthBelowGrade == 8
     assert not hasattr(fw2, 'AdjacentTo')
     assert fw2.Insulation.InsulationGrade == 1
     assert fw2.Insulation.InsulationCondition == 'poor'

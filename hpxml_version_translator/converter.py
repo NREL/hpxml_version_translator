@@ -287,13 +287,8 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
         except KeyError:
             pass
 
-        el_not_in_v3 = [
-            'AdjacentTo',
-            'BelowGradeDepth'  # TODO: Remove it when "Address inconsistencies #14" is merged.
-        ]
-        for el in el_not_in_v3:
-            if hasattr(this_fw, el):
-                this_fw.remove(this_fw[el])
+        if hasattr(this_fw, 'AdjacentTo'):
+            this_fw.remove(this_fw.AdjacentTo)
 
         foundation.remove(fw)
 
@@ -361,6 +356,10 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
 
     # TODO: Addressing Inconsistencies
     # https://github.com/hpxmlwg/hpxml/pull/124
+
+    # Renames FoundationWall/BelowGradeDepth to FoundationWall/DepthBelowGrade
+    for el in root.xpath('//h:FoundationWall/h:BelowGradeDepth', **xpkw):
+        el.tag = f'{{{hpxml3_ns}}}DepthBelowGrade'
 
     # Clothes Dryer CEF
     # https://github.com/hpxmlwg/hpxml/pull/145
