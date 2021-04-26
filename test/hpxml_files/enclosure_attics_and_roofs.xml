@@ -58,6 +58,27 @@
                                     <NominalRValue>7.5</NominalRValue>
                                 </Layer>
                             </AtticRoofInsulation>
+                            <Area>1500.0</Area>
+                        </Attic>
+                        <Attic>
+                            <SystemIdentifier id='attic-3'/>
+                            <AtticType>vented attic</AtticType>
+                        </Attic>
+                        <Attic>
+                            <SystemIdentifier id='attic-4'/>
+                            <AtticType>flat roof</AtticType>
+                        </Attic>
+                        <Attic>
+                            <SystemIdentifier id='attic-5'/>
+                            <AtticType>cathedral ceiling</AtticType>
+                        </Attic>
+                        <Attic>
+                            <SystemIdentifier id='attic-6'/>
+                            <AtticType>cape cod</AtticType>
+                        </Attic>
+                        <Attic>
+                            <SystemIdentifier id='attic-7'/>
+                            <AtticType>other</AtticType>
                         </Attic>
                     </Attics>
                 </AtticAndRoof>

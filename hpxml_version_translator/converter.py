@@ -309,16 +309,13 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
             knee_wall = root.xpath(
                 'h:Building/h:BuildingDetails/h:Enclosure/h:Walls/h:Wall[h:SystemIdentifier/@id=$sysid]',
                 sysid=knee_wall_id, **xpkw)[0]
-            if hasattr(knee_wall, 'AtticWallType'):
-                knee_wall.AtticWallType._setText('knee wall')
-            else:
-                add_after(
-                    knee_wall,
-                    ['SystemIdentifier',
-                     'ExteriorAdjacentTo',
-                     'InteriorAdjacentTo'],
-                    E.AtticWallType('knee wall')
-                )
+            add_after(
+                knee_wall,
+                ['SystemIdentifier',
+                    'ExteriorAdjacentTo',
+                    'InteriorAdjacentTo'],
+                E.AtticWallType('knee wall')
+            )
         # create a FrameFloor adjacent to the attic and assign the area below to Area
         # and then copy AtticFloorInsulation over to Insulation of the frame floor
         if hasattr(this_attic, 'AtticFloorInsulation'):
@@ -333,7 +330,7 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
                 )
             )
             if hasattr(this_attic, 'Area'):
-                enclosure.FrameFloors.FrameFloor.append(E.Area(this_attic.Area))
+                enclosure.FrameFloors.FrameFloor.append(E.Area(float(this_attic.Area)))
             enclosure.FrameFloors.FrameFloor.append(attic_floor_insulation)
         # find the roof whose InteriorAdjacentTo is attic and then copy it to Insulation of the roof
         # FIXME: add insulation to v2 Roofs and these roofs will be converted into hpxml v3 later

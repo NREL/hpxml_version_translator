@@ -105,12 +105,28 @@ def test_enclosure_attics():
     assert enclosure.Roofs.Roof[0].Insulation.Layer.InstallationType == 'cavity'
     assert enclosure.Roofs.Roof[0].Insulation.Layer.NominalRValue == 7.5
     assert enclosure.FrameFloors.FrameFloor[0].InteriorAdjacentTo == 'attic'
+    assert enclosure.FrameFloors.FrameFloor[0].Area == 1500.0
     assert enclosure.FrameFloors.FrameFloor[0].Insulation.InsulationGrade == 1
     assert enclosure.FrameFloors.FrameFloor[0].Insulation.InsulationCondition == 'poor'
     assert enclosure.FrameFloors.FrameFloor[0].Insulation.AssemblyEffectiveRValue == 5.5
 
     attic2 = root.Building.BuildingDetails.Enclosure.Attics.Attic[1]
     assert attic2.AtticType.Attic.extension.Vented == 'unknown'  # venting unknown attic
+
+    attic3 = root.Building.BuildingDetails.Enclosure.Attics.Attic[2]
+    assert attic3.AtticType.Attic.Vented  # vented attic
+
+    attic4 = root.Building.BuildingDetails.Enclosure.Attics.Attic[3]
+    assert hasattr(attic4.AtticType, 'FlatRoof')
+
+    attic5 = root.Building.BuildingDetails.Enclosure.Attics.Attic[4]
+    assert hasattr(attic5.AtticType, 'CathedralCeiling')
+
+    attic6 = root.Building.BuildingDetails.Enclosure.Attics.Attic[5]
+    assert attic6.AtticType.Attic.CapeCod
+
+    attic7 = root.Building.BuildingDetails.Enclosure.Attics.Attic[6]
+    assert hasattr(attic7.AtticType, 'Other')
 
 
 def test_enclosure_roofs():
