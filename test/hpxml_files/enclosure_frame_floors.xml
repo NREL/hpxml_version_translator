@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<HPXML xmlns="http://hpxmlonline.com/2014/6" schemaVersion="2.3">
+    <XMLTransactionHeaderInformation>
+        <XMLType></XMLType>
+        <XMLGeneratedBy></XMLGeneratedBy>
+        <CreatedDateAndTime>2021-04-05T14:17:07.685077</CreatedDateAndTime>
+        <Transaction>create</Transaction>
+    </XMLTransactionHeaderInformation>
+    <SoftwareInfo/>
+    <Building>
+        <BuildingID id="bldg1"></BuildingID>
+        <ProjectStatus>
+            <EventType>audit</EventType>
+        </ProjectStatus>
+        <BuildingDetails>
+            <Enclosure>
+                <Foundations>
+                    <Foundation>
+                        <SystemIdentifier id='foundation-1'/>
+                        <FoundationType>
+                            <SlabOnGrade/>
+                        </FoundationType>
+                        <FrameFloor>
+                            <SystemIdentifier id='framefloor-1'/>
+                            <FloorCovering>hardwood</FloorCovering>
+                            <Area>1350.0</Area>
+                            <Insulation>
+                                <SystemIdentifier id='framefloor-insulation-1'/>
+                                <InsulationLocation>exterior</InsulationLocation>
+                                <AssemblyEffectiveRValue>39.3</AssemblyEffectiveRValue>
+                            </Insulation>
+                        </FrameFloor>
+                        <FrameFloor>
+                            <SystemIdentifier id='framefloor-2'/>
+                            <FloorCovering>carpet</FloorCovering>
+                            <Area>1350.0</Area>
+                            <Insulation>
+                                <SystemIdentifier id='framefloor-insulation-2'/>
+                                <InsulationGrade>1</InsulationGrade>
+                                <InsulationCondition>poor</InsulationCondition>
+                                <InsulationLocation>exterior</InsulationLocation>
+                                <Layer>
+                                    <InstallationType>continuous</InstallationType>
+                                    <NominalRValue>30.0</NominalRValue>
+                                    <Thickness>1.5</Thickness>
+                                </Layer>
+                                <Layer>
+                                    <InstallationType>continuous</InstallationType>
+                                    <NominalRValue>8.0</NominalRValue>
+                                    <Thickness>0.25</Thickness>
+                                </Layer>
+                            </Insulation>
+                        </FrameFloor>
+                    </Foundation>
+                </Foundations>
+            </Enclosure>
+        </BuildingDetails>
+    </Building>
+</HPXML>
