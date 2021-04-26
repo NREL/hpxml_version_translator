@@ -264,9 +264,7 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
     # https://github.com/hpxmlwg/hpxml/pull/181
 
     # Windows and Skylights
-    windows_and_skylights = [root.xpath('h:Building/h:BuildingDetails/h:Enclosure/h:Windows/h:Window', **xpkw),
-                             root.xpath('h:Building/h:BuildingDetails/h:Enclosure/h:Skylights/h:Skylight', **xpkw)]
-    for i, win in enumerate(list(itertools.chain(*windows_and_skylights))):
+    for i, win in enumerate(root.xpath('//h:Window|//h:Skylight', **xpkw)):
         if hasattr(win, 'VisibleTransmittance'):  # insert VisibleTransmittance right after SHGC
             if hasattr(win, 'SHGC'):
                 vis_trans_idx = win.index(win.SHGC) + 1
