@@ -89,7 +89,7 @@ def test_clothes_dryer():
 
 
 def test_windows():
-    root = convert_hpxml_and_parse(hpxml_dir / 'enclosure_windows.xml')
+    root = convert_hpxml_and_parse(hpxml_dir / 'enclosure_windows_skylights.xml')
 
     win1 = root.Building.BuildingDetails.Enclosure.Windows.Window[0]
     assert win1.Area == 108.0
@@ -112,6 +112,21 @@ def test_windows():
     win2 = root.Building.BuildingDetails.Enclosure.Windows.Window[1]
     assert win2.GlassLayers == 'single-pane'
     assert win2.StormWindow.GlassType == 'low-e'
+
+    skylight1 = root.Building.BuildingDetails.Enclosure.Skylights.Skylight[0]
+    assert skylight1.Area == 20.0
+    assert skylight1.UFactor == 0.25
+    assert skylight1.SHGC == 0.60
+    assert skylight1.ExteriorShading[0].Type == 'solar screens'
+    assert skylight1.ExteriorShading[1].Type == 'building'
+    assert skylight1.InteriorShading.Type == 'dark shades'
+    assert skylight1.InteriorShading.SummerShadingCoefficient == 0.65
+    assert skylight1.InteriorShading.WinterShadingCoefficient == 0.65
+    assert skylight1.MoveableInsulation.RValue == 3.5
+    assert skylight1.Pitch == 6.0
+    assert not hasattr(skylight1, 'Treatments')
+    assert not hasattr(skylight1, 'InteriorShadingFactor')
+    assert not hasattr(skylight1, 'MovableInsulationRValue')
 
 
 def test_frame_floors():

@@ -43,6 +43,24 @@
                         <VisibleTransmittance>0.8</VisibleTransmittance>
                     </Window>
                 </Windows>
+                <Skylights>
+                    <Skylight>
+                        <SystemIdentifier id='skylight-1'/>
+                        <Area>20.0</Area>
+                        <Azimuth>0</Azimuth>
+                        <Treatments>solar screen</Treatments>
+                        <UFactor>0.25</UFactor>
+                        <SHGC>0.60</SHGC>
+                        <NFRCCertified>true</NFRCCertified>
+                        <VisibleTransmittance>0.9</VisibleTransmittance>
+                        <InteriorShading>dark shades</InteriorShading>
+                        <InteriorShadingFactor>0.65</InteriorShadingFactor>
+                        <ExteriorShading>building</ExteriorShading>
+                        <MovableInsulationRValue>3.5</MovableInsulationRValue>
+                        <Pitch>6.0</Pitch>
+                        <AttachedToRoof idref='roof-1'/>
+                    </Skylight>
+                </Skylights>
             </Enclosure>
         </BuildingDetails>
     </Building>
