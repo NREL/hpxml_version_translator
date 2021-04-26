@@ -267,8 +267,7 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
     for i, win in enumerate(root.xpath('//h:Window|//h:Skylight', **xpkw)):
         if hasattr(win, 'VisibleTransmittance'):  # insert VisibleTransmittance right after SHGC
             if hasattr(win, 'SHGC'):
-                vis_trans_idx = win.index(win.SHGC) + 1
-                win.insert(vis_trans_idx, win.VisibleTransmittance)
+                win.SHGC.addnext(win.VisibleTransmittance)
         if hasattr(win, 'ExteriorShading'):
             ext_shade = str(win.ExteriorShading)
             win.ExteriorShading.clear()
