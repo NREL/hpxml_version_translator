@@ -241,26 +241,106 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
         for el in root.xpath(f'//h:ProjectDetails/h:{el_name}', **xpkw):
             el.getparent().remove(el)
 
-    # TODO: Addressing Inconsistencies
+    # Addressing Inconsistencies
     # https://github.com/hpxmlwg/hpxml/pull/124
 
-    # TODO: Clothes Dryer CEF
+    for el in root.xpath('//h:HeatPump/h:AnnualCoolEfficiency', **xpkw):
+        el.tag = f'{{{hpxml3_ns}}}AnnualCoolingEfficiency'
+    for el in root.xpath('//h:HeatPump/h:AnnualHeatEfficiency', **xpkw):
+        el.tag = f'{{{hpxml3_ns}}}AnnualHeatingEfficiency'
+
+    # Replaces Measure/InstalledComponent with Measure/InstalledComponents/InstalledComponent
+    for i, ms in enumerate(root.xpath('h:Project/h:ProjectDetails/h:Measures/h:Measure', **xpkw)):
+        if not hasattr(ms, 'InstalledComponents'):
+            try:
+                sibling = getattr(ms, 'extension')
+            except AttributeError:
+                ms.append(E.InstalledComponents())
+            else:
+                sibling.addprevious(E.InstalledComponents())
+        ic = E.InstalledComponent(id=str(ms.InstalledComponent.attrib['id']))
+        ms.InstalledComponents.append(ic)
+        ms.remove(ms.InstalledComponent)
+
+    # Replaces WeatherStation/SystemIdentifiersInfo with WeatherStation/SystemIdentifier
+    for el in root.xpath('//h:WeatherStation/h:SystemIdentifiersInfo', **xpkw):
+        el.tag = f'{{{hpxml3_ns}}}SystemIdentifier'
+
+    # Renames "central air conditioning" to "central air conditioner" for CoolingSystemType
+    for el in root.xpath('//h:CoolingSystem/h:CoolingSystemType', **xpkw):
+        if el == 'central air conditioning':
+            el._setText('central air conditioner')
+
+    # Renames HeatPump/BackupAFUE to BackupAnnualHeatingEfficiency, accepts 0-1 instead of 1-100
+    for bkupafue in root.xpath(
+        'h:Building/h:BuildingDetails/h:Systems/h:HVAC/h:HVACPlant/h:HeatPump/h:BackupAFUE', **xpkw
+    ):
+        bkupafue.addnext(E.BackupAnnualHeatingEfficiency(
+            E.Units('AFUE'),
+            E.Value(f'{float(bkupafue.text) / 100}')
+        ))
+        bkupafue.getparent().remove(bkupafue)
+
+    # Renames FoundationWall/BelowGradeDepth to FoundationWall/DepthBelowGrade
+    for el in root.xpath('//h:FoundationWall/h:BelowGradeDepth', **xpkw):
+        el.tag = f'{{{hpxml3_ns}}}DepthBelowGrade'
+
+    # Clothes Dryer CEF
     # https://github.com/hpxmlwg/hpxml/pull/145
 
     for el in root.xpath('//h:ClothesDryer/h:EfficiencyFactor', **xpkw):
         el.tag = f'{{{hpxml3_ns}}}EnergyFactor'
 
-    # TODO: Standardize Locations
-    # https://github.com/hpxmlwg/hpxml/pull/156
-
-    # TODO: Lighting Fraction Improvements
-    # https://github.com/hpxmlwg/hpxml/pull/165
-
-    # TODO: Deprecated items
-    # https://github.com/hpxmlwg/hpxml/pull/167
-
     # Enclosure
     # https://github.com/hpxmlwg/hpxml/pull/181
+
+    for i, fw in enumerate(root.xpath(
+        'h:Building/h:BuildingDetails/h:Enclosure/h:Foundations/h:Foundation/h:FoundationWall', **xpkw
+    )):
+        enclosure = fw.getparent().getparent().getparent()
+        foundation = fw.getparent()
+
+        fw.addnext(E.AttachedToFoundationWall(idref=fw.SystemIdentifier.attrib['id']))
+        if not hasattr(enclosure, 'FoundationWalls'):
+            add_after(
+                enclosure,
+                ['AirInfiltration',
+                 'Attics',
+                 'Foundations',
+                 'Garages',
+                 'Roofs',
+                 'RimJoists',
+                 'Walls'],
+                E.FoundationWalls()
+            )
+        enclosure.FoundationWalls.append(deepcopy(fw))
+        this_fw = enclosure.FoundationWalls.FoundationWall[i]
+
+        try:
+            boundary_v3 = {'other housing unit': E.ExteriorAdjacentTo(str(fw.AdjacentTo)),
+                           # FUTURE: change it when issue #3 is addressed
+                           'unconditioned basement': E.InteriorAdjacentTo('basement - unconditioned'),
+                           'living space': E.InteriorAdjacentTo(str(fw.AdjacentTo)),
+                           'ground': E.ExteriorAdjacentTo(str(fw.AdjacentTo)),
+                           'crawlspace': E.InteriorAdjacentTo(str(fw.AdjacentTo)),
+                           'attic': E.InteriorAdjacentTo(str(fw.AdjacentTo)),  # FIXME: double-check
+                           'garage': E.InteriorAdjacentTo(str(fw.AdjacentTo)),
+                           # FUTURE: change it when issue #3 is addressed
+                           'ambient': E.ExteriorAdjacentTo('outside')}[fw.AdjacentTo]
+            add_after(
+                this_fw,
+                ['SystemIdentifier',
+                 'ExternalResource',
+                 'AttachedToSpace'],
+                boundary_v3
+            )
+        except KeyError:
+            pass
+
+        if hasattr(this_fw, 'AdjacentTo'):
+            this_fw.remove(this_fw.AdjacentTo)
+
+        foundation.remove(fw)
 
     # Attics
     for i, attic in enumerate(root.xpath(
@@ -486,6 +566,15 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
     for ins_loc in root.xpath('//h:Insulation/h:InsulationLocation', **xpkw):
         ins = ins_loc.getparent()
         ins.remove(ins.InsulationLocation)
+
+    # TODO: Standardize Locations
+    # https://github.com/hpxmlwg/hpxml/pull/156
+
+    # TODO: Lighting Fraction Improvements
+    # https://github.com/hpxmlwg/hpxml/pull/165
+
+    # TODO: Deprecated items
+    # https://github.com/hpxmlwg/hpxml/pull/167
 
     # TODO: Adds desuperheater flexibility
     # https://github.com/hpxmlwg/hpxml/pull/184

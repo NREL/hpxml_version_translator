@@ -68,6 +68,29 @@ def test_green_building_verification():
     assert gbv6.Year == 2019
 
 
+def test_inconsistencies():
+    root = convert_hpxml_and_parse(hpxml_dir / 'inconsistencies.xml')
+
+    ws = root.Building.BuildingDetails.ClimateandRiskZones.WeatherStation[0]
+    assert ws.SystemIdentifier.attrib['id'] == 'weather-station-1'
+
+    clgsys = root.Building.BuildingDetails.Systems.HVAC.HVACPlant.CoolingSystem[0]
+    assert clgsys.CoolingSystemType.text == 'central air conditioner'
+
+    htpump = root.Building.BuildingDetails.Systems.HVAC.HVACPlant.HeatPump[0]
+    assert htpump.AnnualCoolingEfficiency.Units == 'SEER'
+    assert htpump.AnnualCoolingEfficiency.Value == 13.0
+    assert htpump.AnnualHeatingEfficiency.Units == 'HSPF'
+    assert htpump.AnnualHeatingEfficiency.Value == 7.7
+    assert htpump.BackupAnnualHeatingEfficiency.Units == 'AFUE'
+    assert htpump.BackupAnnualHeatingEfficiency.Value == 0.98
+
+    measure = root.Project.ProjectDetails.Measures.Measure[0]
+    assert measure.InstalledComponents.InstalledComponent.attrib['id'] == 'installed-component-1'
+    assert not hasattr(measure, 'InstalledComponent')
+    assert measure.InstalledComponents.getnext() == measure.extension
+
+
 def test_clothes_dryer():
     root = convert_hpxml_and_parse(hpxml_dir / 'clothes_dryer.xml')
 
@@ -142,6 +165,50 @@ def test_enclosure_roofs():
     assert roof1.Pitch == 6.0
     assert not hasattr(roof1, 'RoofArea')
     assert not hasattr(enclosure, 'AtticAndRoof')
+
+
+def test_enclosure_foundation_walls():
+    root = convert_hpxml_and_parse(hpxml_dir / 'enclosure_foundation_walls.xml')
+
+    fw1 = root.Building.BuildingDetails.Enclosure.FoundationWalls.FoundationWall[0]
+    assert fw1.getparent().getparent().Foundations.Foundation.AttachedToFoundationWall[0].attrib['idref']\
+        == 'foundationwall-1'
+    assert fw1.InteriorAdjacentTo == 'basement - unconditioned'
+    assert fw1.Type == 'concrete block'
+    assert fw1.Length == 120
+    assert fw1.Height == 8
+    assert fw1.Area == 960
+    assert fw1.Thickness == 4
+    assert fw1.DepthBelowGrade == 6
+    assert not hasattr(fw1, 'AdjacentTo')
+    assert fw1.Insulation.InsulationGrade == 3
+    assert fw1.Insulation.InsulationCondition == 'good'
+    assert fw1.Insulation.AssemblyEffectiveRValue == 5.0
+    assert not hasattr(fw1.Insulation, 'Location')
+
+    fw2 = root.Building.BuildingDetails.Enclosure.FoundationWalls.FoundationWall[1]
+    assert fw2.getparent().getparent().Foundations.Foundation.AttachedToFoundationWall[1].attrib['idref']\
+        == 'foundationwall-2'
+    assert not hasattr(fw2, 'ExteriorAdjacentTo')
+    assert not hasattr(fw2, 'InteriorAdjacentTo')
+    assert fw2.Type == 'concrete block'
+    assert fw2.Length == 60
+    assert fw2.Height == 8
+    assert fw2.Area == 480
+    assert fw2.Thickness == 7
+    assert fw2.DepthBelowGrade == 8
+    assert not hasattr(fw2, 'AdjacentTo')
+    assert fw2.Insulation.InsulationGrade == 1
+    assert fw2.Insulation.InsulationCondition == 'poor'
+    assert not hasattr(fw2.Insulation, 'Location')
+    assert fw2.Insulation.Layer[0].InstallationType == 'continuous'
+    assert fw2.Insulation.Layer[0].InsulationMaterial.Batt == 'fiberglass'
+    assert fw2.Insulation.Layer[0].NominalRValue == 8.9
+    assert fw2.Insulation.Layer[0].Thickness == 1.5
+    assert fw2.Insulation.Layer[1].InstallationType == 'cavity'
+    assert fw2.Insulation.Layer[1].InsulationMaterial.Rigid == 'eps'
+    assert fw2.Insulation.Layer[1].NominalRValue == 15.0
+    assert fw2.Insulation.Layer[1].Thickness == 3.0
 
 
 def test_frame_floors():
