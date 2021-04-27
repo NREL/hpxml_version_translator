@@ -241,7 +241,7 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
         for el in root.xpath(f'//h:ProjectDetails/h:{el_name}', **xpkw):
             el.getparent().remove(el)
 
-    # TODO: Addressing Inconsistencies
+    # Addressing Inconsistencies
     # https://github.com/hpxmlwg/hpxml/pull/124
 
     for el in root.xpath('//h:HeatPump/h:AnnualCoolEfficiency', **xpkw):
@@ -281,23 +281,62 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
         ))
         bkupafue.getparent().remove(bkupafue)
 
-    # TODO: Clothes Dryer CEF
+    # Clothes Dryer CEF
     # https://github.com/hpxmlwg/hpxml/pull/145
 
     for el in root.xpath('//h:ClothesDryer/h:EfficiencyFactor', **xpkw):
         el.tag = f'{{{hpxml3_ns}}}EnergyFactor'
 
-    # TODO: Standardize Locations
-    # https://github.com/hpxmlwg/hpxml/pull/156
-
-    # TODO: Lighting Fraction Improvements
-    # https://github.com/hpxmlwg/hpxml/pull/165
-
-    # TODO: Deprecated items
-    # https://github.com/hpxmlwg/hpxml/pull/167
-
     # Enclosure
     # https://github.com/hpxmlwg/hpxml/pull/181
+
+    for i, fw in enumerate(root.xpath(
+        'h:Building/h:BuildingDetails/h:Enclosure/h:Foundations/h:Foundation/h:FoundationWall', **xpkw
+    )):
+        enclosure = fw.getparent().getparent().getparent()
+        foundation = fw.getparent()
+
+        fw.addnext(E.AttachedToFoundationWall(idref=fw.SystemIdentifier.attrib['id']))
+        if not hasattr(enclosure, 'FoundationWalls'):
+            add_after(
+                enclosure,
+                ['AirInfiltration',
+                 'Attics',
+                 'Foundations',
+                 'Garages',
+                 'Roofs',
+                 'RimJoists',
+                 'Walls'],
+                E.FoundationWalls()
+            )
+        enclosure.FoundationWalls.append(deepcopy(fw))
+        this_fw = enclosure.FoundationWalls.FoundationWall[i]
+
+        try:
+            boundary_v3 = {'other housing unit': E.ExteriorAdjacentTo(str(fw.AdjacentTo)),
+                           # FUTURE: change it when issue #3 is addressed
+                           'unconditioned basement': E.InteriorAdjacentTo('basement - unconditioned'),
+                           'living space': E.InteriorAdjacentTo(str(fw.AdjacentTo)),
+                           'ground': E.ExteriorAdjacentTo(str(fw.AdjacentTo)),
+                           'crawlspace': E.InteriorAdjacentTo(str(fw.AdjacentTo)),
+                           'attic': E.InteriorAdjacentTo(str(fw.AdjacentTo)),  # FIXME: double-check
+                           'garage': E.InteriorAdjacentTo(str(fw.AdjacentTo)),
+                           # FUTURE: change it when issue #3 is addressed
+                           'ambient': E.ExteriorAdjacentTo('outside')}[fw.AdjacentTo]
+            add_after(
+                this_fw,
+                ['SystemIdentifier',
+                 'ExternalResource',
+                 'AttachedToSpace'],
+                boundary_v3
+            )
+        except KeyError:
+            pass
+
+        if hasattr(this_fw, 'AdjacentTo'):
+            this_fw.remove(this_fw.AdjacentTo)
+
+        foundation.remove(fw)
 
     # Frame Floors
     for i, ff in enumerate(root.xpath(
@@ -330,12 +369,6 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
         enclosure.FrameFloors.append(this_ff)
         foundation.remove(ff)
 
-    # Remove 'Insulation/InsulationLocation'
-    # TODO: Use it for other enclosure types
-    for ins_loc in root.xpath('//h:Insulation/h:InsulationLocation', **xpkw):
-        ins = ins_loc.getparent()
-        ins.remove(ins.InsulationLocation)
-
     # Slabs
     for i, slab in enumerate(root.xpath(
         'h:Building/h:BuildingDetails/h:Enclosure/h:Foundations/h:Foundation/h:Slab', **xpkw
@@ -360,6 +393,34 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
             )
         enclosure.Slabs.append(deepcopy(slab))
         foundation.remove(slab)
+
+    # Remove 'Insulation/InsulationLocation'
+    # TODO: Use it for other enclosure types
+    for ins_loc in root.xpath('//h:Insulation/h:InsulationLocation', **xpkw):
+        ins = ins_loc.getparent()
+        ins.remove(ins.InsulationLocation)
+
+    # TODO: Addressing Inconsistencies
+    # https://github.com/hpxmlwg/hpxml/pull/124
+
+    # Renames FoundationWall/BelowGradeDepth to FoundationWall/DepthBelowGrade
+    for el in root.xpath('//h:FoundationWall/h:BelowGradeDepth', **xpkw):
+        el.tag = f'{{{hpxml3_ns}}}DepthBelowGrade'
+
+    # Clothes Dryer CEF
+    # https://github.com/hpxmlwg/hpxml/pull/145
+
+    for el in root.xpath('//h:ClothesDryer/h:EfficiencyFactor', **xpkw):
+        el.tag = f'{{{hpxml3_ns}}}EnergyFactor'
+
+    # TODO: Standardize Locations
+    # https://github.com/hpxmlwg/hpxml/pull/156
+
+    # TODO: Lighting Fraction Improvements
+    # https://github.com/hpxmlwg/hpxml/pull/165
+
+    # TODO: Deprecated items
+    # https://github.com/hpxmlwg/hpxml/pull/167
 
     # TODO: Adds desuperheater flexibility
     # https://github.com/hpxmlwg/hpxml/pull/184
