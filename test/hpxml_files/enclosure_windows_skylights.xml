@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<HPXML xmlns="http://hpxmlonline.com/2014/6" schemaVersion="2.3">
+    <XMLTransactionHeaderInformation>
+        <XMLType></XMLType>
+        <XMLGeneratedBy></XMLGeneratedBy>
+        <CreatedDateAndTime>2021-04-05T14:17:07.685077</CreatedDateAndTime>
+        <Transaction>create</Transaction>
+    </XMLTransactionHeaderInformation>
+    <SoftwareInfo/>
+    <Building>
+        <BuildingID id="bldg1"></BuildingID>
+        <ProjectStatus>
+            <EventType>audit</EventType>
+        </ProjectStatus>
+        <BuildingDetails>
+            <Enclosure>
+                <Walls>
+                    <Wall>
+                        <SystemIdentifier id='wall-1'/>
+                    </Wall>
+                </Walls>
+                <Windows>
+                    <Window>
+                        <SystemIdentifier id='window-1'/>
+                        <Area>108.0</Area>
+                        <Azimuth>0</Azimuth>
+                        <Treatments>solar screen</Treatments>
+                        <UFactor>0.33</UFactor>
+                        <SHGC>0.45</SHGC>
+                        <NFRCCertified>true</NFRCCertified>
+                        <VisibleTransmittance>0.9</VisibleTransmittance>
+                        <InteriorShading>light shades</InteriorShading>
+                        <InteriorShadingFactor>0.7</InteriorShadingFactor>
+                        <ExteriorShading>evergreen tree</ExteriorShading>
+                        <MovableInsulationRValue>5.5</MovableInsulationRValue>
+                        <AttachedToWall idref='wall-1'/>
+                    </Window>
+                    <Window>
+                        <SystemIdentifier id='window-2'/>
+                        <GlassLayers>single-paned with low-e storms</GlassLayers>
+                        <UFactor>0.45</UFactor>
+                        <SHGC>0.6</SHGC>
+                        <VisibleTransmittance>0.8</VisibleTransmittance>
+                        <ExteriorShading>solar film</ExteriorShading>
+                    </Window>
+                    <Window>
+                        <SystemIdentifier id='window-3'/>
+                        <Treatments>window film</Treatments>
+                        <UFactor>0.45</UFactor>
+                        <SHGC>0.6</SHGC>
+                    </Window>
+                </Windows>
+                <Skylights>
+                    <Skylight>
+                        <SystemIdentifier id='skylight-1'/>
+                        <Area>20.0</Area>
+                        <Azimuth>0</Azimuth>
+                        <Treatments>solar screen</Treatments>
+                        <UFactor>0.25</UFactor>
+                        <SHGC>0.60</SHGC>
+                        <NFRCCertified>true</NFRCCertified>
+                        <VisibleTransmittance>0.9</VisibleTransmittance>
+                        <InteriorShading>dark shades</InteriorShading>
+                        <InteriorShadingFactor>0.65</InteriorShadingFactor>
+                        <ExteriorShading>building</ExteriorShading>
+                        <MovableInsulationRValue>3.5</MovableInsulationRValue>
+                        <Pitch>6.0</Pitch>
+                        <AttachedToRoof idref='roof-1'/>
+                    </Skylight>
+                </Skylights>
+            </Enclosure>
+        </BuildingDetails>
+    </Building>
+</HPXML>

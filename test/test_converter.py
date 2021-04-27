@@ -277,3 +277,48 @@ def test_walls():
     assert wall1.Insulation.Layer[1].InsulationMaterial.Batt == 'fiberglass'
     assert wall1.Insulation.Layer[1].NominalRValue == 12.0
     assert wall1.Insulation.Layer[1].Thickness == 3.5
+
+
+def test_windows():
+    root = convert_hpxml_and_parse(hpxml_dir / 'enclosure_windows_skylights.xml')
+
+    win1 = root.Building.BuildingDetails.Enclosure.Windows.Window[0]
+    assert win1.Area == 108.0
+    assert win1.Azimuth == 0
+    assert win1.UFactor == 0.33
+    assert win1.SHGC == 0.45
+    assert win1.NFRCCertified
+    assert win1.VisibleTransmittance == 0.9
+    assert win1.ExteriorShading[0].Type == 'solar screens'
+    assert win1.ExteriorShading[1].Type == 'evergreen tree'
+    assert win1.InteriorShading.Type == 'light shades'
+    assert win1.InteriorShading.SummerShadingCoefficient == 0.7
+    assert win1.InteriorShading.WinterShadingCoefficient == 0.7
+    assert win1.MoveableInsulation.RValue == 5.5
+    assert win1.AttachedToWall.attrib['idref'] == 'wall-1'
+    assert not hasattr(win1, 'Treatments')
+    assert not hasattr(win1, 'InteriorShadingFactor')
+    assert not hasattr(win1, 'MovableInsulationRValue')
+
+    win2 = root.Building.BuildingDetails.Enclosure.Windows.Window[1]
+    assert win2.GlassLayers == 'single-pane'
+    assert win2.StormWindow.GlassType == 'low-e'
+    assert win2.ExteriorShading[0].Type == 'solar film'
+
+    win3 = root.Building.BuildingDetails.Enclosure.Windows.Window[2]
+    assert hasattr(win3, 'WindowFilm')
+
+    skylight1 = root.Building.BuildingDetails.Enclosure.Skylights.Skylight[0]
+    assert skylight1.Area == 20.0
+    assert skylight1.UFactor == 0.25
+    assert skylight1.SHGC == 0.60
+    assert skylight1.ExteriorShading[0].Type == 'solar screens'
+    assert skylight1.ExteriorShading[1].Type == 'building'
+    assert skylight1.InteriorShading.Type == 'dark shades'
+    assert skylight1.InteriorShading.SummerShadingCoefficient == 0.65
+    assert skylight1.InteriorShading.WinterShadingCoefficient == 0.65
+    assert skylight1.MoveableInsulation.RValue == 3.5
+    assert skylight1.Pitch == 6.0
+    assert not hasattr(skylight1, 'Treatments')
+    assert not hasattr(skylight1, 'InteriorShadingFactor')
+    assert not hasattr(skylight1, 'MovableInsulationRValue')

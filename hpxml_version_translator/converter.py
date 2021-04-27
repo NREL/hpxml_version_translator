@@ -566,6 +566,112 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
                     layer.InstallationType._setText(f'continuous - {str(insulation.InsulationLocation)}')
         insulation.remove(insulation.InsulationLocation)
 
+    # Windows and Skylights
+    for i, win in enumerate(root.xpath('//h:Window|//h:Skylight', **xpkw)):
+        if hasattr(win, 'VisibleTransmittance'):
+            add_after(
+                win,
+                ['Area',
+                 'Quantity',
+                 'Azimuth',
+                 'Orientation',
+                 'FrameType',
+                 'GlassLayers',
+                 'GlassType',
+                 'GasFill',
+                 'Condition',
+                 'UFactor',
+                 'SHGC'],
+                E.VisibleTransmittance(float(win.VisibleTransmittance))
+            )
+            win.remove(win.VisibleTransmittance[1])  # remove VisibleTransmittance of HPXML v2
+        if hasattr(win, 'ExteriorShading'):
+            ext_shade = str(win.ExteriorShading)
+            win.ExteriorShading.clear()
+            win.ExteriorShading.extend([
+                E.SystemIdentifier(id=f'exterior-shading-{i}'),
+                E.Type(ext_shade)
+            ])
+            if hasattr(win, 'InteriorShading'):  # insert ExteriorShading right before InteriorShading
+                win.InteriorShading.addprevious(win.ExteriorShading)
+        if hasattr(win, 'Treatments'):
+            if win.Treatments in ['shading', 'solar screen']:
+                treatment_shade = E.ExteriorShading(
+                    E.SystemIdentifier(id=f'treatment-shading-{i}'),
+                )
+                if win.Treatments == 'solar screen':
+                    treatment_shade.append(E.Type('solar screens'))
+                add_after(
+                    win,
+                    ['UFactor',
+                     'SHGC',
+                     'VisibleTransmittance',
+                     'NFRCCertified',
+                     'ThirdPartyCertification',
+                     'WindowFilm'],
+                    treatment_shade
+                )
+            elif win.Treatments == 'window film':
+                add_after(
+                    win,
+                    ['UFactor',
+                     'SHGC',
+                     'VisibleTransmittance',
+                     'NFRCCertified',
+                     'ThirdPartyCertification'],
+                    E.WindowFilm(
+                        E.SystemIdentifier(id=f'window-film-{i}')
+                    )
+                )
+            win.remove(win.Treatments)
+        if hasattr(win, 'InteriorShading'):
+            int_shading = str(win.InteriorShading)
+            int_shading_factor = float(win.InteriorShadingFactor)
+            win.InteriorShading.clear()
+            win.InteriorShading.extend([
+                E.SystemIdentifier(id=f'interior-shading-{i}'),
+                E.Type(int_shading),
+                E.SummerShadingCoefficient(int_shading_factor),
+                E.WinterShadingCoefficient(int_shading_factor)
+            ])
+            win.remove(win.InteriorShadingFactor)
+        if hasattr(win, 'MovableInsulationRValue'):
+            add_after(
+                win,
+                ['UFactor',
+                 'SHGC',
+                 'VisibleTransmittance',
+                 'NFRCCertified',
+                 'ThirdPartyCertification',
+                 'ExteriorShading',
+                 'InteriorShading',
+                 'StormWindow'],
+                E.MoveableInsulation(
+                    E.SystemIdentifier(id=f'movable-insulation-{i}'),
+                    E.RValue(float(win.MovableInsulationRValue))
+                )
+            )
+            win.remove(win.MovableInsulationRValue)
+        if hasattr(win, 'GlassLayers'):
+            if win.GlassLayers in ['single-paned with low-e storms', 'single-paned with storms']:
+                storm_window = E.StormWindow(
+                    E.SystemIdentifier(id=f'storm-window-{i}')
+                )
+                if win.GlassLayers == 'single-paned with low-e storms':
+                    storm_window.append(E.GlassType('low-e'))
+                win.GlassLayers._setText('single-pane')
+                add_after(
+                    win,
+                    ['UFactor',
+                     'SHGC',
+                     'VisibleTransmittance',
+                     'NFRCCertified',
+                     'ThirdPartyCertification',
+                     'ExteriorShading',
+                     'InteriorShading'],
+                    storm_window
+                )
+
     # TODO: Standardize Locations
     # https://github.com/hpxmlwg/hpxml/pull/156
 
