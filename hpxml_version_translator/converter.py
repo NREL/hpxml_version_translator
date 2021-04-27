@@ -505,6 +505,68 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
     except AttributeError:
         pass
 
+    # Frame Floors
+    for i, ff in enumerate(root.xpath(
+        'h:Building/h:BuildingDetails/h:Enclosure/h:Foundations/h:Foundation/h:FrameFloor', **xpkw
+    )):
+        enclosure = ff.getparent().getparent().getparent()
+        foundation = ff.getparent()
+
+        ff.addnext(E.AttachedToFrameFloor(idref=ff.SystemIdentifier.attrib['id']))
+        if not hasattr(enclosure, 'FrameFloors'):
+            add_after(
+                enclosure,
+                ['AirInfiltration',
+                 'Attics',
+                 'Foundations',
+                 'Garages',
+                 'Roofs',
+                 'RimJoists',
+                 'Walls',
+                 'FoundationWalls'],
+                E.FrameFloors()
+            )
+        this_ff = deepcopy(ff)
+        # Preserve insulation location for each insulation layer
+        if hasattr(this_ff.Insulation, 'InsulationLocation') and hasattr(this_ff.Insulation, 'Layer'):
+            for i, layer in enumerate(this_ff.Insulation.Layer):
+                if layer.InstallationType == 'continuous':
+                    layer.InstallationType._setText(f'continuous - {str(this_ff.Insulation.InsulationLocation)}')
+
+        enclosure.FrameFloors.append(this_ff)
+        foundation.remove(ff)
+
+    # Slabs
+    for i, slab in enumerate(root.xpath(
+        'h:Building/h:BuildingDetails/h:Enclosure/h:Foundations/h:Foundation/h:Slab', **xpkw
+    )):
+        enclosure = slab.getparent().getparent().getparent()
+        foundation = slab.getparent()
+
+        slab.addnext(E.AttachedToSlab(idref=slab.SystemIdentifier.attrib['id']))
+        if not hasattr(enclosure, 'Slabs'):
+            add_after(
+                enclosure,
+                ['AirInfiltration',
+                 'Attics',
+                 'Foundations',
+                 'Garages',
+                 'Roofs',
+                 'RimJoists',
+                 'Walls',
+                 'FoundationWalls',
+                 'FrameFloors'],
+                E.Slabs()
+            )
+        enclosure.Slabs.append(deepcopy(slab))
+        foundation.remove(slab)
+
+    # Remove 'Insulation/InsulationLocation'
+    # TODO: Use it for other enclosure types
+    for ins_loc in root.xpath('//h:Insulation/h:InsulationLocation', **xpkw):
+        ins = ins_loc.getparent()
+        ins.remove(ins.InsulationLocation)
+
     # Windows and Skylights
     for i, win in enumerate(root.xpath('//h:Window|//h:Skylight', **xpkw)):
         if hasattr(win, 'VisibleTransmittance'):
@@ -611,68 +673,6 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
                      'InteriorShading'],
                     storm_window
                 )
-
-    # Frame Floors
-    for i, ff in enumerate(root.xpath(
-        'h:Building/h:BuildingDetails/h:Enclosure/h:Foundations/h:Foundation/h:FrameFloor', **xpkw
-    )):
-        enclosure = ff.getparent().getparent().getparent()
-        foundation = ff.getparent()
-
-        ff.addnext(E.AttachedToFrameFloor(idref=ff.SystemIdentifier.attrib['id']))
-        if not hasattr(enclosure, 'FrameFloors'):
-            add_after(
-                enclosure,
-                ['AirInfiltration',
-                 'Attics',
-                 'Foundations',
-                 'Garages',
-                 'Roofs',
-                 'RimJoists',
-                 'Walls',
-                 'FoundationWalls'],
-                E.FrameFloors()
-            )
-        this_ff = deepcopy(ff)
-        # Preserve insulation location for each insulation layer
-        if hasattr(this_ff.Insulation, 'InsulationLocation') and hasattr(this_ff.Insulation, 'Layer'):
-            for i, layer in enumerate(this_ff.Insulation.Layer):
-                if layer.InstallationType == 'continuous':
-                    layer.InstallationType._setText(f'continuous - {str(this_ff.Insulation.InsulationLocation)}')
-
-        enclosure.FrameFloors.append(this_ff)
-        foundation.remove(ff)
-
-    # Slabs
-    for i, slab in enumerate(root.xpath(
-        'h:Building/h:BuildingDetails/h:Enclosure/h:Foundations/h:Foundation/h:Slab', **xpkw
-    )):
-        enclosure = slab.getparent().getparent().getparent()
-        foundation = slab.getparent()
-
-        slab.addnext(E.AttachedToSlab(idref=slab.SystemIdentifier.attrib['id']))
-        if not hasattr(enclosure, 'Slabs'):
-            add_after(
-                enclosure,
-                ['AirInfiltration',
-                 'Attics',
-                 'Foundations',
-                 'Garages',
-                 'Roofs',
-                 'RimJoists',
-                 'Walls',
-                 'FoundationWalls',
-                 'FrameFloors'],
-                E.Slabs()
-            )
-        enclosure.Slabs.append(deepcopy(slab))
-        foundation.remove(slab)
-
-    # Remove 'Insulation/InsulationLocation'
-    # TODO: Use it for other enclosure types
-    for ins_loc in root.xpath('//h:Insulation/h:InsulationLocation', **xpkw):
-        ins = ins_loc.getparent()
-        ins.remove(ins.InsulationLocation)
 
     # TODO: Standardize Locations
     # https://github.com/hpxmlwg/hpxml/pull/156
