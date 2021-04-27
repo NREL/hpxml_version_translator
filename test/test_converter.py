@@ -68,26 +68,6 @@ def test_green_building_verification():
     assert gbv6.Year == 2019
 
 
-def test_clothes_dryer():
-    root = convert_hpxml_and_parse(hpxml_dir / 'clothes_dryer.xml')
-
-    dryer1 = root.Building.BuildingDetails.Appliances.ClothesDryer[0]
-    assert dryer1.Type == 'dryer'
-    assert dryer1.Location == 'laundry room'
-    assert dryer1.FuelType == 'natural gas'
-    assert dryer1.EnergyFactor == 2.5
-    assert dryer1.ControlType == 'timer'
-    assert not hasattr(dryer1, 'EfficiencyFactor')
-
-    dryer2 = root.Building.BuildingDetails.Appliances.ClothesDryer[1]
-    assert dryer2.Type == 'all-in-one combination washer/dryer'
-    assert dryer2.Location == 'basement'
-    assert dryer2.FuelType == 'electricity'
-    assert dryer2.EnergyFactor == 5.0
-    assert dryer2.ControlType == 'temperature'
-    assert not hasattr(dryer2, 'EfficiencyFactor')
-
-
 def test_inconsistencies():
     root = convert_hpxml_and_parse(hpxml_dir / 'inconsistencies.xml')
 
@@ -109,6 +89,82 @@ def test_inconsistencies():
     assert measure.InstalledComponents.InstalledComponent.attrib['id'] == 'installed-component-1'
     assert not hasattr(measure, 'InstalledComponent')
     assert measure.InstalledComponents.getnext() == measure.extension
+
+
+def test_clothes_dryer():
+    root = convert_hpxml_and_parse(hpxml_dir / 'clothes_dryer.xml')
+
+    dryer1 = root.Building.BuildingDetails.Appliances.ClothesDryer[0]
+    assert dryer1.Type == 'dryer'
+    assert dryer1.Location == 'laundry room'
+    assert dryer1.FuelType == 'natural gas'
+    assert dryer1.EnergyFactor == 2.5
+    assert dryer1.ControlType == 'timer'
+    assert not hasattr(dryer1, 'EfficiencyFactor')
+
+    dryer2 = root.Building.BuildingDetails.Appliances.ClothesDryer[1]
+    assert dryer2.Type == 'all-in-one combination washer/dryer'
+    assert dryer2.Location == 'basement'
+    assert dryer2.FuelType == 'electricity'
+    assert dryer2.EnergyFactor == 5.0
+    assert dryer2.ControlType == 'temperature'
+    assert not hasattr(dryer2, 'EfficiencyFactor')
+
+
+def test_enclosure_attics():
+    root = convert_hpxml_and_parse(hpxml_dir / 'enclosure_attics_and_roofs.xml')
+
+    attic1 = root.Building.BuildingDetails.Enclosure.Attics.Attic[0]
+    enclosure = attic1.getparent().getparent()
+    assert not attic1.AtticType.Attic.Vented  # unvented attic
+    assert attic1.AttachedToRoof.attrib['idref'] == 'roof-1'
+    assert not hasattr(enclosure, 'AtticAndRoof')
+    assert not hasattr(enclosure, 'ExteriorAdjacentTo')
+    assert enclosure.Walls.Wall[0].AtticWallType == 'knee wall'
+    assert enclosure.Roofs.Roof[0].Rafters.Size == '2x4'
+    assert enclosure.Roofs.Roof[0].Rafters.Material == 'wood'
+    assert enclosure.Roofs.Roof[0].Insulation.InsulationGrade == 3
+    assert enclosure.Roofs.Roof[0].Insulation.InsulationCondition == 'good'
+    assert enclosure.Roofs.Roof[0].Insulation.Layer.InstallationType == 'cavity'
+    assert enclosure.Roofs.Roof[0].Insulation.Layer.NominalRValue == 7.5
+    assert enclosure.FrameFloors.FrameFloor[0].InteriorAdjacentTo == 'attic'
+    assert enclosure.FrameFloors.FrameFloor[0].Area == 1500.0
+    assert enclosure.FrameFloors.FrameFloor[0].Insulation.InsulationGrade == 1
+    assert enclosure.FrameFloors.FrameFloor[0].Insulation.InsulationCondition == 'poor'
+    assert enclosure.FrameFloors.FrameFloor[0].Insulation.AssemblyEffectiveRValue == 5.5
+
+    attic2 = root.Building.BuildingDetails.Enclosure.Attics.Attic[1]
+    assert attic2.AtticType.Attic.extension.Vented == 'unknown'  # venting unknown attic
+
+    attic3 = root.Building.BuildingDetails.Enclosure.Attics.Attic[2]
+    assert attic3.AtticType.Attic.Vented  # vented attic
+
+    attic4 = root.Building.BuildingDetails.Enclosure.Attics.Attic[3]
+    assert hasattr(attic4.AtticType, 'FlatRoof')
+
+    attic5 = root.Building.BuildingDetails.Enclosure.Attics.Attic[4]
+    assert hasattr(attic5.AtticType, 'CathedralCeiling')
+
+    attic6 = root.Building.BuildingDetails.Enclosure.Attics.Attic[5]
+    assert attic6.AtticType.Attic.CapeCod
+
+    attic7 = root.Building.BuildingDetails.Enclosure.Attics.Attic[6]
+    assert hasattr(attic7.AtticType, 'Other')
+
+
+def test_enclosure_roofs():
+    root = convert_hpxml_and_parse(hpxml_dir / 'enclosure_attics_and_roofs.xml')
+
+    roof1 = root.Building.BuildingDetails.Enclosure.Roofs.Roof[0]
+    enclosure = roof1.getparent().getparent()
+    assert roof1.Area == 1118.5
+    assert roof1.RoofType == 'shingles'
+    assert roof1.RoofColor == 'dark'
+    assert roof1.SolarAbsorptance == 0.7
+    assert roof1.Emittance == 0.9
+    assert roof1.Pitch == 6.0
+    assert not hasattr(roof1, 'RoofArea')
+    assert not hasattr(enclosure, 'AtticAndRoof')
 
 
 def test_enclosure_foundation_walls():
