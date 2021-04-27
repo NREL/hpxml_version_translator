@@ -280,7 +280,7 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
                  'SHGC'],
                 E.VisibleTransmittance(float(win.VisibleTransmittance))
             )
-            win.remove(win.VisibleTransmittance[1]) # remove VisibleTransmittance of HPXML v2
+            win.remove(win.VisibleTransmittance[1])  # remove VisibleTransmittance of HPXML v2
         if hasattr(win, 'ExteriorShading'):
             ext_shade = str(win.ExteriorShading)
             win.ExteriorShading.clear()
