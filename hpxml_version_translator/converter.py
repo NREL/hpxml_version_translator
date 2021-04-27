@@ -527,12 +527,6 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
                 E.FrameFloors()
             )
         this_ff = deepcopy(ff)
-        # Preserve insulation location for each insulation layer
-        if hasattr(this_ff.Insulation, 'InsulationLocation') and hasattr(this_ff.Insulation, 'Layer'):
-            for i, layer in enumerate(this_ff.Insulation.Layer):
-                if layer.InstallationType == 'continuous':
-                    layer.InstallationType._setText(f'continuous - {str(this_ff.Insulation.InsulationLocation)}')
-
         enclosure.FrameFloors.append(this_ff)
         foundation.remove(ff)
 
@@ -562,10 +556,15 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
         foundation.remove(slab)
 
     # Remove 'Insulation/InsulationLocation'
-    # TODO: Use it for other enclosure types
-    for ins_loc in root.xpath('//h:Insulation/h:InsulationLocation', **xpkw):
-        ins = ins_loc.getparent()
-        ins.remove(ins.InsulationLocation)
+    # TODO: Use it for all enclosure types
+    for insulation_location in root.xpath('//h:Insulation/h:InsulationLocation', **xpkw):
+        # Insulation location to be layer-specific
+        insulation = insulation_location.getparent()
+        if hasattr(insulation, 'Layer'):
+            for i, layer in enumerate(insulation.Layer):
+                if layer.InstallationType == 'continuous':
+                    layer.InstallationType._setText(f'continuous - {str(insulation.InsulationLocation)}')
+        insulation.remove(insulation.InsulationLocation)
 
     # Windows and Skylights
     for i, win in enumerate(root.xpath('//h:Window|//h:Skylight', **xpkw)):
