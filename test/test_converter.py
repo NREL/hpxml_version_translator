@@ -201,7 +201,7 @@ def test_enclosure_foundation_walls():
     assert fw2.Insulation.InsulationGrade == 1
     assert fw2.Insulation.InsulationCondition == 'poor'
     assert not hasattr(fw2.Insulation, 'Location')
-    assert fw2.Insulation.Layer[0].InstallationType == 'continuous'
+    assert fw2.Insulation.Layer[0].InstallationType == 'continuous - exterior'
     assert fw2.Insulation.Layer[0].InsulationMaterial.Batt == 'fiberglass'
     assert fw2.Insulation.Layer[0].NominalRValue == 8.9
     assert fw2.Insulation.Layer[0].Thickness == 1.5
@@ -251,3 +251,29 @@ def test_slabs():
     assert slab1.UnderSlabInsulation.Layer.NominalRValue == 0.0
     assert slab1.extension.CarpetFraction == 0.0
     assert slab1.extension.CarpetRValue == 0.0
+
+
+def test_walls():
+    root = convert_hpxml_and_parse(hpxml_dir / 'enclosure_walls.xml')
+
+    wall1 = root.Building.BuildingDetails.Enclosure.Walls.Wall[0]
+    # assert wall1.ExteriorAdjacentTo == 'ambient'  # TODO: will be addressed by Issue #3
+    assert wall1.InteriorAdjacentTo == 'living space'
+    assert hasattr(wall1.WallType, 'WoodStud')
+    assert wall1.Thickness == 0.5
+    assert wall1.Area == 750
+    assert wall1.Azimuth == 0
+    assert wall1.Siding == 'wood siding'
+    assert wall1.SolarAbsorptance == 0.6
+    assert wall1.Emittance == 0.7
+    assert wall1.Insulation.InsulationGrade == 1
+    assert wall1.Insulation.InsulationCondition == 'good'
+    assert not hasattr(wall1.Insulation, 'InsulationLocation')
+    assert wall1.Insulation.Layer[0].InstallationType == 'continuous - exterior'
+    assert wall1.Insulation.Layer[0].InsulationMaterial.Rigid == 'xps'
+    assert wall1.Insulation.Layer[0].NominalRValue == 5.5
+    assert wall1.Insulation.Layer[0].Thickness == 1.5
+    assert wall1.Insulation.Layer[1].InstallationType == 'cavity'
+    assert wall1.Insulation.Layer[1].InsulationMaterial.Batt == 'fiberglass'
+    assert wall1.Insulation.Layer[1].NominalRValue == 12.0
+    assert wall1.Insulation.Layer[1].Thickness == 3.5

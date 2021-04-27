@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<HPXML xmlns="http://hpxmlonline.com/2014/6" schemaVersion="2.3">
+    <XMLTransactionHeaderInformation>
+        <XMLType></XMLType>
+        <XMLGeneratedBy></XMLGeneratedBy>
+        <CreatedDateAndTime>2021-04-05T14:17:07.685077</CreatedDateAndTime>
+        <Transaction>create</Transaction>
+    </XMLTransactionHeaderInformation>
+    <SoftwareInfo/>
+    <Building>
+        <BuildingID id="bldg1"></BuildingID>
+        <ProjectStatus>
+            <EventType>audit</EventType>
+        </ProjectStatus>
+        <BuildingDetails>
+            <Enclosure>
+                <Walls>
+                    <Wall>
+                        <SystemIdentifier id='wall-1'/>
+                        <!--<ExteriorAdjacentTo>ambient</ExteriorAdjacentTo> will be addressed by Issue #3-->
+                        <InteriorAdjacentTo>living space</InteriorAdjacentTo>
+                        <WallType>
+                            <WoodStud/>
+                        </WallType>
+                        <Thickness>0.5</Thickness>
+                        <Area>750</Area>
+                        <Azimuth>0</Azimuth>
+                        <Siding>wood siding</Siding>
+                        <SolarAbsorptance>0.6</SolarAbsorptance>
+                        <Emittance>0.7</Emittance>
+                        <Insulation>
+                            <SystemIdentifier id='wall-insulation-1'/>
+                            <InsulationGrade>1</InsulationGrade>
+                            <InsulationCondition>good</InsulationCondition>
+                            <InsulationLocation>exterior</InsulationLocation>
+                            <Layer>
+                                <InstallationType>continuous</InstallationType>
+                                <InsulationMaterial>
+                                    <Rigid>xps</Rigid>
+                                </InsulationMaterial>
+                                <NominalRValue>5.5</NominalRValue>
+                                <Thickness>1.5</Thickness>
+                            </Layer>
+                            <Layer>
+                                <InstallationType>cavity</InstallationType>
+                                <InsulationMaterial>
+                                    <Batt>fiberglass</Batt>
+                                </InsulationMaterial>
+                                <NominalRValue>12.0</NominalRValue>
+                                <Thickness>3.5</Thickness>
+                            </Layer>
+                        </Insulation>
+                    </Wall>
+                </Walls>
+            </Enclosure>
+        </BuildingDetails>
+    </Building>
+</HPXML>
