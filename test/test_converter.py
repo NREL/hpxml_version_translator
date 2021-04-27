@@ -112,6 +112,7 @@ def test_windows():
     win2 = root.Building.BuildingDetails.Enclosure.Windows.Window[1]
     assert win2.GlassLayers == 'single-pane'
     assert win2.StormWindow.GlassType == 'low-e'
+    assert win2.ExteriorShading[0].Type == 'solar film'
 
     win3 = root.Building.BuildingDetails.Enclosure.Windows.Window[2]
     assert hasattr(win3, 'WindowFilm')

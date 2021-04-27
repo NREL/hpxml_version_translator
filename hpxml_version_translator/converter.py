@@ -4,7 +4,6 @@ import datetime as dt
 from lxml import etree, objectify
 import pathlib
 import re
-import itertools
 
 from hpxml_version_translator import exceptions as exc
 
@@ -265,9 +264,23 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
 
     # Windows and Skylights
     for i, win in enumerate(root.xpath('//h:Window|//h:Skylight', **xpkw)):
-        if hasattr(win, 'VisibleTransmittance'):  # insert VisibleTransmittance right after SHGC
-            if hasattr(win, 'SHGC'):
-                win.SHGC.addnext(win.VisibleTransmittance)
+        if hasattr(win, 'VisibleTransmittance'):
+            add_after(
+                win,
+                ['Area',
+                 'Quantity',
+                 'Azimuth',
+                 'Orientation',
+                 'FrameType',
+                 'GlassLayers',
+                 'GlassType',
+                 'GasFill',
+                 'Condition',
+                 'UFactor',
+                 'SHGC'],
+                E.VisibleTransmittance(float(win.VisibleTransmittance))
+            )
+            win.remove(win.VisibleTransmittance[1]) # remove VisibleTransmittance of HPXML v2
         if hasattr(win, 'ExteriorShading'):
             ext_shade = str(win.ExteriorShading)
             win.ExteriorShading.clear()
