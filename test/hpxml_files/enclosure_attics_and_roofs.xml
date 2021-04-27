@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<HPXML xmlns="http://hpxmlonline.com/2014/6" schemaVersion="2.3">
+    <XMLTransactionHeaderInformation>
+        <XMLType></XMLType>
+        <XMLGeneratedBy></XMLGeneratedBy>
+        <CreatedDateAndTime>2021-04-05T14:17:07.685077</CreatedDateAndTime>
+        <Transaction>create</Transaction>
+    </XMLTransactionHeaderInformation>
+    <SoftwareInfo/>
+    <Building>
+        <BuildingID id="bldg1"></BuildingID>
+        <ProjectStatus>
+            <EventType>audit</EventType>
+        </ProjectStatus>
+        <BuildingDetails>
+            <Enclosure>
+                <AtticAndRoof>
+                    <Roofs>
+                        <Roof>
+                            <SystemIdentifier id='roof-1'/>
+                            <RoofColor>dark</RoofColor>
+                            <SolarAbsorptance>0.7</SolarAbsorptance>
+                            <Emittance>0.9</Emittance>
+                            <RoofType>shingles</RoofType>
+                            <Pitch>6.0</Pitch>
+                            <RoofArea>1118.5</RoofArea>
+                        </Roof>
+                    </Roofs>
+                    <Attics>
+                        <Attic>
+                            <SystemIdentifier id='attic-1'/>
+                            <AttachedToRoof idref='roof-1'/>
+                            <ExteriorAdjacentTo>ambient</ExteriorAdjacentTo>
+                            <InteriorAdjacentTo>attic</InteriorAdjacentTo>
+                            <AtticKneeWall idref='wall-1'/>
+                            <AtticType>unvented attic</AtticType>
+                            <Area>1000</Area>
+                            <Rafters>
+                                <Size>2x4</Size>
+                                <Material>wood</Material>
+                            </Rafters>
+                        </Attic>
+                        <Attic>
+                            <SystemIdentifier id='attic-2'/>
+                            <AtticType>venting unknown attic</AtticType>
+                            <AtticFloorInsulation>
+                                <SystemIdentifier id='attic-floor-insulation'/>
+                                <InsulationGrade>1</InsulationGrade>
+                                <InsulationCondition>poor</InsulationCondition>
+                                <AssemblyEffectiveRValue>5.5</AssemblyEffectiveRValue>
+                            </AtticFloorInsulation>
+                            <AtticRoofInsulation>
+                                <SystemIdentifier id='attic-roof-insulation'/>
+                                <InsulationGrade>3</InsulationGrade>
+                                <InsulationCondition>good</InsulationCondition>
+                                <Layer>
+                                    <InstallationType>cavity</InstallationType>
+                                    <NominalRValue>7.5</NominalRValue>
+                                </Layer>
+                            </AtticRoofInsulation>
+                            <Area>1500.0</Area>
+                        </Attic>
+                        <Attic>
+                            <SystemIdentifier id='attic-3'/>
+                            <AtticType>vented attic</AtticType>
+                        </Attic>
+                        <Attic>
+                            <SystemIdentifier id='attic-4'/>
+                            <AtticType>flat roof</AtticType>
+                        </Attic>
+                        <Attic>
+                            <SystemIdentifier id='attic-5'/>
+                            <AtticType>cathedral ceiling</AtticType>
+                        </Attic>
+                        <Attic>
+                            <SystemIdentifier id='attic-6'/>
+                            <AtticType>cape cod</AtticType>
+                        </Attic>
+                        <Attic>
+                            <SystemIdentifier id='attic-7'/>
+                            <AtticType>other</AtticType>
+                        </Attic>
+                    </Attics>
+                </AtticAndRoof>
+                <Walls>
+                    <Wall>
+                        <SystemIdentifier id='wall-1'/>
+                    </Wall>
+                </Walls>
+            </Enclosure>
+        </BuildingDetails>
+    </Building>
+</HPXML>
