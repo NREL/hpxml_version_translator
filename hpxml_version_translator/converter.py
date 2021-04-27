@@ -241,6 +241,52 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
         for el in root.xpath(f'//h:ProjectDetails/h:{el_name}', **xpkw):
             el.getparent().remove(el)
 
+    # Addressing Inconsistencies
+    # https://github.com/hpxmlwg/hpxml/pull/124
+
+    for el in root.xpath('//h:HeatPump/h:AnnualCoolEfficiency', **xpkw):
+        el.tag = f'{{{hpxml3_ns}}}AnnualCoolingEfficiency'
+    for el in root.xpath('//h:HeatPump/h:AnnualHeatEfficiency', **xpkw):
+        el.tag = f'{{{hpxml3_ns}}}AnnualHeatingEfficiency'
+
+    # Replaces Measure/InstalledComponent with Measure/InstalledComponents/InstalledComponent
+    for i, ms in enumerate(root.xpath('h:Project/h:ProjectDetails/h:Measures/h:Measure', **xpkw)):
+        if not hasattr(ms, 'InstalledComponents'):
+            try:
+                sibling = getattr(ms, 'extension')
+            except AttributeError:
+                ms.append(E.InstalledComponents())
+            else:
+                sibling.addprevious(E.InstalledComponents())
+        ic = E.InstalledComponent(id=str(ms.InstalledComponent.attrib['id']))
+        ms.InstalledComponents.append(ic)
+        ms.remove(ms.InstalledComponent)
+
+    # Replaces WeatherStation/SystemIdentifiersInfo with WeatherStation/SystemIdentifier
+    for el in root.xpath('//h:WeatherStation/h:SystemIdentifiersInfo', **xpkw):
+        el.tag = f'{{{hpxml3_ns}}}SystemIdentifier'
+
+    # Renames "central air conditioning" to "central air conditioner" for CoolingSystemType
+    for el in root.xpath('//h:CoolingSystem/h:CoolingSystemType', **xpkw):
+        if el == 'central air conditioning':
+            el._setText('central air conditioner')
+
+    # Renames HeatPump/BackupAFUE to BackupAnnualHeatingEfficiency, accepts 0-1 instead of 1-100
+    for bkupafue in root.xpath(
+        'h:Building/h:BuildingDetails/h:Systems/h:HVAC/h:HVACPlant/h:HeatPump/h:BackupAFUE', **xpkw
+    ):
+        bkupafue.addnext(E.BackupAnnualHeatingEfficiency(
+            E.Units('AFUE'),
+            E.Value(f'{float(bkupafue.text) / 100}')
+        ))
+        bkupafue.getparent().remove(bkupafue)
+
+    # Clothes Dryer CEF
+    # https://github.com/hpxmlwg/hpxml/pull/145
+
+    for el in root.xpath('//h:ClothesDryer/h:EfficiencyFactor', **xpkw):
+        el.tag = f'{{{hpxml3_ns}}}EnergyFactor'
+
     # Enclosure
     # https://github.com/hpxmlwg/hpxml/pull/181
 
