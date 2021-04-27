@@ -594,8 +594,7 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
                 E.Type(ext_shade)
             ])
             if hasattr(win, 'InteriorShading'):  # insert ExteriorShading right before InteriorShading
-                int_shade_idx = win.index(win.InteriorShading)
-                win.insert(int_shade_idx, win.ExteriorShading)
+                win.InteriorShading.addprevious(win.ExteriorShading)
         if hasattr(win, 'Treatments'):
             if win.Treatments in ['shading', 'solar screen']:
                 treatment_shade = E.ExteriorShading(
