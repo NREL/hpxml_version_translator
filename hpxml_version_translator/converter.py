@@ -672,8 +672,21 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
                     storm_window
                 )
 
-    # TODO: Standardize Locations
+    # Standardize Locations
     # https://github.com/hpxmlwg/hpxml/pull/156
+
+    for el in root.iter():
+        try:
+            el._setText({
+                'ambient': 'outside',
+                'conditioned space': 'living space',
+                'unconditioned basement': 'basement - unconditioned',
+                'unconditioned attic': 'attic - unconditioned',
+                'unvented crawlspace': 'crawlspace - unvented',
+                'vented crawlspace': 'crawlspace - vented'
+            }[el])
+        except (KeyError, AttributeError):
+            pass
 
     # TODO: Lighting Fraction Improvements
     # https://github.com/hpxmlwg/hpxml/pull/165

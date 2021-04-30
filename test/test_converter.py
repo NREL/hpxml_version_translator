@@ -322,3 +322,46 @@ def test_windows():
     assert not hasattr(skylight1, 'Treatments')
     assert not hasattr(skylight1, 'InteriorShadingFactor')
     assert not hasattr(skylight1, 'MovableInsulationRValue')
+
+
+def test_locations():
+    root = convert_hpxml_and_parse(hpxml_dir / 'standard_locations.xml')
+
+    wall1 = root.Building.BuildingDetails.Enclosure.Walls.Wall[0]
+    assert wall1.ExteriorAdjacentTo == 'outside'
+    assert wall1.InteriorAdjacentTo == 'living space'
+
+    wall2 = root.Building.BuildingDetails.Enclosure.Walls.Wall[1]
+    assert wall2.ExteriorAdjacentTo == 'ground'
+    assert wall2.InteriorAdjacentTo == 'basement - unconditioned'
+
+    wall3 = root.Building.BuildingDetails.Enclosure.Walls.Wall[2]
+    assert wall3.ExteriorAdjacentTo == 'other housing unit'
+    assert wall3.InteriorAdjacentTo == 'crawlspace'
+
+    hvac_dist = root.Building.BuildingDetails.Systems.HVAC.HVACDistribution[0]
+    assert hvac_dist.DistributionSystemType.AirDistribution.AirDistributionType == 'regular velocity'
+
+    duct1 = hvac_dist.DistributionSystemType.AirDistribution.Ducts[0]
+    assert duct1.DuctType == 'supply'
+    assert duct1.DuctLocation == 'attic - unconditioned'
+
+    duct2 = hvac_dist.DistributionSystemType.AirDistribution.Ducts[1]
+    assert duct2.DuctType == 'supply'
+    assert duct2.DuctLocation == 'basement - unconditioned'
+
+    duct3 = hvac_dist.DistributionSystemType.AirDistribution.Ducts[2]
+    assert duct3.DuctType == 'supply'
+    assert duct3.DuctLocation == 'living space'
+
+    duct4 = hvac_dist.DistributionSystemType.AirDistribution.Ducts[3]
+    assert duct4.DuctType == 'return'
+    assert duct4.DuctLocation == 'crawlspace - unvented'
+
+    duct5 = hvac_dist.DistributionSystemType.AirDistribution.Ducts[4]
+    assert duct5.DuctType == 'return'
+    assert duct5.DuctLocation == 'crawlspace - vented'
+
+    duct6 = hvac_dist.DistributionSystemType.AirDistribution.Ducts[5]
+    assert duct6.DuctType == 'return'
+    assert duct6.DuctLocation == 'unconditioned space'
