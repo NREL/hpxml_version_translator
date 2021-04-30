@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<HPXML xmlns="http://hpxmlonline.com/2014/6" schemaVersion="2.3">
+    <XMLTransactionHeaderInformation>
+        <XMLType></XMLType>
+        <XMLGeneratedBy></XMLGeneratedBy>
+        <CreatedDateAndTime>2021-04-05T14:17:07.685077</CreatedDateAndTime>
+        <Transaction>create</Transaction>
+    </XMLTransactionHeaderInformation>
+    <SoftwareInfo/>
+    <Building>
+        <BuildingID id="bldg1"></BuildingID>
+        <ProjectStatus>
+            <EventType>audit</EventType>
+        </ProjectStatus>
+        <BuildingDetails>
+            <Lighting>
+                <LightingGroup>
+                    <SystemIdentifier id="IntLightGroup1"/>
+                    <Location>interior</Location>
+                    <NumberofUnits>32</NumberofUnits>
+                    <LightingType>
+                        <Incandescent/>
+                    </LightingType>
+                    <AverageWattage>60</AverageWattage>
+                    <AverageHoursPerDay>2.3</AverageHoursPerDay>
+                </LightingGroup>
+                <LightingGroup>
+                    <SystemIdentifier id="IntLightGroup2"/>
+                    <Location>interior</Location>
+                    <NumberofUnits>4</NumberofUnits>
+                    <LightingType>
+                        <CompactFluorescent/>
+                    </LightingType>
+                    <AverageWattage>15</AverageWattage>
+                    <ThirdPartyCertification>Energy Star</ThirdPartyCertification>
+                    <AverageHoursPerDay>2.3</AverageHoursPerDay>
+                </LightingGroup>
+                <LightingGroup>
+                    <SystemIdentifier id="IntLightGroup3"/>
+                    <Location>interior</Location>
+                    <NumberofUnits>4</NumberofUnits>
+                    <LightingType>
+                        <LightEmittingDiode/>
+                    </LightingType>
+                    <AverageWattage>5</AverageWattage>
+                    <ThirdPartyCertification>Energy Star</ThirdPartyCertification>
+                    <AverageHoursPerDay>2.3</AverageHoursPerDay>
+                </LightingGroup>
+                <LightingGroup>
+                    <SystemIdentifier id="ExtLightGroup1"/>
+                    <Location>exterior</Location>
+                    <NumberofUnits>6</NumberofUnits>
+                    <LightingType>
+                        <Incandescent/>
+                    </LightingType>
+                    <AverageWattage>20</AverageWattage>
+                    <AverageHoursPerDay>8.0</AverageHoursPerDay>
+                </LightingGroup>
+                <LightingGroup>
+                    <SystemIdentifier id="ExtLightGroup2"/>
+                    <Location>exterior</Location>
+                    <NumberofUnits>8</NumberofUnits>
+                    <LightingType>
+                        <CompactFluorescent/>
+                    </LightingType>
+                    <AverageWattage>30</AverageWattage>
+                    <AverageHoursPerDay>8.0</AverageHoursPerDay>
+                </LightingGroup>
+                <LightingGroup>
+                    <SystemIdentifier id="CommonAreaLightGroup1"/>
+                    <Location>common area</Location>
+                    <NumberofUnits>10</NumberofUnits>
+                    <LightingType>
+                        <LightEmittingDiode/>
+                    </LightingType>
+                    <AverageWattage>25</AverageWattage>
+                    <AverageHoursPerDay>1.2</AverageHoursPerDay>
+                </LightingGroup>
+            </Lighting>
+        </BuildingDetails>
+    </Building>
+</HPXML>
