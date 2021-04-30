@@ -257,7 +257,7 @@ def test_walls():
     root = convert_hpxml_and_parse(hpxml_dir / 'enclosure_walls.xml')
 
     wall1 = root.Building.BuildingDetails.Enclosure.Walls.Wall[0]
-    # assert wall1.ExteriorAdjacentTo == 'ambient'  # TODO: will be addressed by Issue #3
+    assert wall1.ExteriorAdjacentTo == 'outside'
     assert wall1.InteriorAdjacentTo == 'living space'
     assert hasattr(wall1.WallType, 'WoodStud')
     assert wall1.Thickness == 0.5
@@ -324,7 +324,7 @@ def test_windows():
     assert not hasattr(skylight1, 'MovableInsulationRValue')
 
 
-def test_locations():
+def test_standard_locations():
     root = convert_hpxml_and_parse(hpxml_dir / 'standard_locations.xml')
 
     wall1 = root.Building.BuildingDetails.Enclosure.Walls.Wall[0]

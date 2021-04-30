@@ -17,7 +17,7 @@
                 <Walls>
                     <Wall>
                         <SystemIdentifier id='wall-1'/>
-                        <!--<ExteriorAdjacentTo>ambient</ExteriorAdjacentTo> will be addressed by Issue #3-->
+                        <ExteriorAdjacentTo>ambient</ExteriorAdjacentTo>
                         <InteriorAdjacentTo>living space</InteriorAdjacentTo>
                         <WallType>
                             <WoodStud/>
