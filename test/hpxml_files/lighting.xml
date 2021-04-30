@@ -76,6 +76,11 @@
                     <AverageWattage>25</AverageWattage>
                     <AverageHoursPerDay>1.2</AverageHoursPerDay>
                 </LightingGroup>
+                <LightingFractions>
+                    <FractionIncandescent>0.59</FractionIncandescent>
+                    <FractionCFL>0.19</FractionCFL>
+                    <FractionLED>0.22</FractionLED>
+                </LightingFractions>
             </Lighting>
         </BuildingDetails>
     </Building>

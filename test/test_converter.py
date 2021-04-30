@@ -327,17 +327,18 @@ def test_windows():
 def test_lighting():
     root = convert_hpxml_and_parse(hpxml_dir / 'lighting.xml')
 
-    ltg_grp1 = root.Building.BuildingDetails.Lighting.LightingGroup[0]
-    ltg = ltg_grp1.getparent()
+    ltg = root.Building.BuildingDetails.Lighting
+    assert not hasattr(ltg, 'LightingFractions')
+
+    ltg_grp1 = ltg.LightingGroup[0]
     assert ltg_grp1.Location == 'interior'
     assert ltg_grp1.NumberofUnits == 32
     assert abs(ltg_grp1.FractionofUnitsInLocation - 0.8) < 0.001
     assert hasattr(ltg_grp1.LightingType, 'Incandescent')
     assert ltg_grp1.AverageWattage == 60.0
     assert ltg_grp1.AverageHoursPerDay == 2.3
-    assert not hasattr(ltg, 'LightingFractions')
-
-    ltg_grp2 = root.Building.BuildingDetails.Lighting.LightingGroup[1]
+    
+    ltg_grp2 = ltg.LightingGroup[1]
     ltg = ltg_grp2.getparent()
     assert ltg_grp2.Location == 'interior'
     assert ltg_grp2.NumberofUnits == 4
@@ -346,7 +347,7 @@ def test_lighting():
     assert ltg_grp2.AverageWattage == 15.0
     assert ltg_grp2.AverageHoursPerDay == 2.3
 
-    ltg_grp3 = root.Building.BuildingDetails.Lighting.LightingGroup[2]
+    ltg_grp3 = ltg.LightingGroup[2]
     ltg = ltg_grp3.getparent()
     assert ltg_grp3.Location == 'interior'
     assert ltg_grp3.NumberofUnits == 4
@@ -355,7 +356,7 @@ def test_lighting():
     assert ltg_grp3.AverageWattage == 5.0
     assert ltg_grp3.AverageHoursPerDay == 2.3
 
-    ltg_grp4 = root.Building.BuildingDetails.Lighting.LightingGroup[3]
+    ltg_grp4 = ltg.LightingGroup[3]
     ltg = ltg_grp4.getparent()
     assert ltg_grp4.Location == 'exterior'
     assert ltg_grp4.NumberofUnits == 6
@@ -364,7 +365,7 @@ def test_lighting():
     assert ltg_grp4.AverageWattage == 20.0
     assert ltg_grp4.AverageHoursPerDay == 8.0
 
-    ltg_grp5 = root.Building.BuildingDetails.Lighting.LightingGroup[4]
+    ltg_grp5 = ltg.LightingGroup[4]
     ltg = ltg_grp5.getparent()
     assert ltg_grp5.Location == 'exterior'
     assert ltg_grp5.NumberofUnits == 8
@@ -373,7 +374,7 @@ def test_lighting():
     assert ltg_grp5.AverageWattage == 30.0
     assert ltg_grp5.AverageHoursPerDay == 8.0
 
-    ltg_grp6 = root.Building.BuildingDetails.Lighting.LightingGroup[5]
+    ltg_grp6 = ltg.LightingGroup[5]
     ltg = ltg_grp6.getparent()
     assert ltg_grp6.Location == 'common area'
     assert ltg_grp6.NumberofUnits == 10
