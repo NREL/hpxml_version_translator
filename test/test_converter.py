@@ -337,7 +337,7 @@ def test_lighting():
     assert hasattr(ltg_grp1.LightingType, 'Incandescent')
     assert ltg_grp1.AverageWattage == 60.0
     assert ltg_grp1.AverageHoursPerDay == 2.3
-    
+
     ltg_grp2 = ltg.LightingGroup[1]
     ltg = ltg_grp2.getparent()
     assert ltg_grp2.Location == 'interior'
