@@ -678,23 +678,25 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
     # Lighting Fraction Improvements
     # https://github.com/hpxmlwg/hpxml/pull/165
 
-    for i, ltgfrac in enumerate(root.Building.BuildingDetails.Lighting.LightingFractions.getchildren()):
-        ltg = ltgfrac.getparent().getparent()
-        ltggroup = E.LightingGroup(
-            E.SystemIdentifier(id=f'lighting-fraction-{i}'),
-            E.FractionofUnitsInLocation(ltgfrac.text),
-            E.LightingType()
-        )
-        if ltgfrac.tag == f'{{{hpxml3_ns}}}FractionIncandescent':
-            ltggroup.LightingType.append(E.Incandescent())
-        elif ltgfrac.tag == f'{{{hpxml3_ns}}}FractionCFL':
-            ltggroup.LightingType.append(E.CompactFluorescent())
-        elif ltgfrac.tag == f'{{{hpxml3_ns}}}FractionLFL':
-            ltggroup.LightingType.append(E.FluorescentTube())
-        elif ltgfrac.tag == f'{{{hpxml3_ns}}}FractionLED':
-            ltggroup.LightingType.append(E.LightEmittingDiode())
-        ltg.append(ltggroup)
-    root.Building.BuildingDetails.Lighting.remove(root.Building.BuildingDetails.Lighting.LightingFractions)
+    if root.xpath('h:Building/h:BuildingDetails/h:Lighting/h:LightingFractions', **xpkw):
+        ltgfracs = root.xpath('h:Building/h:BuildingDetails/h:Lighting/h:LightingFractions', **xpkw)[0]
+        ltg = ltgfracs.getparent()
+        for j, ltgfrac in enumerate(ltgfracs.getchildren()):
+            ltggroup = E.LightingGroup(
+                E.SystemIdentifier(id=f'lighting-fraction-{j}'),
+                E.FractionofUnitsInLocation(ltgfrac.text),
+                E.LightingType()
+            )
+            if ltgfrac.tag == f'{{{hpxml3_ns}}}FractionIncandescent':
+                ltggroup.LightingType.append(E.Incandescent())
+            elif ltgfrac.tag == f'{{{hpxml3_ns}}}FractionCFL':
+                ltggroup.LightingType.append(E.CompactFluorescent())
+            elif ltgfrac.tag == f'{{{hpxml3_ns}}}FractionLFL':
+                ltggroup.LightingType.append(E.FluorescentTube())
+            elif ltgfrac.tag == f'{{{hpxml3_ns}}}FractionLED':
+                ltggroup.LightingType.append(E.LightEmittingDiode())
+            ltg.append(ltggroup)
+        ltg.remove(ltgfracs)
 
     # TODO: Deprecated items
     # https://github.com/hpxmlwg/hpxml/pull/167
