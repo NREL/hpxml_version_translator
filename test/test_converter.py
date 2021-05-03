@@ -331,54 +331,17 @@ def test_lighting():
     assert not hasattr(ltg, 'LightingFractions')
 
     ltg_grp1 = ltg.LightingGroup[0]
-    assert ltg_grp1.Location == 'interior'
-    assert ltg_grp1.NumberofUnits == 32
-    assert abs(ltg_grp1.FractionofUnitsInLocation - 0.8) < 0.001
+    assert ltg_grp1.FractionofUnitsInLocation == 0.5
     assert hasattr(ltg_grp1.LightingType, 'Incandescent')
-    assert ltg_grp1.AverageWattage == 60.0
-    assert ltg_grp1.AverageHoursPerDay == 2.3
 
     ltg_grp2 = ltg.LightingGroup[1]
-    ltg = ltg_grp2.getparent()
-    assert ltg_grp2.Location == 'interior'
-    assert ltg_grp2.NumberofUnits == 4
-    assert abs(ltg_grp2.FractionofUnitsInLocation - 0.1) < 0.001
+    assert ltg_grp2.FractionofUnitsInLocation == 0.1
     assert hasattr(ltg_grp2.LightingType, 'CompactFluorescent')
-    assert ltg_grp2.AverageWattage == 15.0
-    assert ltg_grp2.AverageHoursPerDay == 2.3
 
     ltg_grp3 = ltg.LightingGroup[2]
-    ltg = ltg_grp3.getparent()
-    assert ltg_grp3.Location == 'interior'
-    assert ltg_grp3.NumberofUnits == 4
-    assert abs(ltg_grp3.FractionofUnitsInLocation - 0.1) < 0.001
-    assert hasattr(ltg_grp3.LightingType, 'LightEmittingDiode')
-    assert ltg_grp3.AverageWattage == 5.0
-    assert ltg_grp3.AverageHoursPerDay == 2.3
+    assert ltg_grp3.FractionofUnitsInLocation == 0.1
+    assert hasattr(ltg_grp3.LightingType, 'FluorescentTube')
 
     ltg_grp4 = ltg.LightingGroup[3]
-    ltg = ltg_grp4.getparent()
-    assert ltg_grp4.Location == 'exterior'
-    assert ltg_grp4.NumberofUnits == 6
-    assert abs(ltg_grp4.FractionofUnitsInLocation - 0.429) < 0.001
-    assert hasattr(ltg_grp4.LightingType, 'Incandescent')
-    assert ltg_grp4.AverageWattage == 20.0
-    assert ltg_grp4.AverageHoursPerDay == 8.0
-
-    ltg_grp5 = ltg.LightingGroup[4]
-    ltg = ltg_grp5.getparent()
-    assert ltg_grp5.Location == 'exterior'
-    assert ltg_grp5.NumberofUnits == 8
-    assert abs(ltg_grp5.FractionofUnitsInLocation - 0.571) < 0.001
-    assert hasattr(ltg_grp5.LightingType, 'CompactFluorescent')
-    assert ltg_grp5.AverageWattage == 30.0
-    assert ltg_grp5.AverageHoursPerDay == 8.0
-
-    ltg_grp6 = ltg.LightingGroup[5]
-    ltg = ltg_grp6.getparent()
-    assert ltg_grp6.Location == 'common area'
-    assert ltg_grp6.NumberofUnits == 10
-    assert abs(ltg_grp6.FractionofUnitsInLocation - 1.0) < 0.001
-    assert hasattr(ltg_grp6.LightingType, 'LightEmittingDiode')
-    assert ltg_grp6.AverageWattage == 25.0
-    assert ltg_grp6.AverageHoursPerDay == 1.2
+    assert ltg_grp4.FractionofUnitsInLocation == 0.3
+    assert hasattr(ltg_grp4.LightingType, 'LightEmittingDiode')

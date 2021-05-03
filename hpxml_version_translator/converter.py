@@ -678,16 +678,23 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
     # Lighting Fraction Improvements
     # https://github.com/hpxmlwg/hpxml/pull/165
 
-    total_num_units_in_location = defaultdict(int)
-    for i, ltggrp in enumerate(root.xpath('//h:Lighting/h:LightingGroup', **xpkw)):
-        total_num_units_in_location[str(ltggrp.Location)] += ltggrp.NumberofUnits
-
-    for i, ltggrp in enumerate(root.xpath('//h:Lighting/h:LightingGroup', **xpkw)):
-        ltg = ltggrp.getparent()
-        frac_of_units = round(ltggrp.NumberofUnits / total_num_units_in_location[str(ltggrp.Location)], 3)
-        ltggrp.NumberofUnits.addnext(E.FractionofUnitsInLocation(frac_of_units))
-        if hasattr(ltg, 'LightingFractions'):
-            ltg.remove(ltg.LightingFractions)
+    for i, ltgfrac in enumerate(root.Building.BuildingDetails.Lighting.LightingFractions.getchildren()):
+        ltg = ltgfrac.getparent().getparent()
+        ltggroup = E.LightingGroup(
+            E.SystemIdentifier(id=f'lighting-fraction-{i}'),
+            E.FractionofUnitsInLocation(ltgfrac.text),
+            E.LightingType()
+        )
+        if ltgfrac.tag == f'{{{hpxml3_ns}}}FractionIncandescent':
+            ltggroup.LightingType.append(E.Incandescent())
+        elif ltgfrac.tag == f'{{{hpxml3_ns}}}FractionCFL':
+            ltggroup.LightingType.append(E.CompactFluorescent())
+        elif ltgfrac.tag == f'{{{hpxml3_ns}}}FractionLFL':
+            ltggroup.LightingType.append(E.FluorescentTube())
+        elif ltgfrac.tag == f'{{{hpxml3_ns}}}FractionLED':
+            ltggroup.LightingType.append(E.LightEmittingDiode())
+        ltg.append(ltggroup)
+    root.Building.BuildingDetails.Lighting.remove(root.Building.BuildingDetails.Lighting.LightingFractions)
 
     # TODO: Deprecated items
     # https://github.com/hpxmlwg/hpxml/pull/167

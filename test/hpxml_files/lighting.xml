@@ -14,72 +14,11 @@
         </ProjectStatus>
         <BuildingDetails>
             <Lighting>
-                <LightingGroup>
-                    <SystemIdentifier id="IntLightGroup1"/>
-                    <Location>interior</Location>
-                    <NumberofUnits>32</NumberofUnits>
-                    <LightingType>
-                        <Incandescent/>
-                    </LightingType>
-                    <AverageWattage>60</AverageWattage>
-                    <AverageHoursPerDay>2.3</AverageHoursPerDay>
-                </LightingGroup>
-                <LightingGroup>
-                    <SystemIdentifier id="IntLightGroup2"/>
-                    <Location>interior</Location>
-                    <NumberofUnits>4</NumberofUnits>
-                    <LightingType>
-                        <CompactFluorescent/>
-                    </LightingType>
-                    <AverageWattage>15</AverageWattage>
-                    <ThirdPartyCertification>Energy Star</ThirdPartyCertification>
-                    <AverageHoursPerDay>2.3</AverageHoursPerDay>
-                </LightingGroup>
-                <LightingGroup>
-                    <SystemIdentifier id="IntLightGroup3"/>
-                    <Location>interior</Location>
-                    <NumberofUnits>4</NumberofUnits>
-                    <LightingType>
-                        <LightEmittingDiode/>
-                    </LightingType>
-                    <AverageWattage>5</AverageWattage>
-                    <ThirdPartyCertification>Energy Star</ThirdPartyCertification>
-                    <AverageHoursPerDay>2.3</AverageHoursPerDay>
-                </LightingGroup>
-                <LightingGroup>
-                    <SystemIdentifier id="ExtLightGroup1"/>
-                    <Location>exterior</Location>
-                    <NumberofUnits>6</NumberofUnits>
-                    <LightingType>
-                        <Incandescent/>
-                    </LightingType>
-                    <AverageWattage>20</AverageWattage>
-                    <AverageHoursPerDay>8.0</AverageHoursPerDay>
-                </LightingGroup>
-                <LightingGroup>
-                    <SystemIdentifier id="ExtLightGroup2"/>
-                    <Location>exterior</Location>
-                    <NumberofUnits>8</NumberofUnits>
-                    <LightingType>
-                        <CompactFluorescent/>
-                    </LightingType>
-                    <AverageWattage>30</AverageWattage>
-                    <AverageHoursPerDay>8.0</AverageHoursPerDay>
-                </LightingGroup>
-                <LightingGroup>
-                    <SystemIdentifier id="CommonAreaLightGroup1"/>
-                    <Location>common area</Location>
-                    <NumberofUnits>10</NumberofUnits>
-                    <LightingType>
-                        <LightEmittingDiode/>
-                    </LightingType>
-                    <AverageWattage>25</AverageWattage>
-                    <AverageHoursPerDay>1.2</AverageHoursPerDay>
-                </LightingGroup>
                 <LightingFractions>
-                    <FractionIncandescent>0.59</FractionIncandescent>
-                    <FractionCFL>0.19</FractionCFL>
-                    <FractionLED>0.22</FractionLED>
+                    <FractionIncandescent>0.5</FractionIncandescent>
+                    <FractionCFL>0.1</FractionCFL>
+                    <FractionLFL>0.1</FractionLFL>
+                    <FractionLED>0.3</FractionLED>
                 </LightingFractions>
             </Lighting>
         </BuildingDetails>
