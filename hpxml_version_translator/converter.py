@@ -678,8 +678,7 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
     # Lighting Fraction Improvements
     # https://github.com/hpxmlwg/hpxml/pull/165
 
-    if root.xpath('h:Building/h:BuildingDetails/h:Lighting/h:LightingFractions', **xpkw):
-        ltgfracs = root.xpath('h:Building/h:BuildingDetails/h:Lighting/h:LightingFractions', **xpkw)[0]
+    for ltgfracs in root.xpath('h:Building/h:BuildingDetails/h:Lighting/h:LightingFractions', **xpkw):
         ltg = ltgfracs.getparent()
         for j, ltgfrac in enumerate(ltgfracs.getchildren()):
             ltggroup = E.LightingGroup(
