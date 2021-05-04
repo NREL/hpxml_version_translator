@@ -365,3 +365,6 @@ def test_standard_locations():
     duct6 = hvac_dist.DistributionSystemType.AirDistribution.Ducts[5]
     assert duct6.DuctType == 'return'
     assert duct6.DuctLocation == 'unconditioned space'
+
+    # Make sure we're not unintentionally changing elements that shouldn't be
+    assert root.XMLTransactionHeaderInformation.XMLGeneratedBy == 'unconditioned basement'
