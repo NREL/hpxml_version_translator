@@ -314,7 +314,7 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
                 E.FoundationWalls()
             )
         enclosure.FoundationWalls.append(deepcopy(fw))
-        this_fw = enclosure.FoundationWalls.FoundationWall[i]
+        this_fw = enclosure.FoundationWalls.FoundationWall[-1]
 
         try:
             boundary_v3 = {'other housing unit': E.ExteriorAdjacentTo(str(fw.AdjacentTo)),
@@ -343,6 +343,25 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
         foundation.remove(fw)
 
     # Attics
+    for i, bldg_const in enumerate(root.xpath(
+        'h:Building/h:BuildingDetails/h:BuildingSummary/h:BuildingConstruction', **xpkw
+    )):
+        if hasattr(bldg_const, 'AtticType'):
+            if bldg_const.AtticType == 'vented attic':
+                bldg_const.AtticType = E.AtticType(E.Attic(E.Vented(True)))
+            elif bldg_const.AtticType == 'unvented attic':
+                bldg_const.AtticType = E.AtticType(E.Attic(E.Vented(False)))
+            elif bldg_const.AtticType == 'flat roof':
+                bldg_const.AtticType = E.AtticType(E.FlatRoof())
+            elif bldg_const.AtticType == 'cathedral ceiling':
+                bldg_const.AtticType = E.AtticType(E.CathedralCeiling())
+            elif bldg_const.AtticType == 'cape cod':
+                bldg_const.AtticType = E.AtticType(E.Attic(E.CapeCod(True)))
+            elif bldg_const.AtticType == 'other':
+                bldg_const.AtticType = E.AtticType(E.Other())
+            elif bldg_const.AtticType == 'venting unknown attic':
+                bldg_const.AtticType = E.AtticType(E.Attic(E.extension(E.Vented('unknown'))))
+
     for i, attic in enumerate(root.xpath(
         'h:Building/h:BuildingDetails/h:Enclosure/h:AtticAndRoof/h:Attics/h:Attic', **xpkw
     )):
@@ -401,7 +420,16 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
         if hasattr(this_attic, 'AtticFloorInsulation'):
             attic_floor_insulation = deepcopy(this_attic.AtticFloorInsulation)
             attic_floor_insulation.tag = f'{{{hpxml3_ns}}}Insulation'
-            enclosure.append(
+            add_after(
+                enclosure,
+                ['AirInfiltration',
+                 'Attics',
+                 'Foundations',
+                 'Garages',
+                 'Roofs',
+                 'RimJoists',
+                 'Walls',
+                 'FoundationWalls'],
                 E.FrameFloors(
                     E.FrameFloor(
                         E.SystemIdentifier(id='attic_floor'),
@@ -473,21 +501,22 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
                 E.Roofs()
             )
         enclosure.Roofs.append(deepcopy(roof))
+        this_roof = enclosure.Roofs.Roof[-1]
 
         if hasattr(roof, 'RoofArea'):
             add_after(
-                enclosure.Roofs.Roof,
+                this_roof,
                 ['SystemIdentifier',
                  'ExternalResource',
                  'AttachedToSpace',
                  'InteriorAdjacentTo'],
                 E.Area(float(roof.RoofArea))
             )
-            enclosure.Roofs.Roof.remove(enclosure.Roofs.Roof.RoofArea)
+            this_roof.remove(this_roof.RoofArea)
 
         if hasattr(roof, 'RoofType'):
             add_after(
-                enclosure.Roofs.Roof,
+                this_roof,
                 ['SystemIdentifier',
                  'ExternalResource',
                  'AttachedToSpace',
@@ -497,13 +526,14 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
                  'Azimuth'],
                 E.RoofType(str(roof.RoofType))
             )
-            enclosure.Roofs.Roof.remove(enclosure.Roofs.Roof.RoofType[1])  # remove the RoofType of HPXML v2
+            this_roof.remove(this_roof.RoofType[1])  # remove the RoofType of HPXML v2
 
     # remove AtticAndRoof after rearranging all attics and roofs
-    try:
-        root.Building.BuildingDetails.Enclosure.remove(root.Building.BuildingDetails.Enclosure.AtticAndRoof)
-    except AttributeError:
-        pass
+    for i, enclosure in enumerate(root.xpath('h:Building/h:BuildingDetails/h:Enclosure', **xpkw)):
+        try:
+            enclosure.remove(enclosure.AtticAndRoof)
+        except AttributeError:
+            pass
 
     # Frame Floors
     for i, ff in enumerate(root.xpath(
@@ -594,6 +624,8 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
             ])
             if hasattr(win, 'InteriorShading'):  # insert ExteriorShading right before InteriorShading
                 win.InteriorShading.addprevious(win.ExteriorShading)
+            elif hasattr(win, 'InteriorShadingFactor'):
+                win.InteriorShadingFactor.addprevious(win.ExteriorShading)
         if hasattr(win, 'Treatments'):
             if win.Treatments in ['shading', 'solar screen']:
                 treatment_shade = E.ExteriorShading(
@@ -625,14 +657,19 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
                 )
             win.remove(win.Treatments)
         if hasattr(win, 'InteriorShading'):
-            int_shading = str(win.InteriorShading)
-            int_shading_factor = float(win.InteriorShadingFactor)
+            cache_interior_shading_type = str(win.InteriorShading)
             win.InteriorShading.clear()
+            win.InteriorShading.append(E.SystemIdentifier(id=f'interior-shading-{i}'))
+            win.InteriorShading.append(E.Type(cache_interior_shading_type))
+        if hasattr(win, 'InteriorShadingFactor'):
+            # handles a case where `InteriorShadingFactor` is specified without `InteriorShading`
+            if not hasattr(win, 'InteriorShading'):
+                win.InteriorShadingFactor.addnext(E.InteriorShading(
+                    E.SystemIdentifier(id=f'interior-shading-{i}')
+                ))
             win.InteriorShading.extend([
-                E.SystemIdentifier(id=f'interior-shading-{i}'),
-                E.Type(int_shading),
-                E.SummerShadingCoefficient(int_shading_factor),
-                E.WinterShadingCoefficient(int_shading_factor)
+                E.SummerShadingCoefficient(float(win.InteriorShadingFactor)),
+                E.WinterShadingCoefficient(float(win.InteriorShadingFactor))
             ])
             win.remove(win.InteriorShadingFactor)
         if hasattr(win, 'MovableInsulationRValue'):
