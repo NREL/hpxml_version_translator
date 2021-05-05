@@ -294,9 +294,9 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
     # Enclosure
     # https://github.com/hpxmlwg/hpxml/pull/181
 
-    for i, fw in enumerate(root.xpath(
+    for fw in root.xpath(
         'h:Building/h:BuildingDetails/h:Enclosure/h:Foundations/h:Foundation/h:FoundationWall', **xpkw
-    )):
+    ):
         enclosure = fw.getparent().getparent().getparent()
         foundation = fw.getparent()
 
@@ -343,9 +343,7 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
         foundation.remove(fw)
 
     # Attics
-    for i, bldg_const in enumerate(root.xpath(
-        'h:Building/h:BuildingDetails/h:BuildingSummary/h:BuildingConstruction', **xpkw
-    )):
+    for bldg_const in root.xpath('h:Building/h:BuildingDetails/h:BuildingSummary/h:BuildingConstruction', **xpkw):
         if hasattr(bldg_const, 'AtticType'):
             if bldg_const.AtticType == 'vented attic':
                 bldg_const.AtticType = E.AtticType(E.Attic(E.Vented(True)))
@@ -362,9 +360,7 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
             elif bldg_const.AtticType == 'venting unknown attic':
                 bldg_const.AtticType = E.AtticType(E.Attic(E.extension(E.Vented('unknown'))))
 
-    for i, attic in enumerate(root.xpath(
-        'h:Building/h:BuildingDetails/h:Enclosure/h:AtticAndRoof/h:Attics/h:Attic', **xpkw
-    )):
+    for attic in root.xpath('h:Building/h:BuildingDetails/h:Enclosure/h:AtticAndRoof/h:Attics/h:Attic', **xpkw):
         enclosure = attic.getparent().getparent().getparent()
         if not hasattr(enclosure, 'Attics'):
             add_after(
@@ -445,9 +441,7 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
         if hasattr(this_attic, 'AtticRoofInsulation'):
             roof_insulation = deepcopy(this_attic.AtticRoofInsulation)
             roof_insulation.tag = f'{{{hpxml3_ns}}}Insulation'
-            for i, rf in enumerate(root.xpath(
-                'h:Building/h:BuildingDetails/h:Enclosure/h:AtticAndRoof/h:Roofs/h:Roof', **xpkw
-            )):
+            for rf in root.xpath('h:Building/h:BuildingDetails/h:Enclosure/h:AtticAndRoof/h:Roofs/h:Roof', **xpkw):
                 add_after(
                     rf,
                     ['Pitch',
@@ -460,9 +454,7 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
         # FIXME: move Rafters to v2 Roofs and these roofs will be converted into hpxml v3 later
         if hasattr(this_attic, 'Rafters'):
             rafters = deepcopy(this_attic.Rafters)
-            for i, rf in enumerate(root.xpath(
-                'h:Building/h:BuildingDetails/h:Enclosure/h:AtticAndRoof/h:Roofs/h:Roof', **xpkw
-            )):
+            for rf in root.xpath('h:Building/h:BuildingDetails/h:Enclosure/h:AtticAndRoof/h:Roofs/h:Roof', **xpkw):
                 add_after(
                     rf,
                     ['RoofColor',
@@ -487,9 +479,7 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
         enclosure.Attics.append(this_attic)
 
     # Roofs
-    for i, roof in enumerate(root.xpath(
-        'h:Building/h:BuildingDetails/h:Enclosure/h:AtticAndRoof/h:Roofs/h:Roof', **xpkw
-    )):
+    for roof in root.xpath('h:Building/h:BuildingDetails/h:Enclosure/h:AtticAndRoof/h:Roofs/h:Roof', **xpkw):
         enclosure = roof.getparent().getparent().getparent()
         if not hasattr(enclosure, 'Roofs'):
             add_after(
@@ -529,16 +519,14 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
             this_roof.remove(this_roof.RoofType[1])  # remove the RoofType of HPXML v2
 
     # remove AtticAndRoof after rearranging all attics and roofs
-    for i, enclosure in enumerate(root.xpath('h:Building/h:BuildingDetails/h:Enclosure', **xpkw)):
+    for enclosure in root.xpath('h:Building/h:BuildingDetails/h:Enclosure', **xpkw):
         try:
             enclosure.remove(enclosure.AtticAndRoof)
         except AttributeError:
             pass
 
     # Frame Floors
-    for i, ff in enumerate(root.xpath(
-        'h:Building/h:BuildingDetails/h:Enclosure/h:Foundations/h:Foundation/h:FrameFloor', **xpkw
-    )):
+    for ff in root.xpath('h:Building/h:BuildingDetails/h:Enclosure/h:Foundations/h:Foundation/h:FrameFloor', **xpkw):
         enclosure = ff.getparent().getparent().getparent()
         foundation = ff.getparent()
 
@@ -561,9 +549,7 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
         foundation.remove(ff)
 
     # Slabs
-    for i, slab in enumerate(root.xpath(
-        'h:Building/h:BuildingDetails/h:Enclosure/h:Foundations/h:Foundation/h:Slab', **xpkw
-    )):
+    for slab in root.xpath('h:Building/h:BuildingDetails/h:Enclosure/h:Foundations/h:Foundation/h:Slab', **xpkw):
         enclosure = slab.getparent().getparent().getparent()
         foundation = slab.getparent()
 
@@ -591,7 +577,7 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
         # Insulation location to be layer-specific
         insulation = insulation_location.getparent()
         if hasattr(insulation, 'Layer'):
-            for i, layer in enumerate(insulation.Layer):
+            for layer in insulation.Layer:
                 if layer.InstallationType == 'continuous':
                     layer.InstallationType._setText(f'continuous - {str(insulation.InsulationLocation)}')
         insulation.remove(insulation.InsulationLocation)
