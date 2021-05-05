@@ -694,6 +694,25 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
     # TODO: Lighting Fraction Improvements
     # https://github.com/hpxmlwg/hpxml/pull/165
 
+    for ltgfracs in root.xpath('h:Building/h:BuildingDetails/h:Lighting/h:LightingFractions', **xpkw):
+        ltg = ltgfracs.getparent()
+        for j, ltgfrac in enumerate(ltgfracs.getchildren()):
+            ltggroup = E.LightingGroup(
+                E.SystemIdentifier(id=f'lighting-fraction-{j}'),
+                E.FractionofUnitsInLocation(ltgfrac.text),
+                E.LightingType()
+            )
+            if ltgfrac.tag == f'{{{hpxml3_ns}}}FractionIncandescent':
+                ltggroup.LightingType.append(E.Incandescent())
+            elif ltgfrac.tag == f'{{{hpxml3_ns}}}FractionCFL':
+                ltggroup.LightingType.append(E.CompactFluorescent())
+            elif ltgfrac.tag == f'{{{hpxml3_ns}}}FractionLFL':
+                ltggroup.LightingType.append(E.FluorescentTube())
+            elif ltgfrac.tag == f'{{{hpxml3_ns}}}FractionLED':
+                ltggroup.LightingType.append(E.LightEmittingDiode())
+            ltg.append(ltggroup)
+        ltg.remove(ltgfracs)
+
     # TODO: Deprecated items
     # https://github.com/hpxmlwg/hpxml/pull/167
 
