@@ -114,57 +114,68 @@ def test_clothes_dryer():
 def test_enclosure_attics():
     root = convert_hpxml_and_parse(hpxml_dir / 'enclosure_attics_and_roofs.xml')
 
-    attic1 = root.Building.BuildingDetails.Enclosure.Attics.Attic[0]
-    enclosure = attic1.getparent().getparent()
-    assert not attic1.AtticType.Attic.Vented  # unvented attic
-    assert attic1.AttachedToRoof.attrib['idref'] == 'roof-1'
+    enclosure = root.Building.BuildingDetails.Enclosure
     assert not hasattr(enclosure, 'AtticAndRoof')
     assert not hasattr(enclosure, 'ExteriorAdjacentTo')
+
+    attic1 = enclosure.Attics.Attic[0]
+    assert not attic1.AtticType.Attic.Vented  # unvented attic
+    assert attic1.AttachedToRoof.attrib['idref'] == 'roof-1'
     assert enclosure.Walls.Wall[0].AtticWallType == 'knee wall'
-    assert enclosure.Roofs.Roof[0].Rafters.Size == '2x4'
-    assert enclosure.Roofs.Roof[0].Rafters.Material == 'wood'
-    assert enclosure.Roofs.Roof[0].Insulation.InsulationGrade == 3
-    assert enclosure.Roofs.Roof[0].Insulation.InsulationCondition == 'good'
-    assert enclosure.Roofs.Roof[0].Insulation.Layer.InstallationType == 'cavity'
-    assert enclosure.Roofs.Roof[0].Insulation.Layer.NominalRValue == 7.5
+
+    attic2 = enclosure.Attics.Attic[1]
+    assert attic2.AtticType.Attic.extension.Vented == 'unknown'  # venting unknown attic
     assert enclosure.FrameFloors.FrameFloor[0].InteriorAdjacentTo == 'attic'
-    assert enclosure.FrameFloors.FrameFloor[0].Area == 1500.0
+    assert enclosure.FrameFloors.FrameFloor[0].Area == 500.0
     assert enclosure.FrameFloors.FrameFloor[0].Insulation.InsulationGrade == 1
     assert enclosure.FrameFloors.FrameFloor[0].Insulation.InsulationCondition == 'poor'
     assert enclosure.FrameFloors.FrameFloor[0].Insulation.AssemblyEffectiveRValue == 5.5
 
-    attic2 = root.Building.BuildingDetails.Enclosure.Attics.Attic[1]
-    assert attic2.AtticType.Attic.extension.Vented == 'unknown'  # venting unknown attic
-
-    attic3 = root.Building.BuildingDetails.Enclosure.Attics.Attic[2]
+    attic3 = enclosure.Attics.Attic[2]
     assert attic3.AtticType.Attic.Vented  # vented attic
 
-    attic4 = root.Building.BuildingDetails.Enclosure.Attics.Attic[3]
+    attic4 = enclosure.Attics.Attic[3]
     assert hasattr(attic4.AtticType, 'FlatRoof')
 
-    attic5 = root.Building.BuildingDetails.Enclosure.Attics.Attic[4]
+    attic5 = enclosure.Attics.Attic[4]
     assert hasattr(attic5.AtticType, 'CathedralCeiling')
 
-    attic6 = root.Building.BuildingDetails.Enclosure.Attics.Attic[5]
+    attic6 = enclosure.Attics.Attic[5]
     assert attic6.AtticType.Attic.CapeCod
 
-    attic7 = root.Building.BuildingDetails.Enclosure.Attics.Attic[6]
+    attic7 = enclosure.Attics.Attic[6]
     assert hasattr(attic7.AtticType, 'Other')
 
 
 def test_enclosure_roofs():
     root = convert_hpxml_and_parse(hpxml_dir / 'enclosure_attics_and_roofs.xml')
 
-    roof1 = root.Building.BuildingDetails.Enclosure.Roofs.Roof[0]
-    enclosure = roof1.getparent().getparent()
+    enclosure = root.Building.BuildingDetails.Enclosure
+    assert not hasattr(enclosure, 'AtticAndRoof')
+
+    roof1 = enclosure.Roofs.Roof[0]
     assert roof1.Area == 1118.5
     assert roof1.RoofType == 'shingles'
     assert roof1.RoofColor == 'dark'
     assert roof1.SolarAbsorptance == 0.7
     assert roof1.Emittance == 0.9
     assert roof1.Pitch == 6.0
+    assert roof1.Rafters.Size == '2x4'
+    assert roof1.Rafters.Material == 'wood'
     assert not hasattr(roof1, 'RoofArea')
-    assert not hasattr(enclosure, 'AtticAndRoof')
+    assert not hasattr(roof1, 'Insulation')
+
+    roof2 = enclosure.Roofs.Roof[1]
+    assert roof2.Area == 559.25
+    assert roof2.RoofType == 'shingles'
+    assert roof2.RoofColor == 'medium'
+    assert roof2.SolarAbsorptance == 0.6
+    assert roof2.Emittance == 0.7
+    assert roof2.Pitch == 6.0
+    assert roof2.Insulation.InsulationGrade == 3
+    assert roof2.Insulation.InsulationCondition == 'good'
+    assert roof2.Insulation.Layer.InstallationType == 'cavity'
+    assert roof2.Insulation.Layer.NominalRValue == 7.5
 
 
 def test_enclosure_foundation_walls():

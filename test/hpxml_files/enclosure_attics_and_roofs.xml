@@ -25,6 +25,15 @@
                             <Pitch>6.0</Pitch>
                             <RoofArea>1118.5</RoofArea>
                         </Roof>
+                        <Roof>
+                            <SystemIdentifier id='roof-2'/>
+                            <RoofColor>medium</RoofColor>
+                            <SolarAbsorptance>0.6</SolarAbsorptance>
+                            <Emittance>0.7</Emittance>
+                            <RoofType>shingles</RoofType>
+                            <Pitch>6.0</Pitch>
+                            <RoofArea>559.25</RoofArea>
+                        </Roof>
                     </Roofs>
                     <Attics>
                         <Attic>
@@ -42,6 +51,7 @@
                         </Attic>
                         <Attic>
                             <SystemIdentifier id='attic-2'/>
+                            <AttachedToRoof idref='roof-2'/>
                             <AtticType>venting unknown attic</AtticType>
                             <AtticFloorInsulation>
                                 <SystemIdentifier id='attic-floor-insulation'/>
@@ -58,7 +68,7 @@
                                     <NominalRValue>7.5</NominalRValue>
                                 </Layer>
                             </AtticRoofInsulation>
-                            <Area>1500.0</Area>
+                            <Area>500</Area>
                         </Attic>
                         <Attic>
                             <SystemIdentifier id='attic-3'/>
