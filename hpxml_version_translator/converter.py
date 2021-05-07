@@ -321,14 +321,16 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
         except KeyError:
             fw_boundary = str(fw.AdjacentTo)  # retain unchanged location name
         try:
-            boundary_v3 = {'other housing unit': E.ExteriorAdjacentTo(fw_boundary),
-                           'unconditioned basement': E.InteriorAdjacentTo(fw_boundary),
-                           'living space': E.InteriorAdjacentTo(fw_boundary),
-                           'ground': E.ExteriorAdjacentTo(fw_boundary),
-                           'crawlspace': E.InteriorAdjacentTo(fw_boundary),
-                           'attic': E.InteriorAdjacentTo(fw_boundary),  # FIXME: double-check
-                           'garage': E.InteriorAdjacentTo(fw_boundary),
-                           'ambient': E.ExteriorAdjacentTo(fw_boundary)}[str(fw.AdjacentTo)]
+            boundary_v3 = {'other housing unit': E.ExteriorAdjacentTo(str(fw.AdjacentTo)),
+                           # FUTURE: change it when issue #3 is addressed
+                           'unconditioned basement': E.InteriorAdjacentTo('basement - unconditioned'),
+                           'living space': E.InteriorAdjacentTo(str(fw.AdjacentTo)),
+                           'ground': E.ExteriorAdjacentTo(str(fw.AdjacentTo)),
+                           'crawlspace': E.InteriorAdjacentTo(str(fw.AdjacentTo)),
+                           'attic': E.InteriorAdjacentTo(str(fw.AdjacentTo)),  # FIXME: double-check
+                           'garage': E.InteriorAdjacentTo(str(fw.AdjacentTo)),
+                           # FUTURE: change it when issue #3 is addressed
+                           'ambient': E.ExteriorAdjacentTo('outside')}[fw.AdjacentTo]
             add_after(
                 this_fw,
                 ['SystemIdentifier',
