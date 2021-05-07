@@ -69,13 +69,7 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
 
     # Change version
     root.attrib['schemaVersion'] = '3.0'
-    # Standardized location mapping
-    location_map = {'ambient': 'outside',
-                    'conditioned space': 'living space',
-                    'unconditioned basement': 'basement - unconditioned',
-                    'unconditioned attic': 'attic - unconditioned',
-                    'unvented crawlspace': 'crawlspace - unvented',
-                    'vented crawlspace': 'crawlspace - vented'}
+
     # Fixing project ids
     # https://github.com/hpxmlwg/hpxml/pull/197
     # This is really messy. I can see why we fixed it.
@@ -323,18 +317,16 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
         this_fw = enclosure.FoundationWalls.FoundationWall[-1]
 
         try:
-            fw_boundary = location_map[str(fw.AdjacentTo)]
-        except KeyError:
-            fw_boundary = str(fw.AdjacentTo)  # retain unchanged location name
-        try:
-            boundary_v3 = {'other housing unit': E.ExteriorAdjacentTo(fw_boundary),
-                           'unconditioned basement': E.InteriorAdjacentTo(fw_boundary),
-                           'living space': E.InteriorAdjacentTo(fw_boundary),
-                           'ground': E.ExteriorAdjacentTo(fw_boundary),
-                           'crawlspace': E.InteriorAdjacentTo(fw_boundary),
-                           'attic': E.InteriorAdjacentTo(fw_boundary),  # FIXME: double-check
-                           'garage': E.InteriorAdjacentTo(fw_boundary),
-                           'ambient': E.ExteriorAdjacentTo(fw_boundary)}[str(fw.AdjacentTo)]
+            boundary_v3 = {'other housing unit': E.ExteriorAdjacentTo(str(fw.AdjacentTo)),
+                           # FUTURE: change it when issue #3 is addressed
+                           'unconditioned basement': E.InteriorAdjacentTo('basement - unconditioned'),
+                           'living space': E.InteriorAdjacentTo(str(fw.AdjacentTo)),
+                           'ground': E.ExteriorAdjacentTo(str(fw.AdjacentTo)),
+                           'crawlspace': E.InteriorAdjacentTo(str(fw.AdjacentTo)),
+                           'attic': E.InteriorAdjacentTo(str(fw.AdjacentTo)),  # FIXME: double-check
+                           'garage': E.InteriorAdjacentTo(str(fw.AdjacentTo)),
+                           # FUTURE: change it when issue #3 is addressed
+                           'ambient': E.ExteriorAdjacentTo('outside')}[fw.AdjacentTo]
             add_after(
                 this_fw,
                 ['SystemIdentifier',
@@ -718,16 +710,28 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
 
     # TODO: Standardize Locations
     # https://github.com/hpxmlwg/hpxml/pull/156
-    for el_name in ('//h:InteriorAdjacentTo|//h:ExteriorAdjacentTo',
-                    '//h:DuctLocation',
-                    '//h:HVACPlant/h:*/h:UnitLocation|//h:WaterHeatingSystem/h:Location|//h:Measure/h:Location'):
-        for el in root.xpath(f'{el_name}', **xpkw):
-            try:
-                el._setText(location_map[el.text])
-            except (KeyError, AttributeError):
-                pass
-    # TODO: Lighting Fraction Improvements
+
+    # Lighting Fraction Improvements
     # https://github.com/hpxmlwg/hpxml/pull/165
+
+    for ltgfracs in root.xpath('h:Building/h:BuildingDetails/h:Lighting/h:LightingFractions', **xpkw):
+        ltg = ltgfracs.getparent()
+        for j, ltgfrac in enumerate(ltgfracs.getchildren()):
+            ltggroup = E.LightingGroup(
+                E.SystemIdentifier(id=f'lighting-fraction-{j}'),
+                E.FractionofUnitsInLocation(ltgfrac.text),
+                E.LightingType()
+            )
+            if ltgfrac.tag == f'{{{hpxml3_ns}}}FractionIncandescent':
+                ltggroup.LightingType.append(E.Incandescent())
+            elif ltgfrac.tag == f'{{{hpxml3_ns}}}FractionCFL':
+                ltggroup.LightingType.append(E.CompactFluorescent())
+            elif ltgfrac.tag == f'{{{hpxml3_ns}}}FractionLFL':
+                ltggroup.LightingType.append(E.FluorescentTube())
+            elif ltgfrac.tag == f'{{{hpxml3_ns}}}FractionLED':
+                ltggroup.LightingType.append(E.LightEmittingDiode())
+            ltg.append(ltggroup)
+        ltg.remove(ltgfracs)
 
     # TODO: Deprecated items
     # https://github.com/hpxmlwg/hpxml/pull/167
