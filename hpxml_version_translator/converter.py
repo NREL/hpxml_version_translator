@@ -69,13 +69,7 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
 
     # Change version
     root.attrib['schemaVersion'] = '3.0'
-    # Standardized location mapping
-    location_map = {'ambient': 'outside',
-                    'conditioned space': 'living space',
-                    'unconditioned basement': 'basement - unconditioned',
-                    'unconditioned attic': 'attic - unconditioned',
-                    'unvented crawlspace': 'crawlspace - unvented',
-                    'vented crawlspace': 'crawlspace - vented'}
+
     # Fixing project ids
     # https://github.com/hpxmlwg/hpxml/pull/197
     # This is really messy. I can see why we fixed it.
@@ -718,16 +712,28 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
 
     # TODO: Standardize Locations
     # https://github.com/hpxmlwg/hpxml/pull/156
-    for el_name in ('//h:InteriorAdjacentTo|//h:ExteriorAdjacentTo',
-                    '//h:DuctLocation',
-                    '//h:HVACPlant/h:*/h:UnitLocation|//h:WaterHeatingSystem/h:Location|//h:Measure/h:Location'):
-        for el in root.xpath(f'{el_name}', **xpkw):
-            try:
-                el._setText(location_map[el.text])
-            except (KeyError, AttributeError):
-                pass
-    # TODO: Lighting Fraction Improvements
+
+    # Lighting Fraction Improvements
     # https://github.com/hpxmlwg/hpxml/pull/165
+
+    for ltgfracs in root.xpath('h:Building/h:BuildingDetails/h:Lighting/h:LightingFractions', **xpkw):
+        ltg = ltgfracs.getparent()
+        for j, ltgfrac in enumerate(ltgfracs.getchildren()):
+            ltggroup = E.LightingGroup(
+                E.SystemIdentifier(id=f'lighting-fraction-{j}'),
+                E.FractionofUnitsInLocation(ltgfrac.text),
+                E.LightingType()
+            )
+            if ltgfrac.tag == f'{{{hpxml3_ns}}}FractionIncandescent':
+                ltggroup.LightingType.append(E.Incandescent())
+            elif ltgfrac.tag == f'{{{hpxml3_ns}}}FractionCFL':
+                ltggroup.LightingType.append(E.CompactFluorescent())
+            elif ltgfrac.tag == f'{{{hpxml3_ns}}}FractionLFL':
+                ltggroup.LightingType.append(E.FluorescentTube())
+            elif ltgfrac.tag == f'{{{hpxml3_ns}}}FractionLED':
+                ltggroup.LightingType.append(E.LightEmittingDiode())
+            ltg.append(ltggroup)
+        ltg.remove(ltgfracs)
 
     # TODO: Deprecated items
     # https://github.com/hpxmlwg/hpxml/pull/167

@@ -342,3 +342,26 @@ def test_windows():
     assert not hasattr(skylight1, 'Treatments')
     assert not hasattr(skylight1, 'InteriorShadingFactor')
     assert not hasattr(skylight1, 'MovableInsulationRValue')
+
+
+def test_lighting():
+    root = convert_hpxml_and_parse(hpxml_dir / 'lighting.xml')
+
+    ltg = root.Building.BuildingDetails.Lighting
+    assert not hasattr(ltg, 'LightingFractions')
+
+    ltg_grp1 = ltg.LightingGroup[0]
+    assert ltg_grp1.FractionofUnitsInLocation == 0.5
+    assert hasattr(ltg_grp1.LightingType, 'Incandescent')
+
+    ltg_grp2 = ltg.LightingGroup[1]
+    assert ltg_grp2.FractionofUnitsInLocation == 0.1
+    assert hasattr(ltg_grp2.LightingType, 'CompactFluorescent')
+
+    ltg_grp3 = ltg.LightingGroup[2]
+    assert ltg_grp3.FractionofUnitsInLocation == 0.1
+    assert hasattr(ltg_grp3.LightingType, 'FluorescentTube')
+
+    ltg_grp4 = ltg.LightingGroup[3]
+    assert ltg_grp4.FractionofUnitsInLocation == 0.3
+    assert hasattr(ltg_grp4.LightingType, 'LightEmittingDiode')
