@@ -111,7 +111,7 @@ def test_clothes_dryer():
     assert not hasattr(dryer2, 'EfficiencyFactor')
 
 
-def test_enclosure_attics():
+def test_enclosure_attics_and_roofs():
     root = convert_hpxml_and_parse(hpxml_dir / 'enclosure_attics_and_roofs.xml')
 
     enclosure = root.Building.BuildingDetails.Enclosure
@@ -122,36 +122,18 @@ def test_enclosure_attics():
     assert not attic1.AtticType.Attic.Vented  # unvented attic
     assert attic1.AttachedToRoof.attrib['idref'] == 'roof-1'
     assert enclosure.Walls.Wall[0].AtticWallType == 'knee wall'
-
     attic2 = enclosure.Attics.Attic[1]
     assert attic2.AtticType.Attic.extension.Vented == 'unknown'  # venting unknown attic
-    assert enclosure.FrameFloors.FrameFloor[0].InteriorAdjacentTo == 'attic'
-    assert enclosure.FrameFloors.FrameFloor[0].Area == 500.0
-    assert enclosure.FrameFloors.FrameFloor[0].Insulation.InsulationGrade == 1
-    assert enclosure.FrameFloors.FrameFloor[0].Insulation.InsulationCondition == 'poor'
-    assert enclosure.FrameFloors.FrameFloor[0].Insulation.AssemblyEffectiveRValue == 5.5
-
     attic3 = enclosure.Attics.Attic[2]
     assert attic3.AtticType.Attic.Vented  # vented attic
-
     attic4 = enclosure.Attics.Attic[3]
     assert hasattr(attic4.AtticType, 'FlatRoof')
-
     attic5 = enclosure.Attics.Attic[4]
     assert hasattr(attic5.AtticType, 'CathedralCeiling')
-
     attic6 = enclosure.Attics.Attic[5]
     assert attic6.AtticType.Attic.CapeCod
-
     attic7 = enclosure.Attics.Attic[6]
     assert hasattr(attic7.AtticType, 'Other')
-
-
-def test_enclosure_roofs():
-    root = convert_hpxml_and_parse(hpxml_dir / 'enclosure_attics_and_roofs.xml')
-
-    enclosure = root.Building.BuildingDetails.Enclosure
-    assert not hasattr(enclosure, 'AtticAndRoof')
 
     roof1 = enclosure.Roofs.Roof[0]
     assert roof1.Area == 1118.5
@@ -176,14 +158,25 @@ def test_enclosure_roofs():
     assert roof2.Insulation.InsulationCondition == 'good'
     assert roof2.Insulation.Layer.InstallationType == 'cavity'
     assert roof2.Insulation.Layer.NominalRValue == 7.5
+    assert not hasattr(roof2, 'Rafters')
+
+    assert enclosure.Walls.Wall[0].AtticWallType == 'knee wall'
+    assert not hasattr(enclosure.Walls.Wall[1], 'AtticWallType')
+
+    assert enclosure.FrameFloors.FrameFloor[0].InteriorAdjacentTo == 'attic'
+    assert enclosure.FrameFloors.FrameFloor[0].Area == 500.0
+    assert enclosure.FrameFloors.FrameFloor[0].Insulation.InsulationGrade == 1
+    assert enclosure.FrameFloors.FrameFloor[0].Insulation.InsulationCondition == 'poor'
+    assert enclosure.FrameFloors.FrameFloor[0].Insulation.AssemblyEffectiveRValue == 5.5
 
 
 def test_enclosure_foundation_walls():
     root = convert_hpxml_and_parse(hpxml_dir / 'enclosure_foundation_walls.xml')
 
-    fw1 = root.Building.BuildingDetails.Enclosure.FoundationWalls.FoundationWall[0]
+    fw1 = root.Building[0].BuildingDetails.Enclosure.FoundationWalls.FoundationWall[0]
     assert fw1.getparent().getparent().Foundations.Foundation.AttachedToFoundationWall[0].attrib['idref']\
         == 'foundationwall-1'
+    assert not hasattr(fw1, 'ExteriorAdjacentTo')
     assert fw1.InteriorAdjacentTo == 'basement - unconditioned'
     assert fw1.Type == 'concrete block'
     assert fw1.Length == 120
@@ -197,7 +190,7 @@ def test_enclosure_foundation_walls():
     assert fw1.Insulation.AssemblyEffectiveRValue == 5.0
     assert not hasattr(fw1.Insulation, 'Location')
 
-    fw2 = root.Building.BuildingDetails.Enclosure.FoundationWalls.FoundationWall[1]
+    fw2 = root.Building[0].BuildingDetails.Enclosure.FoundationWalls.FoundationWall[1]
     assert fw2.getparent().getparent().Foundations.Foundation.AttachedToFoundationWall[1].attrib['idref']\
         == 'foundationwall-2'
     assert not hasattr(fw2, 'ExteriorAdjacentTo')
@@ -220,6 +213,22 @@ def test_enclosure_foundation_walls():
     assert fw2.Insulation.Layer[1].InsulationMaterial.Rigid == 'eps'
     assert fw2.Insulation.Layer[1].NominalRValue == 15.0
     assert fw2.Insulation.Layer[1].Thickness == 3.0
+
+    fw3 = root.Building[1].BuildingDetails.Enclosure.FoundationWalls.FoundationWall[0]
+    assert fw3.getparent().getparent().Foundations.Foundation.AttachedToFoundationWall[0].attrib['idref']\
+        == 'foundationwall-3'
+    assert fw3.ExteriorAdjacentTo == 'ground'
+    assert not hasattr(fw3, 'InteriorAdjacentTo')
+    assert fw3.Type == 'solid concrete'
+    assert fw3.Length == 40
+    assert fw3.Height == 10
+    assert fw3.Area == 400
+    assert fw3.Thickness == 3
+    assert fw3.DepthBelowGrade == 10
+    assert not hasattr(fw3, 'AdjacentTo')
+    assert fw3.Insulation.InsulationGrade == 2
+    assert fw3.Insulation.InsulationCondition == 'fair'
+    assert not hasattr(fw3.Insulation, 'Location')
 
 
 def test_frame_floors():

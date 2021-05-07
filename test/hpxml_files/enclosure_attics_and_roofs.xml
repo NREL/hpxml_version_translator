@@ -96,6 +96,9 @@
                     <Wall>
                         <SystemIdentifier id='wall-1'/>
                     </Wall>
+                    <Wall>
+                        <SystemIdentifier id='wall-2'/>
+                    </Wall>
                 </Walls>
             </Enclosure>
         </BuildingDetails>
