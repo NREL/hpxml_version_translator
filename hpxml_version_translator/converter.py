@@ -317,10 +317,6 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
         this_fw = enclosure.FoundationWalls.FoundationWall[-1]
 
         try:
-            fw_boundary = location_map[str(fw.AdjacentTo)]
-        except KeyError:
-            fw_boundary = str(fw.AdjacentTo)  # retain unchanged location name
-        try:
             boundary_v3 = {'other housing unit': E.ExteriorAdjacentTo(str(fw.AdjacentTo)),
                            # FUTURE: change it when issue #3 is addressed
                            'unconditioned basement': E.InteriorAdjacentTo('basement - unconditioned'),
