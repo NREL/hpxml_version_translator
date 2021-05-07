@@ -85,10 +85,16 @@ def test_inconsistencies():
     assert htpump.BackupAnnualHeatingEfficiency.Units == 'AFUE'
     assert htpump.BackupAnnualHeatingEfficiency.Value == 0.98
 
-    measure = root.Project.ProjectDetails.Measures.Measure[0]
-    assert measure.InstalledComponents.InstalledComponent.attrib['id'] == 'installed-component-1'
-    assert not hasattr(measure, 'InstalledComponent')
-    assert measure.InstalledComponents.getnext() == measure.extension
+    measure1 = root.Project.ProjectDetails.Measures.Measure[0]
+    assert measure1.InstalledComponents.InstalledComponent[0].attrib['id'] == 'installed-component-1'
+    assert measure1.InstalledComponents.InstalledComponent[1].attrib['id'] == 'installed-component-2'
+    assert not hasattr(measure1, 'InstalledComponent')
+    assert measure1.InstalledComponents.getnext() == measure1.extension
+
+    measure2 = root.Project.ProjectDetails.Measures.Measure[1]
+    assert measure2.InstalledComponents.InstalledComponent[0].attrib['id'] == 'installed-component-3'
+    assert measure2.InstalledComponents.InstalledComponent[1].attrib['id'] == 'installed-component-4'
+    assert not hasattr(measure2, 'InstalledComponent')
 
 
 def test_clothes_dryer():

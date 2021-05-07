@@ -256,7 +256,8 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
         el.tag = f'{{{hpxml3_ns}}}AnnualHeatingEfficiency'
 
     # Replaces Measure/InstalledComponent with Measure/InstalledComponents/InstalledComponent
-    for i, ms in enumerate(root.xpath('h:Project/h:ProjectDetails/h:Measures/h:Measure', **xpkw)):
+    for i, ic in enumerate(root.xpath('h:Project/h:ProjectDetails/h:Measures/h:Measure/h:InstalledComponent', **xpkw)):
+        ms = ic.getparent()
         if not hasattr(ms, 'InstalledComponents'):
             try:
                 sibling = getattr(ms, 'extension')
@@ -264,9 +265,8 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
                 ms.append(E.InstalledComponents())
             else:
                 sibling.addprevious(E.InstalledComponents())
-        ic = E.InstalledComponent(id=str(ms.InstalledComponent.attrib['id']))
-        ms.InstalledComponents.append(ic)
-        ms.remove(ms.InstalledComponent)
+        ms.InstalledComponents.append(deepcopy(ic))
+        ms.remove(ic)
 
     # Replaces WeatherStation/SystemIdentifiersInfo with WeatherStation/SystemIdentifier
     for el in root.xpath('//h:WeatherStation/h:SystemIdentifiersInfo', **xpkw):

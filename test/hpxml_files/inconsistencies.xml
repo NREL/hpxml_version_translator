@@ -97,9 +97,17 @@
                         <SystemIdentifiersInfo id="measure-system-1"/>
                     </MeasureSystemIdentifiers>
                     <InstalledComponent id='installed-component-1'/>
+                    <InstalledComponent id='installed-component-2'/>
                     <extension>
                         <DummyExtension>dummy</DummyExtension>
                     </extension>
+                </Measure>
+                <Measure>
+                    <MeasureSystemIdentifiers>
+                        <SystemIdentifiersInfo id="measure-system-2"/>
+                    </MeasureSystemIdentifiers>
+                    <InstalledComponent id='installed-component-3'/>
+                    <InstalledComponent id='installed-component-4'/>
                 </Measure>
             </Measures>
         </ProjectDetails>
