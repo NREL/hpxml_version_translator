@@ -1,8 +1,10 @@
 from lxml import objectify
 import pathlib
+import pytest
 import tempfile
 
 from hpxml_version_translator.converter import convert_hpxml2_to_3
+from hpxml_version_translator import exceptions as exc
 
 
 hpxml_dir = pathlib.Path(__file__).resolve().parent / 'hpxml_files'
@@ -23,9 +25,34 @@ def test_version_change():
 
 def test_project_ids():
     root = convert_hpxml_and_parse(hpxml_dir / 'project_ids.xml')
-    root.Project.PreBuildingID == 'bldg1'
-    root.Project.PostBuildingID == 'bldg2'
-    # TODO: test project ids failures
+    assert root.Project.PreBuildingID.attrib['id'] == 'bldg1'
+    assert root.Project.PostBuildingID.attrib['id'] == 'bldg2'
+
+
+def test_project_ids2():
+    root = convert_hpxml_and_parse(hpxml_dir / 'project_ids2.xml')
+    assert root.Project.PreBuildingID.attrib['id'] == 'bldg1'
+    assert root.Project.PostBuildingID.attrib['id'] == 'bldg2'
+
+
+def test_project_ids_fail1():
+    with pytest.raises(exc.HpxmlTranslationError, match=r"Project\[\d\] has more than one reference.*audit"):
+        convert_hpxml_and_parse(hpxml_dir / 'project_ids_fail1.xml')
+
+
+def test_project_ids_fail2():
+    with pytest.raises(exc.HpxmlTranslationError, match=r"Project\[\d\] has no references.*audit"):
+        convert_hpxml_and_parse(hpxml_dir / 'project_ids_fail2.xml')
+
+
+def test_project_ids_fail3():
+    with pytest.raises(exc.HpxmlTranslationError, match=r"Project\[\d\] has more than one reference.*post retrofit"):
+        convert_hpxml_and_parse(hpxml_dir / 'project_ids_fail3.xml')
+
+
+def test_project_ids_fail4():
+    with pytest.raises(exc.HpxmlTranslationError, match=r"Project\[\d\] has no references.*post retrofit"):
+        convert_hpxml_and_parse(hpxml_dir / 'project_ids_fail4.xml')
 
 
 def test_green_building_verification():

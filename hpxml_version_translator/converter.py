@@ -74,7 +74,7 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
     # https://github.com/hpxmlwg/hpxml/pull/197
     # This is really messy. I can see why we fixed it.
 
-    def get_event_type_from_building_id(building_id):
+    def get_pre_post_from_building_id(building_id):
         event_type = root.xpath(
             'h:Building[h:BuildingID/@id=$bldgid]/h:ProjectStatus/h:EventType/text()',
             smart_strings=False,
@@ -82,7 +82,13 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
             **xpkw
         )
         if len(event_type) == 1:
-            return event_type[0]
+            if event_type[0] in ('proposed workscope', 'approved workscope', 'construction-period testing/daily test out',
+                                 'job completion testing/final inspection', 'quality assurance/monitoring'):
+                return 'post'
+            elif event_type[0] in ('audit', 'preconstruction'):
+                return 'pre'
+            else:
+                return None
         else:
             return None
 
@@ -91,44 +97,41 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
         # Add the ProjectID element if it isn't there
         if not hasattr(project, 'ProjectID'):
             add_after(project, ['BuildingID'], E.ProjectID(id=f'project-{i}'))
-        building_ids_by_event_type = defaultdict(set)
+        building_ids_by_pre_post = defaultdict(set)
 
         # Gather together the buildings in BuildingID and ProjectSystemIdentifiers
         building_id = project.BuildingID.attrib['id']
-        building_ids_by_event_type[get_event_type_from_building_id(building_id)].add(building_id)
+        building_ids_by_pre_post[get_pre_post_from_building_id(building_id)].add(building_id)
         for psi in project.xpath('h:ProjectDetails/h:ProjectSystemIdentifiers', **xpkw):
-            building_id = psi.attrib['id']
-            building_ids_by_event_type[get_event_type_from_building_id(building_id)].add(building_id)
+            building_id = psi.attrib.get('id')
+            building_ids_by_pre_post[get_pre_post_from_building_id(building_id)].add(building_id)
 
-        # Separate the buildings into pre and post retrofit buildings by their EventType
-        pre_building_ids = set()
-        for event_type in ('audit', 'preconstruction'):
-            pre_building_ids.update(building_ids_by_event_type[event_type])
-        post_building_ids = set()
-        for event_type in ('proposed workscope', 'approved workscope', 'construction-period testing/daily test out',
-                           'job completion testing/final inspection', 'quality assurance/monitoring'):
-            post_building_ids.update(building_ids_by_event_type[event_type])
+        for pre_post in ('pre', 'post'):
+            if len(building_ids_by_pre_post[pre_post]) == 0:
+                for building_id in root.xpath('h:Building/h:BuildingID/@id', **xpkw):
+                    if get_pre_post_from_building_id(building_id) == pre_post:
+                        building_ids_by_pre_post[pre_post].add(building_id)
 
         # If there are more than one of each pre and post, throw an error
-        if len(pre_building_ids) == 0:
+        if len(building_ids_by_pre_post['pre']) == 0:
             raise exc.HpxmlTranslationError(
                 f"Project[{i}] has no references to Building nodes with an 'audit' or 'preconstruction' EventType."
             )
-        elif len(pre_building_ids) > 1:
+        elif len(building_ids_by_pre_post['pre']) > 1:
             raise exc.HpxmlTranslationError(
                 f"Project[{i}] has more than one reference to Building nodes with an "
                 "'audit' or 'preconstruction' EventType."
             )
-        if len(post_building_ids) == 0:
+        if len(building_ids_by_pre_post['post']) == 0:
             raise exc.HpxmlTranslationError(
                 f"Project[{i}] has no references to Building nodes with a post retrofit EventType."
             )
-        elif len(post_building_ids) > 1:
+        elif len(building_ids_by_pre_post['post']) > 1:
             raise exc.HpxmlTranslationError(
                 f"Project[{i}] has more than one reference to Building nodes with a post retrofit EventType."
             )
-        pre_building_id = pre_building_ids.pop()
-        post_building_id = post_building_ids.pop()
+        pre_building_id = building_ids_by_pre_post['pre'].pop()
+        post_building_id = building_ids_by_pre_post['post'].pop()
 
         # Add the pre building
         project.ProjectID.addnext(E.PreBuildingID(id=pre_building_id))
