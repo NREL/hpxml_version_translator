@@ -82,7 +82,8 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
             **xpkw
         )
         if len(event_type) == 1:
-            if event_type[0] in ('proposed workscope', 'approved workscope', 'construction-period testing/daily test out',
+            if event_type[0] in ('proposed workscope', 'approved workscope',
+                                 'construction-period testing/daily test out',
                                  'job completion testing/final inspection', 'quality assurance/monitoring'):
                 return 'post'
             elif event_type[0] in ('audit', 'preconstruction'):
