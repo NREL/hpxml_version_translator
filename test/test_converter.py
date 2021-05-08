@@ -345,3 +345,59 @@ def test_lighting():
     ltg_grp4 = ltg.LightingGroup[3]
     assert ltg_grp4.FractionofUnitsInLocation == 0.3
     assert hasattr(ltg_grp4.LightingType, 'LightEmittingDiode')
+
+
+def test_deprecated_items():
+    root = convert_hpxml_and_parse(hpxml_dir / 'deprecated_items.xml')
+
+    whsystem1 = root.Building[0].BuildingDetails.Systems.WaterHeating.WaterHeatingSystem[0]
+    assert whsystem1.WaterHeaterInsulation.Jacket.JacketRValue == 5
+    assert not hasattr(whsystem1.WaterHeaterInsulation, 'Pipe')
+    hw_dist1 = root.Building[0].BuildingDetails.Systems.WaterHeating.HotWaterDistribution[0]
+    assert hw_dist1.PipeInsulation.PipeRValue == 3.0
+    whsystem2 = root.Building[0].BuildingDetails.Systems.WaterHeating.WaterHeatingSystem[1]
+    assert whsystem2.WaterHeaterInsulation.Jacket.JacketRValue == 5.5
+    assert not hasattr(whsystem2.WaterHeaterInsulation, 'Pipe')
+    hw_dist2 = root.Building[0].BuildingDetails.Systems.WaterHeating.HotWaterDistribution[1]
+    assert hw_dist2.PipeInsulation.PipeRValue == 3.5
+    whsystem3 = root.Building[1].BuildingDetails.Systems.WaterHeating.WaterHeatingSystem[0]
+    assert not hasattr(whsystem3, 'WaterHeaterInsulation')
+    hw_dist3 = root.Building[1].BuildingDetails.Systems.WaterHeating.HotWaterDistribution[0]
+    assert hw_dist3.PipeInsulation.PipeRValue == 5.0
+
+    pp1 = root.Building[0].BuildingDetails.Pools.Pool.PoolPumps.PoolPump[0]
+    assert pp1.PumpSpeed.HoursPerDay == 3
+    assert not hasattr(pp1, 'HoursPerDay')
+    pp2 = root.Building[0].BuildingDetails.Pools.Pool.PoolPumps.PoolPump[1]
+    assert pp2.PumpSpeed.HoursPerDay == 4
+    assert not hasattr(pp2, 'HoursPerDay')
+    pp3 = root.Building[1].BuildingDetails.Pools.Pool.PoolPumps.PoolPump[0]
+    assert pp3.PumpSpeed.Power == 250
+    assert pp3.PumpSpeed.HoursPerDay == 5
+    assert not hasattr(pp3, 'HoursPerDay')
+
+    consumption1 = root.Building[0].BuildingDetails.BuildingSummary.AnnualEnergyUse.ConsumptionInfo[0]
+    assert consumption1.ConsumptionType.Water.WaterType == 'indoor water'
+    assert consumption1.ConsumptionType.Water.UnitofMeasure == 'kcf'
+    assert consumption1.ConsumptionDetail.Consumption == 100
+    consumption2 = root.Building[0].BuildingDetails.BuildingSummary.AnnualEnergyUse.ConsumptionInfo[1]
+    assert consumption2.ConsumptionType.Water.WaterType == 'outdoor water'
+    assert consumption2.ConsumptionType.Water.UnitofMeasure == 'ccf'
+    assert consumption2.ConsumptionDetail.Consumption == 200
+    consumption3 = root.Building[0].BuildingDetails.BuildingSummary.AnnualEnergyUse.ConsumptionInfo[2]
+    assert consumption3.ConsumptionType.Water.WaterType == 'indoor water'
+    assert consumption3.ConsumptionType.Water.UnitofMeasure == 'gal'
+    assert consumption3.ConsumptionDetail.Consumption == 300
+    consumption4 = root.Building[1].BuildingDetails.BuildingSummary.AnnualEnergyUse.ConsumptionInfo[0]
+    assert consumption4.ConsumptionType.Water.WaterType == 'indoor water'
+    assert consumption4.ConsumptionType.Water.UnitofMeasure == 'cf'
+    assert consumption4.ConsumptionDetail.Consumption == 400
+
+    wh1 = root.Building[0].BuildingDetails.Systems.WaterHeating
+    assert wh1.AnnualEnergyUse.ConsumptionInfo.ConsumptionType.Water.WaterType == 'indoor and outdoor water'
+    assert wh1.AnnualEnergyUse.ConsumptionInfo.ConsumptionType.Water.UnitofMeasure == 'Mgal'
+    assert wh1.AnnualEnergyUse.ConsumptionInfo.ConsumptionDetail.Consumption == 500
+    wh2 = root.Building[1].BuildingDetails.Systems.WaterHeating
+    assert wh2.AnnualEnergyUse.ConsumptionInfo.ConsumptionType.Water.WaterType == 'indoor water'
+    assert wh2.AnnualEnergyUse.ConsumptionInfo.ConsumptionType.Water.UnitofMeasure == 'gal'
+    assert wh2.AnnualEnergyUse.ConsumptionInfo.ConsumptionDetail.Consumption == 600

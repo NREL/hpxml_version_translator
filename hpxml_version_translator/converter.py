@@ -697,8 +697,44 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
             ltg.append(ltggroup)
         ltg.remove(ltgfracs)
 
-    # TODO: Deprecated items
+    # Deprecated items
     # https://github.com/hpxmlwg/hpxml/pull/167
+
+    # Removes WaterHeaterInsulation/Pipe; use HotWaterDistribution/PipeInsulation instead
+    for pipe in root.xpath('//h:WaterHeaterInsulation/h:Pipe', **xpkw):
+        waterheating = pipe.getparent().getparent().getparent()
+        waterheatingsystem = pipe.getparent().getparent()
+        waterheatingsystem_idref = str(waterheatingsystem.SystemIdentifier.attrib['id'])
+        attached_hw_dist = waterheating.xpath('h:HotWaterDistribution[h:AttachedToWaterHeatingSystem/@idref=$sysid]',
+                                              sysid=waterheatingsystem_idref, **xpkw)[0]
+        add_after(
+            attached_hw_dist,
+            ['SystemIdentifier',
+             'ExternalResource',
+             'AttachedToWaterHeatingSystem',
+             'SystemType'],
+            E.PipeInsulation(
+                E.PipeRValue(float(pipe.PipeRValue))
+            )
+        )
+        waterheaterinsualtion = pipe.getparent()
+        waterheaterinsualtion.remove(pipe)
+        if waterheaterinsualtion.countchildren() == 0:
+            waterheaterinsualtion.getparent().remove(waterheaterinsualtion)
+
+    # Removes PoolPump/HoursPerDay; use PoolPump/PumpSpeed/HoursPerDay instead
+    for poolpump_hour in root.xpath('//h:PoolPump/h:HoursPerDay', **xpkw):
+        poolpump = poolpump_hour.getparent()
+        if not hasattr(poolpump, 'PumpSpeed'):
+            poolpump_hour.addnext(E.PumpSpeed(E.HoursPerDay(float(poolpump_hour))))
+        else:
+            poolpump.PumpSpeed.append(E.HoursPerDay(float(poolpump_hour)))
+        poolpump.remove(poolpump_hour)
+
+    # Removes "indoor water " (note extra trailing space) enumeration from WaterType
+    for watertype in root.xpath('//h:WaterType', **xpkw):
+        if watertype == 'indoor water ':
+            watertype._setText(str(watertype).rstrip())
 
     # TODO: Adds desuperheater flexibility
     # https://github.com/hpxmlwg/hpxml/pull/184
