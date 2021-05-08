@@ -410,8 +410,8 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
             add_after(
                 knee_wall,
                 ['SystemIdentifier',
-                    'ExteriorAdjacentTo',
-                    'InteriorAdjacentTo'],
+                 'ExteriorAdjacentTo',
+                 'InteriorAdjacentTo'],
                 E.AtticWallType('knee wall')
             )
 
@@ -432,7 +432,7 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
                     E.FrameFloors()
                 )
             attic_floor_el = E.FrameFloor(
-                E.SystemIdentifier(id=f'attic_floor-{i}'),
+                E.SystemIdentifier(id=f'attic-floor-{i}'),
                 E.InteriorAdjacentTo('attic'),
             )
             if hasattr(this_attic, 'Area'):
@@ -453,7 +453,15 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
                 sysid=roof_idref, **xpkw)[0]
             add_after(
                 roof_attached_to_this_attic,
-                ['Pitch',
+                ['SystemIdentifier',
+                 'ExternalResource',
+                 'AttachedToSpace',
+                 'RoofColor',
+                 'SolarAbsorptance',
+                 'Emittance',
+                 'RoofType',
+                 'DeckType',
+                 'Pitch',
                  'RoofArea',
                  'RadiantBarrier',
                  'RadiantBarrierLocation'],
@@ -469,7 +477,10 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
                 sysid=roof_idref, **xpkw)[0]
             add_after(
                 roof_attached_to_this_attic,
-                ['RoofColor',
+                ['SystemIdentifier',
+                 'ExternalResource',
+                 'AttachedToSpace',
+                 'RoofColor',
                  'SolarAbsorptance',
                  'Emittance'],
                 rafters
@@ -600,7 +611,9 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
         if hasattr(win, 'VisibleTransmittance'):
             add_after(
                 win,
-                ['Area',
+                ['SystemIdentifier',
+                 'ExternalResource',
+                 'Area',
                  'Quantity',
                  'Azimuth',
                  'Orientation',
@@ -634,7 +647,18 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
                     treatment_shade.append(E.Type('solar screens'))
                 add_after(
                     win,
-                    ['UFactor',
+                    ['SystemIdentifier',
+                     'ExternalResource',
+                     'Area',
+                     'Quantity',
+                     'Azimuth',
+                     'Orientation',
+                     'FrameType',
+                     'GlassLayers',
+                     'GlassType',
+                     'GasFill',
+                     'Condition',
+                     'UFactor',
                      'SHGC',
                      'VisibleTransmittance',
                      'NFRCCertified',
@@ -645,7 +669,18 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
             elif win.Treatments == 'window film':
                 add_after(
                     win,
-                    ['UFactor',
+                    ['SystemIdentifier',
+                     'ExternalResource',
+                     'Area',
+                     'Quantity',
+                     'Azimuth',
+                     'Orientation',
+                     'FrameType',
+                     'GlassLayers',
+                     'GlassType',
+                     'GasFill',
+                     'Condition',
+                     'UFactor',
                      'SHGC',
                      'VisibleTransmittance',
                      'NFRCCertified',
@@ -674,7 +709,18 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
         if hasattr(win, 'MovableInsulationRValue'):
             add_after(
                 win,
-                ['UFactor',
+                ['SystemIdentifier',
+                 'ExternalResource',
+                 'Area',
+                 'Quantity',
+                 'Azimuth',
+                 'Orientation',
+                 'FrameType',
+                 'GlassLayers',
+                 'GlassType',
+                 'GasFill',
+                 'Condition',
+                 'UFactor',
                  'SHGC',
                  'VisibleTransmittance',
                  'NFRCCertified',
@@ -698,7 +744,18 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
                 win.GlassLayers._setText('single-pane')
                 add_after(
                     win,
-                    ['UFactor',
+                    ['SystemIdentifier',
+                     'ExternalResource',
+                     'Area',
+                     'Quantity',
+                     'Azimuth',
+                     'Orientation',
+                     'FrameType',
+                     'GlassLayers',
+                     'GlassType',
+                     'GasFill',
+                     'Condition',
+                     'UFactor',
                      'SHGC',
                      'VisibleTransmittance',
                      'NFRCCertified',
@@ -714,11 +771,13 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
     # Lighting Fraction Improvements
     # https://github.com/hpxmlwg/hpxml/pull/165
 
+    ltgidx = 0
     for ltgfracs in root.xpath('h:Building/h:BuildingDetails/h:Lighting/h:LightingFractions', **xpkw):
         ltg = ltgfracs.getparent()
-        for j, ltgfrac in enumerate(ltgfracs.getchildren()):
+        for ltgfrac in ltgfracs.getchildren():
+            ltgidx += 1
             ltggroup = E.LightingGroup(
-                E.SystemIdentifier(id=f'lighting-fraction-{j}'),
+                E.SystemIdentifier(id=f'lighting-fraction-{ltgidx}'),
                 E.FractionofUnitsInLocation(ltgfrac.text),
                 E.LightingType()
             )

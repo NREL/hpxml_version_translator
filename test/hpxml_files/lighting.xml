@@ -17,8 +17,23 @@
                 <LightingFractions>
                     <FractionIncandescent>0.5</FractionIncandescent>
                     <FractionCFL>0.1</FractionCFL>
-                    <FractionLFL>0.1</FractionLFL>
-                    <FractionLED>0.3</FractionLED>
+                    <FractionLFL>0.4</FractionLFL>
+                </LightingFractions>
+            </Lighting>
+        </BuildingDetails>
+    </Building>
+    <Building>
+        <BuildingID id="bldg2"></BuildingID>
+        <ProjectStatus>
+            <EventType>proposed workscope</EventType>
+        </ProjectStatus>
+        <BuildingDetails>
+            <Lighting>
+                <LightingFractions>
+                    <FractionIncandescent>0.1</FractionIncandescent>
+                    <FractionCFL>0.2</FractionCFL>
+                    <FractionLFL>0.2</FractionLFL>
+                    <FractionLED>0.5</FractionLED>
                 </LightingFractions>
             </Lighting>
         </BuildingDetails>
