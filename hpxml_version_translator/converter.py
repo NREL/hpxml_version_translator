@@ -326,6 +326,9 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
 
         try:
             fw_boundary = location_map[str(fw.AdjacentTo)]
+        except KeyError:
+            fw_boundary = str(fw.AdjacentTo)  # retain unchanged location name
+        try:
             boundary_v3 = {'other housing unit': E.ExteriorAdjacentTo(fw_boundary),
                            'unconditioned basement': E.InteriorAdjacentTo(fw_boundary),
                            'living space': E.InteriorAdjacentTo(fw_boundary),
@@ -333,7 +336,7 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
                            'crawlspace': E.InteriorAdjacentTo(fw_boundary),
                            'attic': E.InteriorAdjacentTo(fw_boundary),  # FIXME: double-check
                            'garage': E.InteriorAdjacentTo(fw_boundary),
-                           'ambient': E.ExteriorAdjacentTo(fw_boundary)}[fw.AdjacentTo]
+                           'ambient': E.ExteriorAdjacentTo(fw_boundary)}[str(fw.AdjacentTo)]
             add_after(
                 this_fw,
                 ['SystemIdentifier',
