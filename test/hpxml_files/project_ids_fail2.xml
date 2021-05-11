@@ -3,39 +3,28 @@
     <XMLTransactionHeaderInformation>
         <XMLType></XMLType>
         <XMLGeneratedBy></XMLGeneratedBy>
-        <CreatedDateAndTime>2021-04-06T11:41:07.728818</CreatedDateAndTime>
+        <CreatedDateAndTime>2021-05-06T16:45:56.825828</CreatedDateAndTime>
         <Transaction>create</Transaction>
     </XMLTransactionHeaderInformation>
     <SoftwareInfo/>
-    <Building>
-        <BuildingID id="bldg1">
-            <SendingSystemIdentifierType>asdf</SendingSystemIdentifierType>
-            <SendingSystemIdentifierValue>jkl</SendingSystemIdentifierValue>
-        </BuildingID>
-        <ProjectStatus>
-            <EventType>audit</EventType>
-        </ProjectStatus>
-        <BuildingDetails/>
-    </Building>
     <Building>
         <BuildingID id="bldg2"/>
         <ProjectStatus>
             <EventType>proposed workscope</EventType>
         </ProjectStatus>
-        <BuildingDetails></BuildingDetails>
+        <BuildingDetails/>
     </Building>
     <Building>
         <BuildingID id="bldg3"/>
         <ProjectStatus>
             <EventType>approved workscope</EventType>
         </ProjectStatus>
-        <BuildingDetails/>
+        <BuildingDetails></BuildingDetails>
     </Building>
     <Project>
-        <BuildingID id="bldg2"/>
+        <BuildingID id='bldg2'/>
         <ProjectDetails>
-            <ProjectSystemIdentifiers id="bldg1"/>
-            <ProjectSystemIdentifiers id="bldg2"/>
+            <ProjectSystemIdentifiers/>
         </ProjectDetails>
     </Project>
 </HPXML>
