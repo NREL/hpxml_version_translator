@@ -695,7 +695,7 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
         except (KeyError, AttributeError):
             pass
 
-    # TODO: Lighting Fraction Improvements
+    # Lighting Fraction Improvements
     # https://github.com/hpxmlwg/hpxml/pull/165
 
     for ltgfracs in root.xpath('h:Building/h:BuildingDetails/h:Lighting/h:LightingFractions', **xpkw):
