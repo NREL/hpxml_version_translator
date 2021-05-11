@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<HPXML xmlns="http://hpxmlonline.com/2014/6" schemaVersion="2.3">
+    <XMLTransactionHeaderInformation>
+        <XMLType></XMLType>
+        <XMLGeneratedBy></XMLGeneratedBy>
+        <CreatedDateAndTime>2021-04-05T14:17:07.685077</CreatedDateAndTime>
+        <Transaction>create</Transaction>
+    </XMLTransactionHeaderInformation>
+    <SoftwareInfo/>
+    <Building>
+        <BuildingID id="bldg1"></BuildingID>
+        <ProjectStatus>
+            <EventType>audit</EventType>
+        </ProjectStatus>
+        <BuildingDetails>
+            <BuildingSummary>
+                <AnnualEnergyUse>
+                    <ConsumptionInfo>
+                        <UtilityID id='utility-1'/>
+                        <ConsumptionType>
+                            <Water>
+                                <WaterType>indoor water </WaterType>
+                                <UnitofMeasure>kcf</UnitofMeasure>
+                            </Water>
+                        </ConsumptionType>
+                        <ConsumptionDetail>
+                            <Consumption>100</Consumption>
+                        </ConsumptionDetail>
+                    </ConsumptionInfo>
+                    <ConsumptionInfo>
+                        <UtilityID id='utility-2'/>
+                        <ConsumptionType>
+                            <Water>
+                                <WaterType>outdoor water</WaterType>
+                                <UnitofMeasure>ccf</UnitofMeasure>
+                            </Water>
+                        </ConsumptionType>
+                        <ConsumptionDetail>
+                            <Consumption>200</Consumption>
+                        </ConsumptionDetail>
+                    </ConsumptionInfo>
+                    <ConsumptionInfo>
+                        <UtilityID id='utility-3'/>
+                        <ConsumptionType>
+                            <Water>
+                                <WaterType>indoor water </WaterType>
+                                <UnitofMeasure>gal</UnitofMeasure>
+                            </Water>
+                        </ConsumptionType>
+                        <ConsumptionDetail>
+                            <Consumption>300</Consumption>
+                        </ConsumptionDetail>
+                    </ConsumptionInfo>
+                </AnnualEnergyUse>
+            </BuildingSummary>
+            <Systems>
+                <WaterHeating>
+                    <WaterHeatingSystem>
+                        <SystemIdentifier id='water-heater-1'/>
+                        <WaterHeaterInsulation>
+                            <Jacket>
+                                <JacketRValue>5</JacketRValue>
+                            </Jacket>
+                            <Pipe>
+                                <PipeRValue>3</PipeRValue>
+                                <PipeLengthInsulated>50</PipeLengthInsulated>
+                            </Pipe>
+                        </WaterHeaterInsulation>
+                    </WaterHeatingSystem>
+                    <WaterHeatingSystem>
+                        <SystemIdentifier id='water-heater-2'/>
+                        <WaterHeaterInsulation>
+                            <Jacket>
+                                <JacketRValue>5.5</JacketRValue>
+                            </Jacket>
+                            <Pipe>
+                                <PipeRValue>3.5</PipeRValue>
+                                <PipeLengthInsulated>50.5</PipeLengthInsulated>
+                            </Pipe>
+                        </WaterHeaterInsulation>
+                    </WaterHeatingSystem>
+                    <HotWaterDistribution>
+                        <SystemIdentifier id='hotwater-distribution-1'/>
+                        <AttachedToWaterHeatingSystem idref='water-heater-1'/>
+                    </HotWaterDistribution>
+                    <HotWaterDistribution>
+                        <SystemIdentifier id='hotwater-distribution-2'/>
+                        <AttachedToWaterHeatingSystem idref='water-heater-2'/>
+                    </HotWaterDistribution>
+                    <AnnualEnergyUse>
+                        <ConsumptionInfo>
+                            <UtilityID id='utility-4'/>
+                            <ConsumptionType>
+                                <Water>
+                                    <WaterType>indoor and outdoor water</WaterType>
+                                    <UnitofMeasure>Mgal</UnitofMeasure>
+                                </Water>
+                            </ConsumptionType>
+                            <ConsumptionDetail>
+                                <Consumption>500</Consumption>
+                            </ConsumptionDetail>
+                        </ConsumptionInfo>
+                    </AnnualEnergyUse>
+                </WaterHeating>
+            </Systems>
+            <Pools>
+                <Pool>
+                    <SystemIdentifier id='pool-1'/>
+                    <PoolPumps>
+                        <PoolPump>
+                            <SystemIdentifier id='poolpump-1'/>
+                            <HoursPerDay>3</HoursPerDay>
+                        </PoolPump>
+                        <PoolPump>
+                            <SystemIdentifier id='poolpump-2'/>
+                            <HoursPerDay>4</HoursPerDay>
+                        </PoolPump>
+                    </PoolPumps>
+                </Pool>
+            </Pools>
+        </BuildingDetails>
+    </Building>
+    <Building>
+        <BuildingID id="bldg2"/>
+        <ProjectStatus>
+            <EventType>proposed workscope</EventType>
+        </ProjectStatus>
+        <BuildingDetails>
+            <BuildingSummary>
+                <AnnualEnergyUse>
+                    <ConsumptionInfo>
+                        <UtilityID id='utility-5'/>
+                        <ConsumptionType>
+                            <Water>
+                                <WaterType>indoor water </WaterType>
+                                <UnitofMeasure>cf</UnitofMeasure>
+                            </Water>
+                        </ConsumptionType>
+                        <ConsumptionDetail>
+                            <Consumption>400</Consumption>
+                        </ConsumptionDetail>
+                    </ConsumptionInfo>
+                </AnnualEnergyUse>
+            </BuildingSummary>
+            <Systems>
+                <WaterHeating>
+                    <WaterHeatingSystem>
+                        <SystemIdentifier id='water-heater-3'/>
+                        <WaterHeaterInsulation>
+                            <Pipe>
+                                <PipeRValue>5</PipeRValue>
+                                <PipeLengthInsulated>20</PipeLengthInsulated>
+                            </Pipe>
+                        </WaterHeaterInsulation>
+                    </WaterHeatingSystem>
+                    <HotWaterDistribution>
+                        <SystemIdentifier id='hotwater-distribution-3'/>
+                        <AttachedToWaterHeatingSystem idref='water-heater-3'/>
+                    </HotWaterDistribution>
+                    <AnnualEnergyUse>
+                        <ConsumptionInfo>
+                            <UtilityID id='utility-6'/>
+                            <ConsumptionType>
+                                <Water>
+                                    <WaterType>indoor water </WaterType>
+                                    <UnitofMeasure>gal</UnitofMeasure>
+                                </Water>
+                            </ConsumptionType>
+                            <ConsumptionDetail>
+                                <Consumption>600</Consumption>
+                            </ConsumptionDetail>
+                        </ConsumptionInfo>
+                    </AnnualEnergyUse>
+                </WaterHeating>
+            </Systems>
+            <Pools>
+                <Pool>
+                    <SystemIdentifier id='pool-3'/>
+                    <PoolPumps>
+                        <PoolPump>
+                            <SystemIdentifier id='poolpump-3'/>
+                            <HoursPerDay>5</HoursPerDay>
+                            <PumpSpeed>
+                                <Power>250</Power>
+                            </PumpSpeed>
+                        </PoolPump>
+                    </PoolPumps>
+                </Pool>
+            </Pools>
+        </BuildingDetails>
+    </Building>
+</HPXML>
