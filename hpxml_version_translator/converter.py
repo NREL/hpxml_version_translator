@@ -685,14 +685,11 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
     # Standardize Locations
     # https://github.com/hpxmlwg/hpxml/pull/156
 
-    for el_name in ('//h:InteriorAdjacentTo|//h:ExteriorAdjacentTo',
-                    '//h:DuctLocation',
-                    '//h:HVACPlant/h:*/h:UnitLocation|//h:WaterHeatingSystem/h:Location|//h:Measure/h:Location'):
-        for el in root.xpath(f'{el_name}', **xpkw):
-            try:
-                el._setText(location_map[el.text])
-            except (KeyError, AttributeError):
-                pass
+    for el in root.xpath('//h:InteriorAdjacentTo|//h:ExteriorAdjacentTo|//h:DuctLocation|//h:HVACPlant/h:*/h:UnitLocation|//h:WaterHeatingSystem/h:Location|//h:Measure/h:Location', **xpkw):  # noqa E501
+        try:
+            el._setText(location_map[el.text])
+        except (KeyError, AttributeError):
+            pass
 
     # TODO: Lighting Fraction Improvements
     # https://github.com/hpxmlwg/hpxml/pull/165
