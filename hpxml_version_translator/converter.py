@@ -476,20 +476,9 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
             roof_attached_to_this_attic = root.xpath(
                 'h:Building/h:BuildingDetails/h:Enclosure/h:AtticAndRoof/h:Roofs/h:Roof[h:SystemIdentifier/@id=$sysid]',
                 sysid=roof_idref, **xpkw)[0]
-            add_after(
+            add_before(
                 roof_attached_to_this_attic,
-                ['SystemIdentifier',
-                 'ExternalResource',
-                 'AttachedToSpace',
-                 'RoofColor',
-                 'SolarAbsorptance',
-                 'Emittance',
-                 'RoofType',
-                 'DeckType',
-                 'Pitch',
-                 'RoofArea',
-                 'RadiantBarrier',
-                 'RadiantBarrierLocation'],
+                ['extension'],
                 roof_insulation
             )
 
@@ -682,46 +671,36 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
                 )
                 if win.Treatments == 'solar screen':
                     treatment_shade.append(E.Type('solar screens'))
-                add_after(
+                add_before(
                     win,
-                    ['SystemIdentifier',
-                     'ExternalResource',
-                     'Area',
-                     'Quantity',
-                     'Azimuth',
-                     'Orientation',
-                     'FrameType',
-                     'GlassLayers',
-                     'GlassType',
-                     'GasFill',
-                     'Condition',
-                     'UFactor',
-                     'SHGC',
-                     'VisibleTransmittance',
-                     'NFRCCertified',
-                     'ThirdPartyCertification',
-                     'WindowFilm'],
+                    ['InteriorShading',
+                     'InteriorShadingFactor',
+                     'MoveableInsulation',
+                     'Overhangs',
+                     'WeatherStripping',
+                     'Operable',
+                     'LeakinessDescription',
+                     'WindowtoWallRatio',
+                     'AttachedToWall',
+                     'AnnualEnergyUse',
+                     'extension'],
                     treatment_shade
                 )
             elif win.Treatments == 'window film':
-                add_after(
+                add_before(
                     win,
-                    ['SystemIdentifier',
-                     'ExternalResource',
-                     'Area',
-                     'Quantity',
-                     'Azimuth',
-                     'Orientation',
-                     'FrameType',
-                     'GlassLayers',
-                     'GlassType',
-                     'GasFill',
-                     'Condition',
-                     'UFactor',
-                     'SHGC',
-                     'VisibleTransmittance',
-                     'NFRCCertified',
-                     'ThirdPartyCertification'],
+                    ['ExteriorShading',
+                     'InteriorShading',
+                     'StormWindow',
+                     'MoveableInsulation',
+                     'Overhangs',
+                     'WeatherStripping',
+                     'Operable',
+                     'LeakinessDescription',
+                     'WindowtoWallRatio',
+                     'AttachedToWall',
+                     'AnnualEnergyUse',
+                     'extension'],
                     E.WindowFilm(
                         E.SystemIdentifier(id=f'window-film-{i}')
                     )
@@ -744,27 +723,15 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
             ])
             win.remove(win.InteriorShadingFactor)
         if hasattr(win, 'MovableInsulationRValue'):
-            add_after(
+            if win.tag == f'{{{hpxml3_ns}}}Window':
+                el_list = ['Overhangs', 'WeatherStripping', 'Operable', 'WindowtoWallRatio', 'AttachedToWall',
+                           'AnnualEnergyUse', 'extension']
+            elif win.tag == f'{{{hpxml3_ns}}}Skylight':
+                el_list = ['Overhangs', 'WeatherStripping', 'Operable', 'SolarTube', 'Pitch', 'AttachedToRoof',
+                           'AnnualEnergyUse', 'extension']
+            add_before(
                 win,
-                ['SystemIdentifier',
-                 'ExternalResource',
-                 'Area',
-                 'Quantity',
-                 'Azimuth',
-                 'Orientation',
-                 'FrameType',
-                 'GlassLayers',
-                 'GlassType',
-                 'GasFill',
-                 'Condition',
-                 'UFactor',
-                 'SHGC',
-                 'VisibleTransmittance',
-                 'NFRCCertified',
-                 'ThirdPartyCertification',
-                 'ExteriorShading',
-                 'InteriorShading',
-                 'StormWindow'],
+                el_list,
                 E.MoveableInsulation(
                     E.SystemIdentifier(id=f'movable-insulation-{i}'),
                     E.RValue(float(win.MovableInsulationRValue))
@@ -779,26 +746,17 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
                 if win.GlassLayers == 'single-paned with low-e storms':
                     storm_window.append(E.GlassType('low-e'))
                 win.GlassLayers._setText('single-pane')
-                add_after(
+                add_before(
                     win,
-                    ['SystemIdentifier',
-                     'ExternalResource',
-                     'Area',
-                     'Quantity',
-                     'Azimuth',
-                     'Orientation',
-                     'FrameType',
-                     'GlassLayers',
-                     'GlassType',
-                     'GasFill',
-                     'Condition',
-                     'UFactor',
-                     'SHGC',
-                     'VisibleTransmittance',
-                     'NFRCCertified',
-                     'ThirdPartyCertification',
-                     'ExteriorShading',
-                     'InteriorShading'],
+                    ['MoveableInsulation',
+                     'Overhangs',
+                     'WeatherStripping',
+                     'Operable',
+                     'LeakinessDescription',
+                     'WindowtoWallRatio',
+                     'AttachedToWall',
+                     'AnnualEnergyUse',
+                     'extension'],
                     storm_window
                 )
 
