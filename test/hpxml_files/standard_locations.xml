@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<HPXML xmlns="http://hpxmlonline.com/2014/6" schemaVersion="2.3">
+    <XMLTransactionHeaderInformation>
+        <XMLType></XMLType>
+        <XMLGeneratedBy>unconditioned basement</XMLGeneratedBy>
+        <CreatedDateAndTime>2021-04-05T14:17:07.685077</CreatedDateAndTime>
+        <Transaction>create</Transaction>
+    </XMLTransactionHeaderInformation>
+    <SoftwareInfo/>
+    <Building>
+        <BuildingID id="bldg1"></BuildingID>
+        <ProjectStatus>
+            <EventType>audit</EventType>
+        </ProjectStatus>
+        <BuildingDetails>
+            <Enclosure>
+                <Walls>
+                    <Wall>
+                        <SystemIdentifier id='wall-1'/>
+                        <ExteriorAdjacentTo>ambient</ExteriorAdjacentTo>
+                        <InteriorAdjacentTo>living space</InteriorAdjacentTo>
+                    </Wall>
+                    <Wall>
+                        <SystemIdentifier id='wall-2'/>
+                        <ExteriorAdjacentTo>ground</ExteriorAdjacentTo>
+                        <InteriorAdjacentTo>unconditioned basement</InteriorAdjacentTo>
+                    </Wall>
+                    <Wall>
+                        <SystemIdentifier id='wall-3'/>
+                        <ExteriorAdjacentTo>other housing unit</ExteriorAdjacentTo>
+                        <InteriorAdjacentTo>crawlspace</InteriorAdjacentTo>
+                    </Wall>
+                    <Wall>
+                        <SystemIdentifier id='wall-4'/>
+                        <ExteriorAdjacentTo>garage</ExteriorAdjacentTo>
+                        <InteriorAdjacentTo>other</InteriorAdjacentTo>
+                    </Wall>
+                </Walls>
+            </Enclosure>
+            <Systems>
+                <HVAC>
+                    <HVACDistribution>
+                        <SystemIdentifier id='hvac-dist-1'/>
+                        <DistributionSystemType>
+                            <AirDistribution>
+                                <AirDistributionType>regular velocity</AirDistributionType>
+                                <Ducts>
+                                    <DuctType>supply</DuctType>
+                                    <DuctLocation>unconditioned attic</DuctLocation>
+                                </Ducts>
+                                <Ducts>
+                                    <DuctType>supply</DuctType>
+                                    <DuctLocation>unconditioned basement</DuctLocation>
+                                </Ducts>
+                                <Ducts>
+                                    <DuctType>supply</DuctType>
+                                    <DuctLocation>conditioned space</DuctLocation>
+                                </Ducts>
+                                <Ducts>
+                                    <DuctType>return</DuctType>
+                                    <DuctLocation>unvented crawlspace</DuctLocation>
+                                </Ducts>
+                                <Ducts>
+                                    <DuctType>return</DuctType>
+                                    <DuctLocation>vented crawlspace</DuctLocation>
+                                </Ducts>
+                                <Ducts>
+                                    <DuctType>return</DuctType>
+                                    <DuctLocation>unconditioned space</DuctLocation>
+                                </Ducts>
+                            </AirDistribution>
+                        </DistributionSystemType>
+                    </HVACDistribution>
+                </HVAC>
+            </Systems>
+        </BuildingDetails>
+    </Building>
+    <Building>
+        <BuildingID id="bldg2"></BuildingID>
+        <ProjectStatus>
+            <EventType>proposed workscope</EventType>
+        </ProjectStatus>
+        <BuildingDetails>
+            <Enclosure>
+                <Walls>
+                    <Wall>
+                        <SystemIdentifier id='wall-5'/>
+                        <ExteriorAdjacentTo>ambient</ExteriorAdjacentTo>
+                        <InteriorAdjacentTo>living space</InteriorAdjacentTo>
+                    </Wall>
+                    <Wall>
+                        <SystemIdentifier id='wall-6'/>
+                        <ExteriorAdjacentTo>ground</ExteriorAdjacentTo>
+                        <InteriorAdjacentTo>unconditioned basement</InteriorAdjacentTo>
+                    </Wall>
+                    <Wall>
+                        <SystemIdentifier id='wall-7'/>
+                        <ExteriorAdjacentTo>other housing unit</ExteriorAdjacentTo>
+                        <InteriorAdjacentTo>crawlspace</InteriorAdjacentTo>
+                    </Wall>
+                    <Wall>
+                        <SystemIdentifier id='wall-8'/>
+                        <ExteriorAdjacentTo>garage</ExteriorAdjacentTo>
+                        <InteriorAdjacentTo>other</InteriorAdjacentTo>
+                    </Wall>
+                </Walls>
+            </Enclosure>
+            <Systems>
+                <HVAC>
+                    <HVACDistribution>
+                        <SystemIdentifier id='hvac-dist-2'/>
+                        <DistributionSystemType>
+                            <AirDistribution>
+                                <AirDistributionType>regular velocity</AirDistributionType>
+                                <Ducts>
+                                    <DuctType>supply</DuctType>
+                                    <DuctLocation>unconditioned attic</DuctLocation>
+                                </Ducts>
+                                <Ducts>
+                                    <DuctType>supply</DuctType>
+                                    <DuctLocation>unconditioned basement</DuctLocation>
+                                </Ducts>
+                                <Ducts>
+                                    <DuctType>supply</DuctType>
+                                    <DuctLocation>conditioned space</DuctLocation>
+                                </Ducts>
+                                <Ducts>
+                                    <DuctType>return</DuctType>
+                                    <DuctLocation>unvented crawlspace</DuctLocation>
+                                </Ducts>
+                                <Ducts>
+                                    <DuctType>return</DuctType>
+                                    <DuctLocation>vented crawlspace</DuctLocation>
+                                </Ducts>
+                                <Ducts>
+                                    <DuctType>return</DuctType>
+                                    <DuctLocation>unconditioned space</DuctLocation>
+                                </Ducts>
+                            </AirDistribution>
+                        </DistributionSystemType>
+                    </HVACDistribution>
+                </HVAC>
+            </Systems>
+        </BuildingDetails>
+    </Building>
+</HPXML>
