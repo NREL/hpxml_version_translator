@@ -284,7 +284,7 @@ def test_walls():
     root = convert_hpxml_and_parse(hpxml_dir / 'enclosure_walls.xml')
 
     wall1 = root.Building.BuildingDetails.Enclosure.Walls.Wall[0]
-    # assert wall1.ExteriorAdjacentTo == 'ambient'  # TODO: will be addressed by Issue #3
+    assert wall1.ExteriorAdjacentTo == 'outside'
     assert wall1.InteriorAdjacentTo == 'living space'
     assert hasattr(wall1.WallType, 'WoodStud')
     assert wall1.Thickness == 0.5
@@ -349,6 +349,81 @@ def test_windows():
     assert not hasattr(skylight1, 'Treatments')
     assert not hasattr(skylight1, 'InteriorShadingFactor')
     assert not hasattr(skylight1, 'MovableInsulationRValue')
+
+
+def test_standard_locations():
+    root = convert_hpxml_and_parse(hpxml_dir / 'standard_locations.xml')
+
+    wall1 = root.Building[0].BuildingDetails.Enclosure.Walls.Wall[0]
+    assert wall1.ExteriorAdjacentTo == 'outside'
+    assert wall1.InteriorAdjacentTo == 'living space'
+    wall2 = root.Building[0].BuildingDetails.Enclosure.Walls.Wall[1]
+    assert wall2.ExteriorAdjacentTo == 'ground'
+    assert wall2.InteriorAdjacentTo == 'basement - unconditioned'
+    wall3 = root.Building[0].BuildingDetails.Enclosure.Walls.Wall[2]
+    assert wall3.ExteriorAdjacentTo == 'other housing unit'
+    assert wall3.InteriorAdjacentTo == 'crawlspace'
+    wall4 = root.Building[0].BuildingDetails.Enclosure.Walls.Wall[3]
+    assert wall4.ExteriorAdjacentTo == 'garage'
+    assert wall4.InteriorAdjacentTo == 'other'
+
+    hvac_dist1 = root.Building[0].BuildingDetails.Systems.HVAC.HVACDistribution[0]
+    assert hvac_dist1.DistributionSystemType.AirDistribution.AirDistributionType == 'regular velocity'
+    duct1 = hvac_dist1.DistributionSystemType.AirDistribution.Ducts[0]
+    assert duct1.DuctType == 'supply'
+    assert duct1.DuctLocation == 'attic - unconditioned'
+    duct2 = hvac_dist1.DistributionSystemType.AirDistribution.Ducts[1]
+    assert duct2.DuctType == 'supply'
+    assert duct2.DuctLocation == 'basement - unconditioned'
+    duct3 = hvac_dist1.DistributionSystemType.AirDistribution.Ducts[2]
+    assert duct3.DuctType == 'supply'
+    assert duct3.DuctLocation == 'living space'
+    duct4 = hvac_dist1.DistributionSystemType.AirDistribution.Ducts[3]
+    assert duct4.DuctType == 'return'
+    assert duct4.DuctLocation == 'crawlspace - unvented'
+    duct5 = hvac_dist1.DistributionSystemType.AirDistribution.Ducts[4]
+    assert duct5.DuctType == 'return'
+    assert duct5.DuctLocation == 'crawlspace - vented'
+    duct6 = hvac_dist1.DistributionSystemType.AirDistribution.Ducts[5]
+    assert duct6.DuctType == 'return'
+    assert duct6.DuctLocation == 'unconditioned space'
+
+    wall5 = root.Building[1].BuildingDetails.Enclosure.Walls.Wall[0]
+    assert wall5.ExteriorAdjacentTo == 'outside'
+    assert wall5.InteriorAdjacentTo == 'living space'
+    wall6 = root.Building[1].BuildingDetails.Enclosure.Walls.Wall[1]
+    assert wall6.ExteriorAdjacentTo == 'ground'
+    assert wall6.InteriorAdjacentTo == 'basement - unconditioned'
+    wall7 = root.Building[1].BuildingDetails.Enclosure.Walls.Wall[2]
+    assert wall7.ExteriorAdjacentTo == 'other housing unit'
+    assert wall7.InteriorAdjacentTo == 'crawlspace'
+    wall8 = root.Building[1].BuildingDetails.Enclosure.Walls.Wall[3]
+    assert wall8.ExteriorAdjacentTo == 'garage'
+    assert wall8.InteriorAdjacentTo == 'other'
+
+    hvac_dist2 = root.Building[1].BuildingDetails.Systems.HVAC.HVACDistribution[0]
+    assert hvac_dist2.DistributionSystemType.AirDistribution.AirDistributionType == 'regular velocity'
+    duct7 = hvac_dist2.DistributionSystemType.AirDistribution.Ducts[0]
+    assert duct7.DuctType == 'supply'
+    assert duct7.DuctLocation == 'attic - unconditioned'
+    duct8 = hvac_dist2.DistributionSystemType.AirDistribution.Ducts[1]
+    assert duct8.DuctType == 'supply'
+    assert duct8.DuctLocation == 'basement - unconditioned'
+    duct9 = hvac_dist2.DistributionSystemType.AirDistribution.Ducts[2]
+    assert duct9.DuctType == 'supply'
+    assert duct9.DuctLocation == 'living space'
+    duct10 = hvac_dist2.DistributionSystemType.AirDistribution.Ducts[3]
+    assert duct10.DuctType == 'return'
+    assert duct10.DuctLocation == 'crawlspace - unvented'
+    duct11 = hvac_dist2.DistributionSystemType.AirDistribution.Ducts[4]
+    assert duct11.DuctType == 'return'
+    assert duct11.DuctLocation == 'crawlspace - vented'
+    duct12 = hvac_dist2.DistributionSystemType.AirDistribution.Ducts[5]
+    assert duct12.DuctType == 'return'
+    assert duct12.DuctLocation == 'unconditioned space'
+
+    # Make sure we're not unintentionally changing elements that shouldn't be
+    assert root.XMLTransactionHeaderInformation.XMLGeneratedBy == 'unconditioned basement'
 
 
 def test_lighting():
