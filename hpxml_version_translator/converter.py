@@ -49,7 +49,7 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
     def add_after(parent_el, list_of_el_names, el_to_add):
         for sibling_name in reversed(list_of_el_names):
             try:
-                sibling = getattr(parent_el, sibling_name)
+                sibling = getattr(parent_el, sibling_name)[-1]
             except AttributeError:
                 continue
             else:
@@ -800,22 +800,36 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
     # https://github.com/hpxmlwg/hpxml/pull/167
 
     # Removes WaterHeaterInsulation/Pipe; use HotWaterDistribution/PipeInsulation instead
-    for pipe in root.xpath('//h:WaterHeaterInsulation/h:Pipe', **xpkw):
+    for i, pipe in enumerate(root.xpath('//h:WaterHeaterInsulation/h:Pipe', **xpkw), 1):
         waterheating = pipe.getparent().getparent().getparent()
         waterheatingsystem = pipe.getparent().getparent()
         waterheatingsystem_idref = str(waterheatingsystem.SystemIdentifier.attrib['id'])
-        attached_hw_dist = waterheating.xpath('h:HotWaterDistribution[h:AttachedToWaterHeatingSystem/@idref=$sysid]',
-                                              sysid=waterheatingsystem_idref, **xpkw)[0]
-        add_after(
-            attached_hw_dist,
-            ['SystemIdentifier',
-             'ExternalResource',
-             'AttachedToWaterHeatingSystem',
-             'SystemType'],
-            E.PipeInsulation(
-                E.PipeRValue(float(pipe.PipeRValue))
+        try:
+            hw_dist = waterheating.xpath('h:HotWaterDistribution[h:AttachedToWaterHeatingSystem/@idref=$sysid]',
+                                         sysid=waterheatingsystem_idref, **xpkw)[0]
+            add_after(
+                hw_dist,
+                ['SystemIdentifier',
+                 'ExternalResource',
+                 'AttachedToWaterHeatingSystem',
+                 'SystemType'],
+                E.PipeInsulation(
+                    E.PipeRValue(float(pipe.PipeRValue))
+                )
             )
-        )
+        except IndexError:  # handles when there is no attached hot water distribution system
+            add_after(
+                waterheating,
+                ['WaterHeatingSystem',
+                 'WaterHeatingControl'],
+                E.HotWaterDistribution(
+                    E.SystemIdentifier(id=f'hotwater-distribution-{i}'),
+                    E.AttachedToWaterHeatingSystem(idref=waterheatingsystem_idref),
+                    E.PipeInsulation(
+                        E.PipeRValue(float(pipe.PipeRValue))
+                    )
+                )
+            )
         waterheaterinsualtion = pipe.getparent()
         waterheaterinsualtion.remove(pipe)
         if waterheaterinsualtion.countchildren() == 0:
