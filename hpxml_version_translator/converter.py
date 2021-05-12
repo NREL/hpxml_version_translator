@@ -476,20 +476,9 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
             roof_attached_to_this_attic = root.xpath(
                 'h:Building/h:BuildingDetails/h:Enclosure/h:AtticAndRoof/h:Roofs/h:Roof[h:SystemIdentifier/@id=$sysid]',
                 sysid=roof_idref, **xpkw)[0]
-            add_after(
+            add_before(
                 roof_attached_to_this_attic,
-                ['SystemIdentifier',
-                 'ExternalResource',
-                 'AttachedToSpace',
-                 'RoofColor',
-                 'SolarAbsorptance',
-                 'Emittance',
-                 'RoofType',
-                 'DeckType',
-                 'Pitch',
-                 'RoofArea',
-                 'RadiantBarrier',
-                 'RadiantBarrierLocation'],
+                ['extension'],
                 roof_insulation
             )
 
@@ -657,19 +646,25 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
         if hasattr(win, 'ExteriorShading'):
             ext_shade = str(win.ExteriorShading)
             win.remove(win.ExteriorShading)  # remove ExteriorShading of HPXML v2
-            add_before(
+            add_after(
                 win,
-                ['InteriorShading',
-                 'InteriorShadingFactor',
-                 'MoveableInsulation',
-                 'Overhangs',
-                 'WeatherStripping',
-                 'Operable',
-                 'LeakinessDescription',
-                 'WindowtoWallRatio',
-                 'AttachedToWall',
-                 'AnnualEnergyUse',
-                 'extension'],
+                ['SystemIdentifier',
+                 'ExternalResource',
+                 'Area',
+                 'Quantity',
+                 'Azimuth',
+                 'Orientation',
+                 'FrameType',
+                 'GlassLayers',
+                 'GlassType',
+                 'GasFill',
+                 'Condition',
+                 'UFactor',
+                 'SHGC',
+                 'VisibleTransmittance',
+                 'NFRCCertified',
+                 'ThirdPartyCertification',
+                 'WindowFilm'],
                 E.ExteriorShading(
                     E.SystemIdentifier(id=f'exterior-shading-{i}'),
                     E.Type(ext_shade)
