@@ -57,6 +57,17 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
                 return
         parent_el.insert(0, el_to_add)
 
+    def add_before(parent_el, list_of_el_names, el_to_add):
+        for sibling_name in list_of_el_names:
+            try:
+                sibling = getattr(parent_el, sibling_name)[0]
+            except AttributeError:
+                continue
+            else:
+                sibling.addprevious(el_to_add)
+                return
+        parent_el.append(el_to_add)
+
     # Ensure we're working with valid HPXML v2.x (earlier versions should validate against v2.3 schema)
     hpxml2_doc = objectify.parse(pathobj_to_str(hpxml2_file))
     hpxml2_schema.assertValid(hpxml2_doc)
@@ -395,6 +406,7 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
         # move AttachedToRoof to after VentilationRate
         if hasattr(this_attic, 'AttachedToRoof'):
             attached_to_roof = deepcopy(this_attic.AttachedToRoof)
+            this_attic.remove(this_attic.AttachedToRoof)  # remove the AttachedToRoof of HPXML v2
             add_after(
                 this_attic,
                 ['SystemIdentifier',
@@ -403,7 +415,6 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
                  'VentilationRate'],
                 attached_to_roof
             )
-            this_attic.remove(this_attic.AttachedToRoof[0])  # remove the AttachedToRoof of HPXML v2
 
         # find the wall with the same id and add AtticWallType = knee wall
         if hasattr(this_attic, 'AtticKneeWall'):
@@ -530,6 +541,8 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
             this_roof.remove(this_roof.RoofArea)
 
         if hasattr(roof, 'RoofType'):
+            roof_type = str(roof.RoofType)
+            this_roof.remove(this_roof.RoofType)  # remove the RoofType of HPXML v2
             add_after(
                 this_roof,
                 ['SystemIdentifier',
@@ -539,9 +552,8 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
                  'Area',
                  'Orientation',
                  'Azimuth'],
-                E.RoofType(str(roof.RoofType))
+                E.RoofType(roof_type)
             )
-            this_roof.remove(this_roof.RoofType[1])  # remove the RoofType of HPXML v2
 
     # remove AtticAndRoof after rearranging all attics and roofs
     for enclosure in root.xpath('h:Building/h:BuildingDetails/h:Enclosure', **xpkw):
@@ -613,6 +625,8 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
     # Windows and Skylights
     for i, win in enumerate(root.xpath('//h:Window|//h:Skylight', **xpkw)):
         if hasattr(win, 'VisibleTransmittance'):
+            vis_trans = float(win.VisibleTransmittance)
+            win.remove(win.VisibleTransmittance)  # remove VisibleTransmittance of HPXML v2
             add_after(
                 win,
                 ['SystemIdentifier',
@@ -628,20 +642,20 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
                  'Condition',
                  'UFactor',
                  'SHGC'],
-                E.VisibleTransmittance(float(win.VisibleTransmittance))
+                E.VisibleTransmittance(vis_trans)
             )
-            win.remove(win.VisibleTransmittance[1])  # remove VisibleTransmittance of HPXML v2
         if hasattr(win, 'ExteriorShading'):
             ext_shade = str(win.ExteriorShading)
-            win.ExteriorShading.clear()
-            win.ExteriorShading.extend([
-                E.SystemIdentifier(id=f'exterior-shading-{i}'),
-                E.Type(ext_shade)
-            ])
-            if hasattr(win, 'InteriorShading'):  # insert ExteriorShading right before InteriorShading
-                win.InteriorShading.addprevious(win.ExteriorShading)
-            elif hasattr(win, 'InteriorShadingFactor'):
-                win.InteriorShadingFactor.addprevious(win.ExteriorShading)
+            win.remove(win.ExteriorShading)  # remove ExteriorShading of HPXML v2
+            add_before(
+                win,
+                ['InteriorShading',
+                 'InteriorShadingFactor'],
+                E.ExteriorShading(
+                    E.SystemIdentifier(id=f'exterior-shading-{i}'),
+                    E.Type(ext_shade)
+                )
+            )
         if hasattr(win, 'Treatments'):
             if win.Treatments in ['shading', 'solar screen']:
                 treatment_shade = E.ExteriorShading(
