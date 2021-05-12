@@ -379,8 +379,8 @@ def test_windows():
     assert win1.SHGC == 0.45
     assert win1.NFRCCertified
     assert win1.VisibleTransmittance == 0.9
-    assert win1.ExteriorShading[0].Type == 'evergreen tree'
-    assert win1.ExteriorShading[1].Type == 'solar screens'
+    assert win1.ExteriorShading[0].Type == 'solar screens'
+    assert win1.ExteriorShading[1].Type == 'evergreen tree'
     assert win1.InteriorShading.SystemIdentifier.attrib['id'] == 'interior-shading-0'
     assert win1.InteriorShading.Type == 'light shades'
     assert win1.InteriorShading.SummerShadingCoefficient == 0.7
@@ -403,8 +403,8 @@ def test_windows():
     assert skylight1.Area == 20.0
     assert skylight1.UFactor == 0.25
     assert skylight1.SHGC == 0.60
-    assert skylight1.ExteriorShading[0].Type == 'building'
-    assert skylight1.ExteriorShading[1].Type == 'solar screens'
+    assert skylight1.ExteriorShading[0].Type == 'solar screens'
+    assert skylight1.ExteriorShading[1].Type == 'building'
     assert skylight1.InteriorShading.SystemIdentifier.attrib['id'] == 'interior-shading-3'
     assert skylight1.InteriorShading.Type == 'dark shades'
     assert skylight1.InteriorShading.SummerShadingCoefficient == 0.65

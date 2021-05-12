@@ -444,16 +444,13 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
         # and then copy AtticFloorInsulation over to Insulation of the frame floor
         if hasattr(this_attic, 'AtticFloorInsulation'):
             if not hasattr(enclosure, 'FrameFloors'):
-                add_after(
+                add_before(
                     enclosure,
-                    ['AirInfiltration',
-                     'Attics',
-                     'Foundations',
-                     'Garages',
-                     'Roofs',
-                     'RimJoists',
-                     'Walls',
-                     'FoundationWalls'],
+                    ['Slabs',
+                     'Windows',
+                     'Skylights',
+                     'Doors',
+                     'extension'],
                     E.FrameFloors()
                 )
             attic_floor_el = E.FrameFloor(
@@ -572,16 +569,13 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
         else:
             ff.addnext(el_attached_to_ff)
         if not hasattr(enclosure, 'FrameFloors'):
-            add_after(
+            add_before(
                 enclosure,
-                ['AirInfiltration',
-                 'Attics',
-                 'Foundations',
-                 'Garages',
-                 'Roofs',
-                 'RimJoists',
-                 'Walls',
-                 'FoundationWalls'],
+                ['Slabs',
+                 'Windows',
+                 'Skylights',
+                 'Doors',
+                 'extension'],
                 E.FrameFloors()
             )
         this_ff = deepcopy(ff)
@@ -595,17 +589,12 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
 
         slab.addnext(E.AttachedToSlab(idref=slab.SystemIdentifier.attrib['id']))
         if not hasattr(enclosure, 'Slabs'):
-            add_after(
+            add_before(
                 enclosure,
-                ['AirInfiltration',
-                 'Attics',
-                 'Foundations',
-                 'Garages',
-                 'Roofs',
-                 'RimJoists',
-                 'Walls',
-                 'FoundationWalls',
-                 'FrameFloors'],
+                ['Windows',
+                 'Skylights',
+                 'Doors',
+                 'extension'],
                 E.Slabs()
             )
         enclosure.Slabs.append(deepcopy(slab))
@@ -677,36 +666,46 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
                 )
                 if win.Treatments == 'solar screen':
                     treatment_shade.append(E.Type('solar screens'))
-                add_before(
+                add_after(
                     win,
-                    ['InteriorShading',
-                     'InteriorShadingFactor',
-                     'MoveableInsulation',
-                     'Overhangs',
-                     'WeatherStripping',
-                     'Operable',
-                     'LeakinessDescription',
-                     'WindowtoWallRatio',
-                     'AttachedToWall',
-                     'AnnualEnergyUse',
-                     'extension'],
+                    ['SystemIdentifier',
+                     'ExternalResource',
+                     'Area',
+                     'Quantity',
+                     'Azimuth',
+                     'Orientation',
+                     'FrameType',
+                     'GlassLayers',
+                     'GlassType',
+                     'GasFill',
+                     'Condition',
+                     'UFactor',
+                     'SHGC',
+                     'VisibleTransmittance',
+                     'NFRCCertified',
+                     'ThirdPartyCertification',
+                     'WindowFilm'],
                     treatment_shade
                 )
             elif win.Treatments == 'window film':
-                add_before(
+                add_after(
                     win,
-                    ['ExteriorShading',
-                     'InteriorShading',
-                     'StormWindow',
-                     'MoveableInsulation',
-                     'Overhangs',
-                     'WeatherStripping',
-                     'Operable',
-                     'LeakinessDescription',
-                     'WindowtoWallRatio',
-                     'AttachedToWall',
-                     'AnnualEnergyUse',
-                     'extension'],
+                    ['SystemIdentifier',
+                     'ExternalResource',
+                     'Area',
+                     'Quantity',
+                     'Azimuth',
+                     'Orientation',
+                     'FrameType',
+                     'GlassLayers',
+                     'GlassType',
+                     'GasFill',
+                     'Condition',
+                     'UFactor',
+                     'SHGC',
+                     'VisibleTransmittance',
+                     'NFRCCertified',
+                     'ThirdPartyCertification'],
                     E.WindowFilm(
                         E.SystemIdentifier(id=f'window-film-{i}')
                     )
@@ -752,17 +751,26 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
                 if win.GlassLayers == 'single-paned with low-e storms':
                     storm_window.append(E.GlassType('low-e'))
                 win.GlassLayers._setText('single-pane')
-                add_before(
+                add_after(
                     win,
-                    ['MoveableInsulation',
-                     'Overhangs',
-                     'WeatherStripping',
-                     'Operable',
-                     'LeakinessDescription',
-                     'WindowtoWallRatio',
-                     'AttachedToWall',
-                     'AnnualEnergyUse',
-                     'extension'],
+                    ['SystemIdentifier',
+                     'ExternalResource',
+                     'Area',
+                     'Quantity',
+                     'Azimuth',
+                     'Orientation',
+                     'FrameType',
+                     'GlassLayers',
+                     'GlassType',
+                     'GasFill',
+                     'Condition',
+                     'UFactor',
+                     'SHGC',
+                     'VisibleTransmittance',
+                     'NFRCCertified',
+                     'ThirdPartyCertification',
+                     'ExteriorShading',
+                     'InteriorShading'],
                     storm_window
                 )
 
