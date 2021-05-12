@@ -42,6 +42,7 @@
                         <SHGC>0.6</SHGC>
                         <VisibleTransmittance>0.8</VisibleTransmittance>
                         <ExteriorShading>solar film</ExteriorShading>
+                        <WeatherStripping>true</WeatherStripping>
                     </Window>
                     <Window>
                         <SystemIdentifier id='window-3'/>

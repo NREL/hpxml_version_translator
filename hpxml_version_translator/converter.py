@@ -650,7 +650,16 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
             add_before(
                 win,
                 ['InteriorShading',
-                 'InteriorShadingFactor'],
+                 'InteriorShadingFactor',
+                 'MoveableInsulation',
+                 'Overhangs',
+                 'WeatherStripping',
+                 'Operable',
+                 'LeakinessDescription',
+                 'WindowtoWallRatio',
+                 'AttachedToWall',
+                 'AnnualEnergyUse',
+                 'extension'],
                 E.ExteriorShading(
                     E.SystemIdentifier(id=f'exterior-shading-{i}'),
                     E.Type(ext_shade)
