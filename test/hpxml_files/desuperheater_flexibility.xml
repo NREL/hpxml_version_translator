@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<HPXML xmlns="http://hpxmlonline.com/2014/6" schemaVersion="2.3">
+    <XMLTransactionHeaderInformation>
+        <XMLType></XMLType>
+        <XMLGeneratedBy></XMLGeneratedBy>
+        <CreatedDateAndTime>2021-04-05T14:17:07.685077</CreatedDateAndTime>
+        <Transaction>create</Transaction>
+    </XMLTransactionHeaderInformation>
+    <SoftwareInfo/>
+    <Building>
+        <BuildingID id="bldg1"></BuildingID>
+        <ProjectStatus>
+            <EventType>audit</EventType>
+        </ProjectStatus>
+        <BuildingDetails>
+            <ClimateandRiskZones>
+                <WeatherStation>
+                    <SystemIdentifiersInfo id='weather-station-1'/>
+                    <Name>Golden, CO</Name>
+                </WeatherStation>
+            </ClimateandRiskZones>
+            <Systems>
+                <HVAC>
+                    <HVACPlant>
+                        <HeatingSystem>
+                            <SystemIdentifier id='heating-system-1'/>
+                            <HeatingSystemType>
+                                <Boiler/>
+                            </HeatingSystemType>
+                        </HeatingSystem>
+                        <HeatPump>
+                            <SystemIdentifier id='heatpump-1'/>
+                            <HeatPumpType>water-to-air</HeatPumpType>
+                        </HeatPump>
+                    </HVACPlant>
+                </HVAC>
+                <WaterHeating>
+                    <WaterHeatingSystem>
+                        <SystemIdentifier id='water-heater-1'/>
+                        <HasGeothermalDesuperheater>true</HasGeothermalDesuperheater>
+                        <RelatedHeatingSystem idref='heating-system-1'/>
+                    </WaterHeatingSystem>
+                    <WaterHeatingSystem>
+                        <SystemIdentifier id='water-heater-2'/>
+                        <HasGeothermalDesuperheater>false</HasGeothermalDesuperheater>
+                        <RelatedHeatingSystem idref='heatpump-1'/>
+                    </WaterHeatingSystem>
+                </WaterHeating>
+            </Systems>
+        </BuildingDetails>
+    </Building>
+    <Building>
+        <BuildingID id="bldg2"/>
+        <ProjectStatus>
+            <EventType>proposed workscope</EventType>
+        </ProjectStatus>
+        <BuildingDetails>
+            <Systems>
+                <HVAC>
+                    <HVACPlant>
+                        <HeatingSystem>
+                            <SystemIdentifier id='heating-system-2'/>
+                            <HeatingSystemType>
+                                <Boiler/>
+                            </HeatingSystemType>
+                        </HeatingSystem>
+                    </HVACPlant>
+                </HVAC>
+                <WaterHeating>
+                    <WaterHeatingSystem>
+                        <SystemIdentifier id='water-heater-3'/>
+                        <HasGeothermalDesuperheater>true</HasGeothermalDesuperheater>
+                        <RelatedHeatingSystem idref='heating-system-2'/>
+                    </WaterHeatingSystem>
+                </WaterHeating>
+            </Systems>
+        </BuildingDetails>
+    </Building>
+</HPXML>
