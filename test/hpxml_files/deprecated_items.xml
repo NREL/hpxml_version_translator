@@ -153,10 +153,6 @@
                             </Pipe>
                         </WaterHeaterInsulation>
                     </WaterHeatingSystem>
-                    <HotWaterDistribution>
-                        <SystemIdentifier id='hotwater-distribution-3'/>
-                        <AttachedToWaterHeatingSystem idref='water-heater-3'/>
-                    </HotWaterDistribution>
                     <AnnualEnergyUse>
                         <ConsumptionInfo>
                             <UtilityID id='utility-6'/>

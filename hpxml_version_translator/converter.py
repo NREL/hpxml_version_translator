@@ -49,13 +49,24 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
     def add_after(parent_el, list_of_el_names, el_to_add):
         for sibling_name in reversed(list_of_el_names):
             try:
-                sibling = getattr(parent_el, sibling_name)
+                sibling = getattr(parent_el, sibling_name)[-1]
             except AttributeError:
                 continue
             else:
                 sibling.addnext(el_to_add)
                 return
         parent_el.insert(0, el_to_add)
+
+    def add_before(parent_el, list_of_el_names, el_to_add):
+        for sibling_name in list_of_el_names:
+            try:
+                sibling = getattr(parent_el, sibling_name)[0]
+            except AttributeError:
+                continue
+            else:
+                sibling.addprevious(el_to_add)
+                return
+        parent_el.append(el_to_add)
 
     # Ensure we're working with valid HPXML v2.x (earlier versions should validate against v2.3 schema)
     hpxml2_doc = objectify.parse(pathobj_to_str(hpxml2_file))
@@ -262,7 +273,8 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
         el.tag = f'{{{hpxml3_ns}}}AnnualHeatingEfficiency'
 
     # Replaces Measure/InstalledComponent with Measure/InstalledComponents/InstalledComponent
-    for i, ms in enumerate(root.xpath('h:Project/h:ProjectDetails/h:Measures/h:Measure', **xpkw)):
+    for i, ic in enumerate(root.xpath('h:Project/h:ProjectDetails/h:Measures/h:Measure/h:InstalledComponent', **xpkw)):
+        ms = ic.getparent()
         if not hasattr(ms, 'InstalledComponents'):
             try:
                 sibling = getattr(ms, 'extension')
@@ -270,9 +282,8 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
                 ms.append(E.InstalledComponents())
             else:
                 sibling.addprevious(E.InstalledComponents())
-        ic = E.InstalledComponent(id=str(ms.InstalledComponent.attrib['id']))
-        ms.InstalledComponents.append(ic)
-        ms.remove(ms.InstalledComponent)
+        ms.InstalledComponents.append(deepcopy(ic))
+        ms.remove(ic)
 
     # Replaces WeatherStation/SystemIdentifiersInfo with WeatherStation/SystemIdentifier
     for el in root.xpath('//h:WeatherStation/h:SystemIdentifiersInfo', **xpkw):
@@ -306,9 +317,9 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
     # Enclosure
     # https://github.com/hpxmlwg/hpxml/pull/181
 
-    for i, fw in enumerate(root.xpath(
+    for fw in root.xpath(
         'h:Building/h:BuildingDetails/h:Enclosure/h:Foundations/h:Foundation/h:FoundationWall', **xpkw
-    )):
+    ):
         enclosure = fw.getparent().getparent().getparent()
         foundation = fw.getparent()
 
@@ -326,7 +337,7 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
                 E.FoundationWalls()
             )
         enclosure.FoundationWalls.append(deepcopy(fw))
-        this_fw = enclosure.FoundationWalls.FoundationWall[i]
+        this_fw = enclosure.FoundationWalls.FoundationWall[-1]
 
         try:
             fw_boundary = location_map[str(fw.AdjacentTo)]
@@ -357,9 +368,26 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
         foundation.remove(fw)
 
     # Attics
-    for i, attic in enumerate(root.xpath(
-        'h:Building/h:BuildingDetails/h:Enclosure/h:AtticAndRoof/h:Attics/h:Attic', **xpkw
-    )):
+    for bldg_const in root.xpath('h:Building/h:BuildingDetails/h:BuildingSummary/h:BuildingConstruction', **xpkw):
+        if hasattr(bldg_const, 'AtticType'):
+            if bldg_const.AtticType == 'vented attic':
+                bldg_const.AtticType = E.AtticType(E.Attic(E.Vented(True)))
+            elif bldg_const.AtticType == 'unvented attic':
+                bldg_const.AtticType = E.AtticType(E.Attic(E.Vented(False)))
+            elif bldg_const.AtticType == 'flat roof':
+                bldg_const.AtticType = E.AtticType(E.FlatRoof())
+            elif bldg_const.AtticType == 'cathedral ceiling':
+                bldg_const.AtticType = E.AtticType(E.CathedralCeiling())
+            elif bldg_const.AtticType == 'cape cod':
+                bldg_const.AtticType = E.AtticType(E.Attic(E.CapeCod(True)))
+            elif bldg_const.AtticType == 'other':
+                bldg_const.AtticType = E.AtticType(E.Other())
+            elif bldg_const.AtticType == 'venting unknown attic':
+                bldg_const.AtticType = E.AtticType(E.Attic(E.extension(E.Vented('unknown'))))
+
+    for i, attic in enumerate(
+        root.xpath('h:Building/h:BuildingDetails/h:Enclosure/h:AtticAndRoof/h:Attics/h:Attic', **xpkw)
+    ):
         enclosure = attic.getparent().getparent().getparent()
         if not hasattr(enclosure, 'Attics'):
             add_after(
@@ -388,6 +416,7 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
         # move AttachedToRoof to after VentilationRate
         if hasattr(this_attic, 'AttachedToRoof'):
             attached_to_roof = deepcopy(this_attic.AttachedToRoof)
+            this_attic.remove(this_attic.AttachedToRoof)  # remove the AttachedToRoof of HPXML v2
             add_after(
                 this_attic,
                 ['SystemIdentifier',
@@ -396,7 +425,7 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
                  'VentilationRate'],
                 attached_to_roof
             )
-            this_attic.remove(this_attic.AttachedToRoof[0])  # remove the AttachedToRoof of HPXML v2
+
         # find the wall with the same id and add AtticWallType = knee wall
         if hasattr(this_attic, 'AtticKneeWall'):
             knee_wall_id = this_attic.AtticKneeWall.attrib['idref']
@@ -406,66 +435,75 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
             add_after(
                 knee_wall,
                 ['SystemIdentifier',
-                    'ExteriorAdjacentTo',
-                    'InteriorAdjacentTo'],
+                 'ExteriorAdjacentTo',
+                 'InteriorAdjacentTo'],
                 E.AtticWallType('knee wall')
             )
+
         # create a FrameFloor adjacent to the attic and assign the area below to Area
         # and then copy AtticFloorInsulation over to Insulation of the frame floor
         if hasattr(this_attic, 'AtticFloorInsulation'):
-            attic_floor_insulation = deepcopy(this_attic.AtticFloorInsulation)
-            attic_floor_insulation.tag = f'{{{hpxml3_ns}}}Insulation'
-            enclosure.append(
-                E.FrameFloors(
-                    E.FrameFloor(
-                        E.SystemIdentifier(id='attic_floor'),
-                        E.InteriorAdjacentTo('attic'),
-                    )
+            if not hasattr(enclosure, 'FrameFloors'):
+                add_before(
+                    enclosure,
+                    ['Slabs',
+                     'Windows',
+                     'Skylights',
+                     'Doors',
+                     'extension'],
+                    E.FrameFloors()
                 )
+            attic_floor_el = E.FrameFloor(
+                E.SystemIdentifier(id=f'attic-floor-{i}'),
+                E.InteriorAdjacentTo('attic'),
             )
             if hasattr(this_attic, 'Area'):
-                enclosure.FrameFloors.FrameFloor.append(E.Area(float(this_attic.Area)))
-            enclosure.FrameFloors.FrameFloor.append(attic_floor_insulation)
+                attic_floor_el.append(E.Area(float(this_attic.Area)))
+            attic_floor_insulation = deepcopy(this_attic.AtticFloorInsulation)
+            attic_floor_insulation.tag = f'{{{hpxml3_ns}}}Insulation'
+            attic_floor_el.append(attic_floor_insulation)
+            enclosure.FrameFloors.append(attic_floor_el)
+
         # find the roof whose InteriorAdjacentTo is attic and then copy it to Insulation of the roof
-        # FIXME: add insulation to v2 Roofs and these roofs will be converted into hpxml v3 later
+        # add insulation to v2 Roofs and these roofs will be converted into hpxml v3 later
         if hasattr(this_attic, 'AtticRoofInsulation'):
             roof_insulation = deepcopy(this_attic.AtticRoofInsulation)
             roof_insulation.tag = f'{{{hpxml3_ns}}}Insulation'
-            for i, rf in enumerate(root.xpath(
-                'h:Building/h:BuildingDetails/h:Enclosure/h:AtticAndRoof/h:Roofs/h:Roof', **xpkw
-            )):
-                add_after(
-                    rf,
-                    ['Pitch',
-                     'RoofArea',
-                     'RadiantBarrier',
-                     'RadiantBarrierLocation'],
-                    roof_insulation
-                )
-        # move Rafters to Roof
-        # FIXME: move Rafters to v2 Roofs and these roofs will be converted into hpxml v3 later
+            roof_idref = this_attic.AttachedToRoof.attrib['idref']
+            roof_attached_to_this_attic = root.xpath(
+                'h:Building/h:BuildingDetails/h:Enclosure/h:AtticAndRoof/h:Roofs/h:Roof[h:SystemIdentifier/@id=$sysid]',
+                sysid=roof_idref, **xpkw)[0]
+            add_before(
+                roof_attached_to_this_attic,
+                ['extension'],
+                roof_insulation
+            )
+
+        # move Rafters to v2 Roofs and these roofs will be converted into hpxml v3 later
         if hasattr(this_attic, 'Rafters'):
             rafters = deepcopy(this_attic.Rafters)
-            for i, rf in enumerate(root.xpath(
-                'h:Building/h:BuildingDetails/h:Enclosure/h:AtticAndRoof/h:Roofs/h:Roof', **xpkw
-            )):
-                add_after(
-                    rf,
-                    ['RoofColor',
-                     'SolarAbsorptance',
-                     'Emittance'],
-                    rafters
-                )
+            roof_idref = this_attic.AttachedToRoof.attrib['idref']
+            roof_attached_to_this_attic = root.xpath(
+                'h:Building/h:BuildingDetails/h:Enclosure/h:AtticAndRoof/h:Roofs/h:Roof[h:SystemIdentifier/@id=$sysid]',
+                sysid=roof_idref, **xpkw)[0]
+            add_after(
+                roof_attached_to_this_attic,
+                ['SystemIdentifier',
+                 'ExternalResource',
+                 'AttachedToSpace',
+                 'RoofColor',
+                 'SolarAbsorptance',
+                 'Emittance'],
+                rafters
+            )
 
-        el_not_in_v3 = [
-            'ExteriorAdjacentTo',
-            'InteriorAdjacentTo',
-            'AtticKneeWall',
-            'AtticFloorInsulation',
-            'AtticRoofInsulation',
-            'Area',
-            'Rafters'
-        ]
+        el_not_in_v3 = ['ExteriorAdjacentTo',
+                        'InteriorAdjacentTo',
+                        'AtticKneeWall',
+                        'AtticFloorInsulation',
+                        'AtticRoofInsulation',
+                        'Area',
+                        'Rafters']
         for el in el_not_in_v3:
             if hasattr(this_attic, el):
                 this_attic.remove(this_attic[el])
@@ -473,9 +511,7 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
         enclosure.Attics.append(this_attic)
 
     # Roofs
-    for i, roof in enumerate(root.xpath(
-        'h:Building/h:BuildingDetails/h:Enclosure/h:AtticAndRoof/h:Roofs/h:Roof', **xpkw
-    )):
+    for roof in root.xpath('h:Building/h:BuildingDetails/h:Enclosure/h:AtticAndRoof/h:Roofs/h:Roof', **xpkw):
         enclosure = roof.getparent().getparent().getparent()
         if not hasattr(enclosure, 'Roofs'):
             add_after(
@@ -487,21 +523,24 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
                 E.Roofs()
             )
         enclosure.Roofs.append(deepcopy(roof))
+        this_roof = enclosure.Roofs.Roof[-1]
 
         if hasattr(roof, 'RoofArea'):
             add_after(
-                enclosure.Roofs.Roof,
+                this_roof,
                 ['SystemIdentifier',
                  'ExternalResource',
                  'AttachedToSpace',
                  'InteriorAdjacentTo'],
                 E.Area(float(roof.RoofArea))
             )
-            enclosure.Roofs.Roof.remove(enclosure.Roofs.Roof.RoofArea)
+            this_roof.remove(this_roof.RoofArea)
 
         if hasattr(roof, 'RoofType'):
+            roof_type = str(roof.RoofType)
+            this_roof.remove(this_roof.RoofType)  # remove the RoofType of HPXML v2
             add_after(
-                enclosure.Roofs.Roof,
+                this_roof,
                 ['SystemIdentifier',
                  'ExternalResource',
                  'AttachedToSpace',
@@ -509,35 +548,34 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
                  'Area',
                  'Orientation',
                  'Azimuth'],
-                E.RoofType(str(roof.RoofType))
+                E.RoofType(roof_type)
             )
-            enclosure.Roofs.Roof.remove(enclosure.Roofs.Roof.RoofType[1])  # remove the RoofType of HPXML v2
 
     # remove AtticAndRoof after rearranging all attics and roofs
-    try:
-        root.Building.BuildingDetails.Enclosure.remove(root.Building.BuildingDetails.Enclosure.AtticAndRoof)
-    except AttributeError:
-        pass
+    for enclosure in root.xpath('h:Building/h:BuildingDetails/h:Enclosure', **xpkw):
+        try:
+            enclosure.remove(enclosure.AtticAndRoof)
+        except AttributeError:
+            pass
 
     # Frame Floors
-    for i, ff in enumerate(root.xpath(
-        'h:Building/h:BuildingDetails/h:Enclosure/h:Foundations/h:Foundation/h:FrameFloor', **xpkw
-    )):
+    for ff in root.xpath('h:Building/h:BuildingDetails/h:Enclosure/h:Foundations/h:Foundation/h:FrameFloor', **xpkw):
         enclosure = ff.getparent().getparent().getparent()
         foundation = ff.getparent()
 
-        ff.addnext(E.AttachedToFrameFloor(idref=ff.SystemIdentifier.attrib['id']))
+        el_attached_to_ff = E.AttachedToFrameFloor(idref=ff.SystemIdentifier.attrib['id'])
+        if hasattr(foundation, 'AttachedToFoundationWall'):
+            foundation.AttachedToFoundationWall.addnext(el_attached_to_ff)  # make the element order valid
+        else:
+            ff.addnext(el_attached_to_ff)
         if not hasattr(enclosure, 'FrameFloors'):
-            add_after(
+            add_before(
                 enclosure,
-                ['AirInfiltration',
-                 'Attics',
-                 'Foundations',
-                 'Garages',
-                 'Roofs',
-                 'RimJoists',
-                 'Walls',
-                 'FoundationWalls'],
+                ['Slabs',
+                 'Windows',
+                 'Skylights',
+                 'Doors',
+                 'extension'],
                 E.FrameFloors()
             )
         this_ff = deepcopy(ff)
@@ -545,37 +583,29 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
         foundation.remove(ff)
 
     # Slabs
-    for i, slab in enumerate(root.xpath(
-        'h:Building/h:BuildingDetails/h:Enclosure/h:Foundations/h:Foundation/h:Slab', **xpkw
-    )):
+    for slab in root.xpath('h:Building/h:BuildingDetails/h:Enclosure/h:Foundations/h:Foundation/h:Slab', **xpkw):
         enclosure = slab.getparent().getparent().getparent()
         foundation = slab.getparent()
 
         slab.addnext(E.AttachedToSlab(idref=slab.SystemIdentifier.attrib['id']))
         if not hasattr(enclosure, 'Slabs'):
-            add_after(
+            add_before(
                 enclosure,
-                ['AirInfiltration',
-                 'Attics',
-                 'Foundations',
-                 'Garages',
-                 'Roofs',
-                 'RimJoists',
-                 'Walls',
-                 'FoundationWalls',
-                 'FrameFloors'],
+                ['Windows',
+                 'Skylights',
+                 'Doors',
+                 'extension'],
                 E.Slabs()
             )
         enclosure.Slabs.append(deepcopy(slab))
         foundation.remove(slab)
 
     # Remove 'Insulation/InsulationLocation'
-    # TODO: Use it for all enclosure types
     for insulation_location in root.xpath('//h:Insulation/h:InsulationLocation', **xpkw):
         # Insulation location to be layer-specific
         insulation = insulation_location.getparent()
         if hasattr(insulation, 'Layer'):
-            for i, layer in enumerate(insulation.Layer):
+            for layer in insulation.Layer:
                 if layer.InstallationType == 'continuous':
                     layer.InstallationType._setText(f'continuous - {str(insulation.InsulationLocation)}')
         insulation.remove(insulation.InsulationLocation)
@@ -583,9 +613,13 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
     # Windows and Skylights
     for i, win in enumerate(root.xpath('//h:Window|//h:Skylight', **xpkw)):
         if hasattr(win, 'VisibleTransmittance'):
+            vis_trans = float(win.VisibleTransmittance)
+            win.remove(win.VisibleTransmittance)  # remove VisibleTransmittance of HPXML v2
             add_after(
                 win,
-                ['Area',
+                ['SystemIdentifier',
+                 'ExternalResource',
+                 'Area',
                  'Quantity',
                  'Azimuth',
                  'Orientation',
@@ -596,18 +630,35 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
                  'Condition',
                  'UFactor',
                  'SHGC'],
-                E.VisibleTransmittance(float(win.VisibleTransmittance))
+                E.VisibleTransmittance(vis_trans)
             )
-            win.remove(win.VisibleTransmittance[1])  # remove VisibleTransmittance of HPXML v2
         if hasattr(win, 'ExteriorShading'):
             ext_shade = str(win.ExteriorShading)
-            win.ExteriorShading.clear()
-            win.ExteriorShading.extend([
-                E.SystemIdentifier(id=f'exterior-shading-{i}'),
-                E.Type(ext_shade)
-            ])
-            if hasattr(win, 'InteriorShading'):  # insert ExteriorShading right before InteriorShading
-                win.InteriorShading.addprevious(win.ExteriorShading)
+            win.remove(win.ExteriorShading)  # remove ExteriorShading of HPXML v2
+            add_after(
+                win,
+                ['SystemIdentifier',
+                 'ExternalResource',
+                 'Area',
+                 'Quantity',
+                 'Azimuth',
+                 'Orientation',
+                 'FrameType',
+                 'GlassLayers',
+                 'GlassType',
+                 'GasFill',
+                 'Condition',
+                 'UFactor',
+                 'SHGC',
+                 'VisibleTransmittance',
+                 'NFRCCertified',
+                 'ThirdPartyCertification',
+                 'WindowFilm'],
+                E.ExteriorShading(
+                    E.SystemIdentifier(id=f'exterior-shading-{i}'),
+                    E.Type(ext_shade)
+                )
+            )
         if hasattr(win, 'Treatments'):
             if win.Treatments in ['shading', 'solar screen']:
                 treatment_shade = E.ExteriorShading(
@@ -617,7 +668,18 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
                     treatment_shade.append(E.Type('solar screens'))
                 add_after(
                     win,
-                    ['UFactor',
+                    ['SystemIdentifier',
+                     'ExternalResource',
+                     'Area',
+                     'Quantity',
+                     'Azimuth',
+                     'Orientation',
+                     'FrameType',
+                     'GlassLayers',
+                     'GlassType',
+                     'GasFill',
+                     'Condition',
+                     'UFactor',
                      'SHGC',
                      'VisibleTransmittance',
                      'NFRCCertified',
@@ -628,7 +690,18 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
             elif win.Treatments == 'window film':
                 add_after(
                     win,
-                    ['UFactor',
+                    ['SystemIdentifier',
+                     'ExternalResource',
+                     'Area',
+                     'Quantity',
+                     'Azimuth',
+                     'Orientation',
+                     'FrameType',
+                     'GlassLayers',
+                     'GlassType',
+                     'GasFill',
+                     'Condition',
+                     'UFactor',
                      'SHGC',
                      'VisibleTransmittance',
                      'NFRCCertified',
@@ -639,29 +712,46 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
                 )
             win.remove(win.Treatments)
         if hasattr(win, 'InteriorShading'):
-            int_shading = str(win.InteriorShading)
-            int_shading_factor = float(win.InteriorShadingFactor)
+            cache_interior_shading_type = str(win.InteriorShading)
             win.InteriorShading.clear()
+            win.InteriorShading.append(E.SystemIdentifier(id=f'interior-shading-{i}'))
+            win.InteriorShading.append(E.Type(cache_interior_shading_type))
+        if hasattr(win, 'InteriorShadingFactor'):
+            # handles a case where `InteriorShadingFactor` is specified without `InteriorShading`
+            if not hasattr(win, 'InteriorShading'):
+                win.InteriorShadingFactor.addnext(E.InteriorShading(
+                    E.SystemIdentifier(id=f'interior-shading-{i}')
+                ))
             win.InteriorShading.extend([
-                E.SystemIdentifier(id=f'interior-shading-{i}'),
-                E.Type(int_shading),
-                E.SummerShadingCoefficient(int_shading_factor),
-                E.WinterShadingCoefficient(int_shading_factor)
+                E.SummerShadingCoefficient(float(win.InteriorShadingFactor)),
+                E.WinterShadingCoefficient(float(win.InteriorShadingFactor))
             ])
             win.remove(win.InteriorShadingFactor)
         if hasattr(win, 'MovableInsulationRValue'):
             add_after(
                 win,
-                ['UFactor',
+                ['SystemIdentifier',
+                 'ExternalResource',
+                 'Area',
+                 'Quantity',
+                 'Azimuth',
+                 'Orientation',
+                 'FrameType',
+                 'GlassLayers',
+                 'GlassType',
+                 'GasFill',
+                 'Condition',
+                 'UFactor',
                  'SHGC',
                  'VisibleTransmittance',
                  'NFRCCertified',
                  'ThirdPartyCertification',
+                 'WindowFilm',
                  'ExteriorShading',
                  'InteriorShading',
                  'StormWindow'],
                 E.MoveableInsulation(
-                    E.SystemIdentifier(id=f'movable-insulation-{i}'),
+                    E.SystemIdentifier(id=f'moveable-insulation-{i}'),
                     E.RValue(float(win.MovableInsulationRValue))
                 )
             )
@@ -676,11 +766,23 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
                 win.GlassLayers._setText('single-pane')
                 add_after(
                     win,
-                    ['UFactor',
+                    ['SystemIdentifier',
+                     'ExternalResource',
+                     'Area',
+                     'Quantity',
+                     'Azimuth',
+                     'Orientation',
+                     'FrameType',
+                     'GlassLayers',
+                     'GlassType',
+                     'GasFill',
+                     'Condition',
+                     'UFactor',
                      'SHGC',
                      'VisibleTransmittance',
                      'NFRCCertified',
                      'ThirdPartyCertification',
+                     'WindowFilm',
                      'ExteriorShading',
                      'InteriorShading'],
                     storm_window
@@ -698,11 +800,13 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
     # Lighting Fraction Improvements
     # https://github.com/hpxmlwg/hpxml/pull/165
 
+    ltgidx = 0
     for ltgfracs in root.xpath('h:Building/h:BuildingDetails/h:Lighting/h:LightingFractions', **xpkw):
         ltg = ltgfracs.getparent()
-        for j, ltgfrac in enumerate(ltgfracs.getchildren()):
+        for ltgfrac in ltgfracs.getchildren():
+            ltgidx += 1
             ltggroup = E.LightingGroup(
-                E.SystemIdentifier(id=f'lighting-fraction-{j}'),
+                E.SystemIdentifier(id=f'lighting-fraction-{ltgidx}'),
                 E.FractionofUnitsInLocation(ltgfrac.text),
                 E.LightingType()
             )
@@ -721,22 +825,36 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
     # https://github.com/hpxmlwg/hpxml/pull/167
 
     # Removes WaterHeaterInsulation/Pipe; use HotWaterDistribution/PipeInsulation instead
-    for pipe in root.xpath('//h:WaterHeaterInsulation/h:Pipe', **xpkw):
+    for i, pipe in enumerate(root.xpath('//h:WaterHeaterInsulation/h:Pipe', **xpkw), 1):
         waterheating = pipe.getparent().getparent().getparent()
         waterheatingsystem = pipe.getparent().getparent()
         waterheatingsystem_idref = str(waterheatingsystem.SystemIdentifier.attrib['id'])
-        attached_hw_dist = waterheating.xpath('h:HotWaterDistribution[h:AttachedToWaterHeatingSystem/@idref=$sysid]',
-                                              sysid=waterheatingsystem_idref, **xpkw)[0]
-        add_after(
-            attached_hw_dist,
-            ['SystemIdentifier',
-             'ExternalResource',
-             'AttachedToWaterHeatingSystem',
-             'SystemType'],
-            E.PipeInsulation(
-                E.PipeRValue(float(pipe.PipeRValue))
+        try:
+            hw_dist = waterheating.xpath('h:HotWaterDistribution[h:AttachedToWaterHeatingSystem/@idref=$sysid]',
+                                         sysid=waterheatingsystem_idref, **xpkw)[0]
+            add_after(
+                hw_dist,
+                ['SystemIdentifier',
+                 'ExternalResource',
+                 'AttachedToWaterHeatingSystem',
+                 'SystemType'],
+                E.PipeInsulation(
+                    E.PipeRValue(float(pipe.PipeRValue))
+                )
             )
-        )
+        except IndexError:  # handles when there is no attached hot water distribution system
+            add_after(
+                waterheating,
+                ['WaterHeatingSystem',
+                 'WaterHeatingControl'],
+                E.HotWaterDistribution(
+                    E.SystemIdentifier(id=f'hotwater-distribution-{i}'),
+                    E.AttachedToWaterHeatingSystem(idref=waterheatingsystem_idref),
+                    E.PipeInsulation(
+                        E.PipeRValue(float(pipe.PipeRValue))
+                    )
+                )
+            )
         waterheaterinsualtion = pipe.getparent()
         waterheaterinsualtion.remove(pipe)
         if waterheaterinsualtion.countchildren() == 0:
