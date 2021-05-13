@@ -728,17 +728,30 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
             ])
             win.remove(win.InteriorShadingFactor)
         if hasattr(win, 'MovableInsulationRValue'):
-            if win.tag == f'{{{hpxml3_ns}}}Window':
-                el_list = ['Overhangs', 'WeatherStripping', 'Operable', 'WindowtoWallRatio', 'AttachedToWall',
-                           'AnnualEnergyUse', 'extension']
-            elif win.tag == f'{{{hpxml3_ns}}}Skylight':
-                el_list = ['Overhangs', 'WeatherStripping', 'Operable', 'SolarTube', 'Pitch', 'AttachedToRoof',
-                           'AnnualEnergyUse', 'extension']
-            add_before(
+            add_after(
                 win,
-                el_list,
+                ['SystemIdentifier',
+                 'ExternalResource',
+                 'Area',
+                 'Quantity',
+                 'Azimuth',
+                 'Orientation',
+                 'FrameType',
+                 'GlassLayers',
+                 'GlassType',
+                 'GasFill',
+                 'Condition',
+                 'UFactor',
+                 'SHGC',
+                 'VisibleTransmittance',
+                 'NFRCCertified',
+                 'ThirdPartyCertification',
+                 'WindowFilm',
+                 'ExteriorShading',
+                 'InteriorShading',
+                 'StormWindow'],
                 E.MoveableInsulation(
-                    E.SystemIdentifier(id=f'movable-insulation-{i}'),
+                    E.SystemIdentifier(id=f'moveable-insulation-{i}'),
                     E.RValue(float(win.MovableInsulationRValue))
                 )
             )
@@ -769,6 +782,7 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
                      'VisibleTransmittance',
                      'NFRCCertified',
                      'ThirdPartyCertification',
+                     'WindowFilm',
                      'ExteriorShading',
                      'InteriorShading'],
                     storm_window
