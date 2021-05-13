@@ -76,40 +76,4 @@
             </Enclosure>
         </BuildingDetails>
     </Building>
-    <Building>
-        <BuildingID id="bldg2"></BuildingID>
-        <ProjectStatus>
-            <EventType>proposed workscope</EventType>
-        </ProjectStatus>
-        <BuildingDetails>
-            <Enclosure>
-                <Foundations>
-                    <Foundation>
-                        <SystemIdentifier id='foundation-3'/>
-                        <FoundationType>
-                            <Basement/>
-                        </FoundationType>
-                        <FoundationWall>
-                            <SystemIdentifier id='foundationwall-3'/>
-                            <Type>solid concrete</Type>
-                            <Length>40</Length>
-                            <Height>10</Height>
-                            <Area>400</Area>
-                            <Thickness>3</Thickness>
-                            <BelowGradeDepth>10</BelowGradeDepth>
-                            <AdjacentToFoundation idref='foundation-3'/>
-                            <AdjacentTo>ground</AdjacentTo>
-                            <Insulation>
-                                <SystemIdentifier id='foundationwall-insulation-3'/>
-                                <InsulationGrade>2</InsulationGrade>
-                                <InsulationCondition>fair</InsulationCondition>
-                                <InsulationLocation>exterior</InsulationLocation>
-                                <AssemblyEffectiveRValue>3.0</AssemblyEffectiveRValue>
-                            </Insulation>
-                        </FoundationWall>
-                    </Foundation>
-                </Foundations>
-            </Enclosure>
-        </BuildingDetails>
-    </Building>
 </HPXML>

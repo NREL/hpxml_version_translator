@@ -112,16 +112,10 @@ def test_inconsistencies():
     assert htpump.BackupAnnualHeatingEfficiency.Units == 'AFUE'
     assert htpump.BackupAnnualHeatingEfficiency.Value == 0.98
 
-    measure1 = root.Project.ProjectDetails.Measures.Measure[0]
-    assert measure1.InstalledComponents.InstalledComponent[0].attrib['id'] == 'installed-component-1'
-    assert measure1.InstalledComponents.InstalledComponent[1].attrib['id'] == 'installed-component-2'
-    assert not hasattr(measure1, 'InstalledComponent')
-    assert measure1.InstalledComponents.getnext() == measure1.extension
-
-    measure2 = root.Project.ProjectDetails.Measures.Measure[1]
-    assert measure2.InstalledComponents.InstalledComponent[0].attrib['id'] == 'installed-component-3'
-    assert measure2.InstalledComponents.InstalledComponent[1].attrib['id'] == 'installed-component-4'
-    assert not hasattr(measure2, 'InstalledComponent')
+    measure = root.Project.ProjectDetails.Measures.Measure[0]
+    assert measure.InstalledComponents.InstalledComponent.attrib['id'] == 'installed-component-1'
+    assert not hasattr(measure, 'InstalledComponent')
+    assert measure.InstalledComponents.getnext() == measure.extension
 
 
 def test_clothes_dryer():
@@ -144,109 +138,68 @@ def test_clothes_dryer():
     assert not hasattr(dryer2, 'EfficiencyFactor')
 
 
-def test_enclosure_attics_and_roofs():
+def test_enclosure_attics():
     root = convert_hpxml_and_parse(hpxml_dir / 'enclosure_attics_and_roofs.xml')
 
-    enclosure1 = root.Building[0].BuildingDetails.Enclosure
-    assert not hasattr(enclosure1, 'AtticAndRoof')
-    assert not hasattr(enclosure1, 'ExteriorAdjacentTo')
-
-    attic1 = enclosure1.Attics.Attic[0]
+    attic1 = root.Building.BuildingDetails.Enclosure.Attics.Attic[0]
+    enclosure = attic1.getparent().getparent()
     assert not attic1.AtticType.Attic.Vented  # unvented attic
     assert attic1.AttachedToRoof.attrib['idref'] == 'roof-1'
-    attic2 = enclosure1.Attics.Attic[1]
+    assert not hasattr(enclosure, 'AtticAndRoof')
+    assert not hasattr(enclosure, 'ExteriorAdjacentTo')
+    assert enclosure.Walls.Wall[0].AtticWallType == 'knee wall'
+    assert enclosure.Roofs.Roof[0].Rafters.Size == '2x4'
+    assert enclosure.Roofs.Roof[0].Rafters.Material == 'wood'
+    assert enclosure.Roofs.Roof[0].Insulation.InsulationGrade == 3
+    assert enclosure.Roofs.Roof[0].Insulation.InsulationCondition == 'good'
+    assert enclosure.Roofs.Roof[0].Insulation.Layer.InstallationType == 'cavity'
+    assert enclosure.Roofs.Roof[0].Insulation.Layer.NominalRValue == 7.5
+    assert enclosure.FrameFloors.FrameFloor[0].InteriorAdjacentTo == 'attic'
+    assert enclosure.FrameFloors.FrameFloor[0].Area == 1500.0
+    assert enclosure.FrameFloors.FrameFloor[0].Insulation.InsulationGrade == 1
+    assert enclosure.FrameFloors.FrameFloor[0].Insulation.InsulationCondition == 'poor'
+    assert enclosure.FrameFloors.FrameFloor[0].Insulation.AssemblyEffectiveRValue == 5.5
+
+    attic2 = root.Building.BuildingDetails.Enclosure.Attics.Attic[1]
     assert attic2.AtticType.Attic.extension.Vented == 'unknown'  # venting unknown attic
-    attic3 = enclosure1.Attics.Attic[2]
+
+    attic3 = root.Building.BuildingDetails.Enclosure.Attics.Attic[2]
     assert attic3.AtticType.Attic.Vented  # vented attic
-    attic4 = enclosure1.Attics.Attic[3]
+
+    attic4 = root.Building.BuildingDetails.Enclosure.Attics.Attic[3]
     assert hasattr(attic4.AtticType, 'FlatRoof')
-    attic5 = enclosure1.Attics.Attic[4]
+
+    attic5 = root.Building.BuildingDetails.Enclosure.Attics.Attic[4]
     assert hasattr(attic5.AtticType, 'CathedralCeiling')
-    attic6 = enclosure1.Attics.Attic[5]
+
+    attic6 = root.Building.BuildingDetails.Enclosure.Attics.Attic[5]
     assert attic6.AtticType.Attic.CapeCod
-    attic7 = enclosure1.Attics.Attic[6]
+
+    attic7 = root.Building.BuildingDetails.Enclosure.Attics.Attic[6]
     assert hasattr(attic7.AtticType, 'Other')
 
-    roof1 = enclosure1.Roofs.Roof[0]
+
+def test_enclosure_roofs():
+    root = convert_hpxml_and_parse(hpxml_dir / 'enclosure_attics_and_roofs.xml')
+
+    roof1 = root.Building.BuildingDetails.Enclosure.Roofs.Roof[0]
+    enclosure = roof1.getparent().getparent()
     assert roof1.Area == 1118.5
     assert roof1.RoofType == 'shingles'
     assert roof1.RoofColor == 'dark'
     assert roof1.SolarAbsorptance == 0.7
     assert roof1.Emittance == 0.9
     assert roof1.Pitch == 6.0
-    assert roof1.Rafters.Size == '2x4'
-    assert roof1.Rafters.Material == 'wood'
     assert not hasattr(roof1, 'RoofArea')
-    assert not hasattr(roof1, 'Insulation')
-
-    roof2 = enclosure1.Roofs.Roof[1]
-    assert roof2.Area == 559.25
-    assert roof2.RoofType == 'shingles'
-    assert roof2.RoofColor == 'medium'
-    assert roof2.SolarAbsorptance == 0.6
-    assert roof2.Emittance == 0.7
-    assert roof2.Pitch == 6.0
-    assert roof2.Insulation.SystemIdentifier.attrib['id'] == 'attic-roof-insulation-1'
-    assert roof2.Insulation.InsulationGrade == 3
-    assert roof2.Insulation.InsulationCondition == 'good'
-    assert roof2.Insulation.Layer.InstallationType == 'cavity'
-    assert roof2.Insulation.Layer.NominalRValue == 7.5
-    assert not hasattr(roof2, 'Rafters')
-
-    assert enclosure1.Walls.Wall[0].AtticWallType == 'knee wall'
-    assert not hasattr(enclosure1.Walls.Wall[1], 'AtticWallType')
-
-    assert enclosure1.FrameFloors.FrameFloor[0].SystemIdentifier.attrib['id'] == 'attic-floor-1'
-    assert enclosure1.FrameFloors.FrameFloor[0].InteriorAdjacentTo == 'attic'
-    assert enclosure1.FrameFloors.FrameFloor[0].Area == 500.0
-    assert enclosure1.FrameFloors.FrameFloor[0].Insulation.SystemIdentifier.attrib['id'] == 'attic-floor-insulation-1'
-    assert enclosure1.FrameFloors.FrameFloor[0].Insulation.InsulationGrade == 1
-    assert enclosure1.FrameFloors.FrameFloor[0].Insulation.InsulationCondition == 'poor'
-    assert enclosure1.FrameFloors.FrameFloor[0].Insulation.AssemblyEffectiveRValue == 5.5
-
-    enclosure2 = root.Building[1].BuildingDetails.Enclosure
-    assert not hasattr(enclosure2, 'AtticAndRoof')
-    assert not hasattr(enclosure2, 'ExteriorAdjacentTo')
-
-    attic8 = enclosure2.Attics.Attic[0]
-    assert attic8.AtticType.Attic.Vented  # vented attic
-    assert attic8.AttachedToRoof.attrib['idref'] == 'roof-3'
-    attic9 = enclosure2.Attics.Attic[1]
-    assert attic9.AtticType.Attic.extension.Vented == 'unknown'  # venting unknown attic
-
-    roof3 = enclosure2.Roofs.Roof[0]
-    assert roof3.Rafters.Size == '2x6'
-    assert roof3.Rafters.Material == 'wood'
-    assert not hasattr(roof3, 'RoofArea')
-    assert not hasattr(roof3, 'Insulation')
-
-    roof4 = enclosure2.Roofs.Roof[1]
-    assert roof4.Insulation.SystemIdentifier.attrib['id'] == 'attic-roof-insulation-2'
-    assert roof4.Insulation.InsulationGrade == 2
-    assert roof4.Insulation.InsulationCondition == 'fair'
-    assert roof4.Insulation.Layer.InstallationType == 'cavity'
-    assert roof4.Insulation.Layer.NominalRValue == 7.5
-    assert not hasattr(roof4, 'Rafters')
-
-    assert enclosure2.Walls.Wall[0].AtticWallType == 'knee wall'
-    assert not hasattr(enclosure2.Walls.Wall[1], 'AtticWallType')
-
-    assert enclosure2.FrameFloors.FrameFloor[0].SystemIdentifier.attrib['id'] == 'attic-floor-8'
-    assert enclosure2.FrameFloors.FrameFloor[0].InteriorAdjacentTo == 'attic'
-    assert enclosure2.FrameFloors.FrameFloor[0].Area == 700.0
-    assert enclosure2.FrameFloors.FrameFloor[0].Insulation.SystemIdentifier.attrib['id'] == 'attic-floor-insulation-2'
-    assert enclosure2.FrameFloors.FrameFloor[0].Insulation.InsulationGrade == 1
-    assert enclosure2.FrameFloors.FrameFloor[0].Insulation.InsulationCondition == 'poor'
-    assert enclosure2.FrameFloors.FrameFloor[0].Insulation.AssemblyEffectiveRValue == 5.5
+    assert not hasattr(enclosure, 'AtticAndRoof')
 
 
 def test_enclosure_foundation_walls():
     root = convert_hpxml_and_parse(hpxml_dir / 'enclosure_foundation_walls.xml')
 
-    fw1 = root.Building[0].BuildingDetails.Enclosure.FoundationWalls.FoundationWall[0]
+    fw1 = root.Building.BuildingDetails.Enclosure.FoundationWalls.FoundationWall[0]
     assert fw1.getparent().getparent().Foundations.Foundation.AttachedToFoundationWall[0].attrib['idref']\
         == 'foundationwall-1'
-    assert not hasattr(fw1, 'ExteriorAdjacentTo')
     assert fw1.InteriorAdjacentTo == 'basement - unconditioned'
     assert fw1.Type == 'concrete block'
     assert fw1.Length == 120
@@ -260,7 +213,7 @@ def test_enclosure_foundation_walls():
     assert fw1.Insulation.AssemblyEffectiveRValue == 5.0
     assert not hasattr(fw1.Insulation, 'Location')
 
-    fw2 = root.Building[0].BuildingDetails.Enclosure.FoundationWalls.FoundationWall[1]
+    fw2 = root.Building.BuildingDetails.Enclosure.FoundationWalls.FoundationWall[1]
     assert fw2.getparent().getparent().Foundations.Foundation.AttachedToFoundationWall[1].attrib['idref']\
         == 'foundationwall-2'
     assert not hasattr(fw2, 'ExteriorAdjacentTo')
@@ -283,22 +236,6 @@ def test_enclosure_foundation_walls():
     assert fw2.Insulation.Layer[1].InsulationMaterial.Rigid == 'eps'
     assert fw2.Insulation.Layer[1].NominalRValue == 15.0
     assert fw2.Insulation.Layer[1].Thickness == 3.0
-
-    fw3 = root.Building[1].BuildingDetails.Enclosure.FoundationWalls.FoundationWall[0]
-    assert fw3.getparent().getparent().Foundations.Foundation.AttachedToFoundationWall[0].attrib['idref']\
-        == 'foundationwall-3'
-    assert fw3.ExteriorAdjacentTo == 'ground'
-    assert not hasattr(fw3, 'InteriorAdjacentTo')
-    assert fw3.Type == 'solid concrete'
-    assert fw3.Length == 40
-    assert fw3.Height == 10
-    assert fw3.Area == 400
-    assert fw3.Thickness == 3
-    assert fw3.DepthBelowGrade == 10
-    assert not hasattr(fw3, 'AdjacentTo')
-    assert fw3.Insulation.InsulationGrade == 2
-    assert fw3.Insulation.InsulationCondition == 'fair'
-    assert not hasattr(fw3.Insulation, 'Location')
 
 
 def test_frame_floors():
@@ -372,7 +309,7 @@ def test_walls():
 def test_windows():
     root = convert_hpxml_and_parse(hpxml_dir / 'enclosure_windows_skylights.xml')
 
-    win1 = root.Building[0].BuildingDetails.Enclosure.Windows.Window[0]
+    win1 = root.Building.BuildingDetails.Enclosure.Windows.Window[0]
     assert win1.Area == 108.0
     assert win1.Azimuth == 0
     assert win1.UFactor == 0.33
@@ -381,7 +318,6 @@ def test_windows():
     assert win1.VisibleTransmittance == 0.9
     assert win1.ExteriorShading[0].Type == 'solar screens'
     assert win1.ExteriorShading[1].Type == 'evergreen tree'
-    assert win1.InteriorShading.SystemIdentifier.attrib['id'] == 'interior-shading-0'
     assert win1.InteriorShading.Type == 'light shades'
     assert win1.InteriorShading.SummerShadingCoefficient == 0.7
     assert win1.InteriorShading.WinterShadingCoefficient == 0.7
@@ -391,57 +327,28 @@ def test_windows():
     assert not hasattr(win1, 'InteriorShadingFactor')
     assert not hasattr(win1, 'MovableInsulationRValue')
 
-    win2 = root.Building[0].BuildingDetails.Enclosure.Windows.Window[1]
+    win2 = root.Building.BuildingDetails.Enclosure.Windows.Window[1]
     assert win2.GlassLayers == 'single-pane'
     assert win2.StormWindow.GlassType == 'low-e'
     assert win2.ExteriorShading[0].Type == 'solar film'
 
-    win3 = root.Building[0].BuildingDetails.Enclosure.Windows.Window[2]
+    win3 = root.Building.BuildingDetails.Enclosure.Windows.Window[2]
     assert hasattr(win3, 'WindowFilm')
 
-    skylight1 = root.Building[0].BuildingDetails.Enclosure.Skylights.Skylight[0]
+    skylight1 = root.Building.BuildingDetails.Enclosure.Skylights.Skylight[0]
     assert skylight1.Area == 20.0
     assert skylight1.UFactor == 0.25
     assert skylight1.SHGC == 0.60
     assert skylight1.ExteriorShading[0].Type == 'solar screens'
     assert skylight1.ExteriorShading[1].Type == 'building'
-    assert skylight1.InteriorShading.SystemIdentifier.attrib['id'] == 'interior-shading-3'
     assert skylight1.InteriorShading.Type == 'dark shades'
     assert skylight1.InteriorShading.SummerShadingCoefficient == 0.65
     assert skylight1.InteriorShading.WinterShadingCoefficient == 0.65
     assert skylight1.MoveableInsulation.RValue == 3.5
-    assert skylight1.AttachedToRoof.attrib['idref'] == 'roof-1'
     assert skylight1.Pitch == 6.0
     assert not hasattr(skylight1, 'Treatments')
     assert not hasattr(skylight1, 'InteriorShadingFactor')
     assert not hasattr(skylight1, 'MovableInsulationRValue')
-
-    win4 = root.Building[1].BuildingDetails.Enclosure.Windows.Window[0]
-    assert win4.Area == 108.0
-    assert win4.Azimuth == 0
-    assert win4.UFactor == 0.33
-    assert win4.SHGC == 0.45
-    assert win4.NFRCCertified
-    assert win4.VisibleTransmittance == 0.9
-    assert win4.ExteriorShading[0].Type == 'evergreen tree'
-    assert win4.InteriorShading.SystemIdentifier.attrib['id'] == 'interior-shading-4'
-    assert win4.InteriorShading.Type == 'light shades'
-    assert win4.InteriorShading.SummerShadingCoefficient == 0.7
-    assert win4.InteriorShading.WinterShadingCoefficient == 0.7
-    assert win4.MoveableInsulation.RValue == 5.5
-    assert win4.AttachedToWall.attrib['idref'] == 'wall-2'
-    assert not hasattr(win4, 'Treatments')
-    assert not hasattr(win4, 'InteriorShadingFactor')
-    assert not hasattr(win4, 'MovableInsulationRValue')
-
-    skylight2 = root.Building[1].BuildingDetails.Enclosure.Skylights.Skylight[0]
-    assert skylight2.ExteriorShading[0].Type == 'solar film'
-    assert skylight2.InteriorShading.SystemIdentifier.attrib['id'] == 'interior-shading-5'
-    assert skylight2.InteriorShading.Type == 'light shades'
-    assert skylight2.InteriorShading.SummerShadingCoefficient == 0.55
-    assert skylight2.InteriorShading.WinterShadingCoefficient == 0.55
-    assert skylight2.AttachedToRoof.attrib['idref'] == 'roof-2'
-    assert not hasattr(skylight2, 'InteriorShadingFactor')
 
 
 def test_standard_locations():
@@ -522,39 +429,24 @@ def test_standard_locations():
 def test_lighting():
     root = convert_hpxml_and_parse(hpxml_dir / 'lighting.xml')
 
-    ltg1 = root.Building[0].BuildingDetails.Lighting
-    assert not hasattr(ltg1, 'LightingFractions')
-    ltg_grp1 = ltg1.LightingGroup[0]
-    assert ltg_grp1.SystemIdentifier.attrib['id'] == 'lighting-fraction-1'
+    ltg = root.Building.BuildingDetails.Lighting
+    assert not hasattr(ltg, 'LightingFractions')
+
+    ltg_grp1 = ltg.LightingGroup[0]
     assert ltg_grp1.FractionofUnitsInLocation == 0.5
     assert hasattr(ltg_grp1.LightingType, 'Incandescent')
-    ltg_grp2 = ltg1.LightingGroup[1]
-    assert ltg_grp2.SystemIdentifier.attrib['id'] == 'lighting-fraction-2'
+
+    ltg_grp2 = ltg.LightingGroup[1]
     assert ltg_grp2.FractionofUnitsInLocation == 0.1
     assert hasattr(ltg_grp2.LightingType, 'CompactFluorescent')
-    ltg_grp3 = ltg1.LightingGroup[2]
-    assert ltg_grp3.SystemIdentifier.attrib['id'] == 'lighting-fraction-3'
-    assert ltg_grp3.FractionofUnitsInLocation == 0.4
+
+    ltg_grp3 = ltg.LightingGroup[2]
+    assert ltg_grp3.FractionofUnitsInLocation == 0.1
     assert hasattr(ltg_grp3.LightingType, 'FluorescentTube')
 
-    ltg2 = root.Building[1].BuildingDetails.Lighting
-    assert not hasattr(ltg2, 'LightingFractions')
-    ltg_grp5 = ltg2.LightingGroup[0]
-    assert ltg_grp5.SystemIdentifier.attrib['id'] == 'lighting-fraction-4'
-    assert ltg_grp5.FractionofUnitsInLocation == 0.1
-    assert hasattr(ltg_grp5.LightingType, 'Incandescent')
-    ltg_grp6 = ltg2.LightingGroup[1]
-    assert ltg_grp6.SystemIdentifier.attrib['id'] == 'lighting-fraction-5'
-    assert ltg_grp6.FractionofUnitsInLocation == 0.2
-    assert hasattr(ltg_grp6.LightingType, 'CompactFluorescent')
-    ltg_grp7 = ltg2.LightingGroup[2]
-    assert ltg_grp7.SystemIdentifier.attrib['id'] == 'lighting-fraction-6'
-    assert ltg_grp7.FractionofUnitsInLocation == 0.2
-    assert hasattr(ltg_grp7.LightingType, 'FluorescentTube')
-    ltg_grp8 = ltg2.LightingGroup[3]
-    assert ltg_grp8.SystemIdentifier.attrib['id'] == 'lighting-fraction-7'
-    assert ltg_grp8.FractionofUnitsInLocation == 0.5
-    assert hasattr(ltg_grp8.LightingType, 'LightEmittingDiode')
+    ltg_grp4 = ltg.LightingGroup[3]
+    assert ltg_grp4.FractionofUnitsInLocation == 0.3
+    assert hasattr(ltg_grp4.LightingType, 'LightEmittingDiode')
 
 
 def test_deprecated_items():

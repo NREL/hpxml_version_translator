@@ -19,6 +19,32 @@
                     <Name>Golden, CO</Name>
                 </WeatherStation>
             </ClimateandRiskZones>
+            <Enclosure>
+                <!--<Foundations>
+                    <Foundation>
+                        <SystemIdentifier id='foundation-1'/>
+                        <FoundationType>
+                            <Basement/>
+                        </FoundationType>
+                        <FoundationWall>
+                            <SystemIdentifier id='foundationwall-1'/>
+                            <Type>concrete block</Type>
+                            <Length>120</Length>
+                            <Height>8</Height>
+                            <Area>960</Area>
+                            <Thickness>4</Thickness>
+                            <BelowGradeDepth>6</BelowGradeDepth>
+                            <AdjacentToFoundation idref='foundation-1'/>
+                            <Insulation>
+                                <SystemIdentifier id='foundationwall-insulation-1'/>
+                                <InsulationGrade>3</InsulationGrade>
+                                <InsulationCondition>good</InsulationCondition>
+                                <AssemblyEffectiveRValue>5.0</AssemblyEffectiveRValue>
+                            </Insulation>
+                        </FoundationWall>
+                    </Foundation>
+                </Foundations>-->
+            </Enclosure>
             <Systems>
                 <HVAC>
                     <HVACPlant>
@@ -71,17 +97,9 @@
                         <SystemIdentifiersInfo id="measure-system-1"/>
                     </MeasureSystemIdentifiers>
                     <InstalledComponent id='installed-component-1'/>
-                    <InstalledComponent id='installed-component-2'/>
                     <extension>
                         <DummyExtension>dummy</DummyExtension>
                     </extension>
-                </Measure>
-                <Measure>
-                    <MeasureSystemIdentifiers>
-                        <SystemIdentifiersInfo id="measure-system-2"/>
-                    </MeasureSystemIdentifiers>
-                    <InstalledComponent id='installed-component-3'/>
-                    <InstalledComponent id='installed-component-4'/>
                 </Measure>
             </Measures>
         </ProjectDetails>

@@ -25,15 +25,6 @@
                             <Pitch>6.0</Pitch>
                             <RoofArea>1118.5</RoofArea>
                         </Roof>
-                        <Roof>
-                            <SystemIdentifier id='roof-2'/>
-                            <RoofColor>medium</RoofColor>
-                            <SolarAbsorptance>0.6</SolarAbsorptance>
-                            <Emittance>0.7</Emittance>
-                            <RoofType>shingles</RoofType>
-                            <Pitch>6.0</Pitch>
-                            <RoofArea>559.25</RoofArea>
-                        </Roof>
                     </Roofs>
                     <Attics>
                         <Attic>
@@ -51,16 +42,15 @@
                         </Attic>
                         <Attic>
                             <SystemIdentifier id='attic-2'/>
-                            <AttachedToRoof idref='roof-2'/>
                             <AtticType>venting unknown attic</AtticType>
                             <AtticFloorInsulation>
-                                <SystemIdentifier id='attic-floor-insulation-1'/>
+                                <SystemIdentifier id='attic-floor-insulation'/>
                                 <InsulationGrade>1</InsulationGrade>
                                 <InsulationCondition>poor</InsulationCondition>
                                 <AssemblyEffectiveRValue>5.5</AssemblyEffectiveRValue>
                             </AtticFloorInsulation>
                             <AtticRoofInsulation>
-                                <SystemIdentifier id='attic-roof-insulation-1'/>
+                                <SystemIdentifier id='attic-roof-insulation'/>
                                 <InsulationGrade>3</InsulationGrade>
                                 <InsulationCondition>good</InsulationCondition>
                                 <Layer>
@@ -68,7 +58,7 @@
                                     <NominalRValue>7.5</NominalRValue>
                                 </Layer>
                             </AtticRoofInsulation>
-                            <Area>500</Area>
+                            <Area>1500.0</Area>
                         </Attic>
                         <Attic>
                             <SystemIdentifier id='attic-3'/>
@@ -95,71 +85,6 @@
                 <Walls>
                     <Wall>
                         <SystemIdentifier id='wall-1'/>
-                    </Wall>
-                    <Wall>
-                        <SystemIdentifier id='wall-2'/>
-                    </Wall>
-                </Walls>
-            </Enclosure>
-        </BuildingDetails>
-    </Building>
-    <Building>
-        <BuildingID id="bldg2"></BuildingID>
-        <ProjectStatus>
-            <EventType>proposed workscope</EventType>
-        </ProjectStatus>
-        <BuildingDetails>
-            <Enclosure>
-                <AtticAndRoof>
-                    <Roofs>
-                        <Roof>
-                            <SystemIdentifier id='roof-3'/>
-                        </Roof>
-                        <Roof>
-                            <SystemIdentifier id='roof-4'/>
-                        </Roof>
-                    </Roofs>
-                    <Attics>
-                        <Attic>
-                            <SystemIdentifier id='attic-8'/>
-                            <AttachedToRoof idref='roof-3'/>
-                            <AtticKneeWall idref='wall-3'/>
-                            <AtticType>vented attic</AtticType>
-                            <Area>1000</Area>
-                            <Rafters>
-                                <Size>2x6</Size>
-                                <Material>wood</Material>
-                            </Rafters>
-                        </Attic>
-                        <Attic>
-                            <SystemIdentifier id='attic-9'/>
-                            <AttachedToRoof idref='roof-4'/>
-                            <AtticType>venting unknown attic</AtticType>
-                            <AtticFloorInsulation>
-                                <SystemIdentifier id='attic-floor-insulation-2'/>
-                                <InsulationGrade>1</InsulationGrade>
-                                <InsulationCondition>poor</InsulationCondition>
-                                <AssemblyEffectiveRValue>5.5</AssemblyEffectiveRValue>
-                            </AtticFloorInsulation>
-                            <AtticRoofInsulation>
-                                <SystemIdentifier id='attic-roof-insulation-2'/>
-                                <InsulationGrade>2</InsulationGrade>
-                                <InsulationCondition>fair</InsulationCondition>
-                                <Layer>
-                                    <InstallationType>cavity</InstallationType>
-                                    <NominalRValue>7.5</NominalRValue>
-                                </Layer>
-                            </AtticRoofInsulation>
-                            <Area>700</Area>
-                        </Attic>
-                    </Attics>
-                </AtticAndRoof>
-                <Walls>
-                    <Wall>
-                        <SystemIdentifier id='wall-3'/>
-                    </Wall>
-                    <Wall>
-                        <SystemIdentifier id='wall-4'/>
                     </Wall>
                 </Walls>
             </Enclosure>

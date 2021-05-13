@@ -42,7 +42,6 @@
                         <SHGC>0.6</SHGC>
                         <VisibleTransmittance>0.8</VisibleTransmittance>
                         <ExteriorShading>solar film</ExteriorShading>
-                        <WeatherStripping>true</WeatherStripping>
                     </Window>
                     <Window>
                         <SystemIdentifier id='window-3'/>
@@ -67,49 +66,6 @@
                         <MovableInsulationRValue>3.5</MovableInsulationRValue>
                         <Pitch>6.0</Pitch>
                         <AttachedToRoof idref='roof-1'/>
-                    </Skylight>
-                </Skylights>
-            </Enclosure>
-        </BuildingDetails>
-    </Building>
-    <Building>
-        <BuildingID id="bldg2"></BuildingID>
-        <ProjectStatus>
-            <EventType>proposed workscope</EventType>
-        </ProjectStatus>
-        <BuildingDetails>
-            <Enclosure>
-                <Walls>
-                    <Wall>
-                        <SystemIdentifier id='wall-2'/>
-                    </Wall>
-                </Walls>
-                <Windows>
-                    <Window>
-                        <SystemIdentifier id='window-4'/>
-                        <Area>108.0</Area>
-                        <Azimuth>0</Azimuth>
-                        <UFactor>0.33</UFactor>
-                        <SHGC>0.45</SHGC>
-                        <NFRCCertified>true</NFRCCertified>
-                        <VisibleTransmittance>0.9</VisibleTransmittance>
-                        <InteriorShading>light shades</InteriorShading>
-                        <InteriorShadingFactor>0.7</InteriorShadingFactor>
-                        <ExteriorShading>evergreen tree</ExteriorShading>
-                        <MovableInsulationRValue>5.5</MovableInsulationRValue>
-                        <AttachedToWall idref='wall-2'/>
-                    </Window>
-                </Windows>
-                <Skylights>
-                    <Skylight>
-                        <SystemIdentifier id='skylight-2'/>
-                        <VisibleTransmittance>0.8</VisibleTransmittance>
-                        <InteriorShading>light shades</InteriorShading>
-                        <InteriorShadingFactor>0.55</InteriorShadingFactor>
-                        <ExteriorShading>solar film</ExteriorShading>
-                        <MovableInsulationRValue>3.5</MovableInsulationRValue>
-                        <Pitch>6.0</Pitch>
-                        <AttachedToRoof idref='roof-2'/>
                     </Skylight>
                 </Skylights>
             </Enclosure>
