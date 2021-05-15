@@ -339,30 +339,29 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
         enclosure.FoundationWalls.append(deepcopy(fw))
         this_fw = enclosure.FoundationWalls.FoundationWall[-1]
 
-        try:
-            fw_boundary = location_map[str(fw.AdjacentTo)]
-        except KeyError:
-            fw_boundary = str(fw.AdjacentTo)  # retain unchanged location name
-        try:
-            boundary_v3 = {'other housing unit': E.ExteriorAdjacentTo(fw_boundary),
-                           'unconditioned basement': E.InteriorAdjacentTo(fw_boundary),
-                           'living space': E.InteriorAdjacentTo(fw_boundary),
-                           'ground': E.ExteriorAdjacentTo(fw_boundary),
-                           'crawlspace': E.InteriorAdjacentTo(fw_boundary),
-                           'attic': E.InteriorAdjacentTo(fw_boundary),  # FIXME: double-check
-                           'garage': E.InteriorAdjacentTo(fw_boundary),
-                           'ambient': E.ExteriorAdjacentTo(fw_boundary)}[str(fw.AdjacentTo)]
-            add_after(
-                this_fw,
-                ['SystemIdentifier',
-                 'ExternalResource',
-                 'AttachedToSpace'],
-                boundary_v3
-            )
-        except KeyError:
-            pass
-
         if hasattr(this_fw, 'AdjacentTo'):
+            try:
+                fw_boundary = location_map[str(fw.AdjacentTo)]
+            except KeyError:
+                fw_boundary = str(fw.AdjacentTo)  # retain unchanged location name
+            try:
+                boundary_v3 = {'other housing unit': E.ExteriorAdjacentTo(fw_boundary),
+                               'unconditioned basement': E.InteriorAdjacentTo(fw_boundary),
+                               'living space': E.InteriorAdjacentTo(fw_boundary),
+                               'ground': E.ExteriorAdjacentTo(fw_boundary),
+                               'crawlspace': E.InteriorAdjacentTo(fw_boundary),
+                               'attic': E.InteriorAdjacentTo(fw_boundary),  # FIXME: double-check
+                               'garage': E.InteriorAdjacentTo(fw_boundary),
+                               'ambient': E.ExteriorAdjacentTo(fw_boundary)}[str(fw.AdjacentTo)]
+                add_after(
+                    this_fw,
+                    ['SystemIdentifier',
+                     'ExternalResource',
+                     'AttachedToSpace'],
+                    boundary_v3
+                )
+            except KeyError:
+                pass
             this_fw.remove(this_fw.AdjacentTo)
 
         foundation.remove(fw)
@@ -874,8 +873,13 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
         if watertype == 'indoor water ':
             watertype._setText(str(watertype).rstrip())
 
-    # TODO: Adds desuperheater flexibility
+    # Adds desuperheater flexibility
     # https://github.com/hpxmlwg/hpxml/pull/184
+
+    for el in root.xpath('//h:WaterHeatingSystem/h:RelatedHeatingSystem', **xpkw):
+        el.tag = f'{{{hpxml3_ns}}}RelatedHVACSystem'
+    for el in root.xpath('//h:WaterHeatingSystem/h:HasGeothermalDesuperheater', **xpkw):
+        el.tag = f'{{{hpxml3_ns}}}UsesDesuperheater'
 
     # TODO: Allow insulation location to be layer-specific
     # https://github.com/hpxmlwg/hpxml/pull/188
