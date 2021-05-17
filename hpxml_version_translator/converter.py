@@ -438,6 +438,13 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
                  'InteriorAdjacentTo'],
                 E.AtticWallType('knee wall')
             )
+            add_before(
+                this_attic,
+                ['AttachedToFrameFloor',
+                 'AnnualEnergyUse',
+                 'extension'],
+                E.AttachedToWall(idref=knee_wall_id)
+            )
 
         # create a FrameFloor adjacent to the attic and assign the area below to Area
         # and then copy AtticFloorInsulation over to Insulation of the frame floor
@@ -456,11 +463,12 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
                 E.SystemIdentifier(id=f'attic-floor-{i}'),
                 E.InteriorAdjacentTo('attic'),
             )
+            attic_floor_id = attic_floor_el.SystemIdentifier.attrib['id']
             add_before(
                 this_attic,
                 ['AnnualEnergyUse',
                  'extension'],
-                E.AttachedToFrameFloor(idref=attic_floor_el.SystemIdentifier.attrib['id'])
+                E.AttachedToFrameFloor(idref=attic_floor_id)
             )
             if hasattr(this_attic, 'Area'):
                 attic_floor_el.append(E.Area(float(this_attic.Area)))
