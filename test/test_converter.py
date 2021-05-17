@@ -156,6 +156,7 @@ def test_enclosure_attics_and_roofs():
     assert attic1.AttachedToRoof.attrib['idref'] == 'roof-1'
     attic2 = enclosure1.Attics.Attic[1]
     assert attic2.AtticType.Attic.extension.Vented == 'unknown'  # venting unknown attic
+    assert attic2.AttachedToFrameFloor.attrib['idref'] == 'attic-floor-1'
     attic3 = enclosure1.Attics.Attic[2]
     assert attic3.AtticType.Attic.Vented  # vented attic
     attic4 = enclosure1.Attics.Attic[3]
@@ -213,6 +214,7 @@ def test_enclosure_attics_and_roofs():
     assert attic8.AttachedToRoof.attrib['idref'] == 'roof-3'
     attic9 = enclosure2.Attics.Attic[1]
     assert attic9.AtticType.Attic.extension.Vented == 'unknown'  # venting unknown attic
+    assert attic9.AttachedToFrameFloor.attrib['idref'] == 'attic-floor-8'
 
     roof3 = enclosure2.Roofs.Roof[0]
     assert roof3.Rafters.Size == '2x6'

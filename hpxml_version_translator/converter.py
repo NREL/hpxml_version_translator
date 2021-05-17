@@ -456,6 +456,12 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
                 E.SystemIdentifier(id=f'attic-floor-{i}'),
                 E.InteriorAdjacentTo('attic'),
             )
+            add_before(
+                this_attic,
+                ['AnnualEnergyUse',
+                 'extension'],
+                E.AttachedToFrameFloor(idref=attic_floor_el.SystemIdentifier.attrib['id'])
+            )
             if hasattr(this_attic, 'Area'):
                 attic_floor_el.append(E.Area(float(this_attic.Area)))
             attic_floor_insulation = deepcopy(this_attic.AtticFloorInsulation)
