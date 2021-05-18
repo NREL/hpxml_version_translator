@@ -910,6 +910,10 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
     # TODO: updating BPI-2101 enums in GreenBuildingVerification/Type
     # https://github.com/hpxmlwg/hpxml/pull/210
 
+    # Scrub Customer
+    for customer in root.xpath('//h:Customer', **xpkw):
+        root.remove(customer)
+
     # Write out new file
     hpxml3_doc.write(pathobj_to_str(hpxml3_file), pretty_print=True, encoding='utf-8')
     hpxml3_schema.assertValid(hpxml3_doc)
