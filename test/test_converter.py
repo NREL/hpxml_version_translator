@@ -635,9 +635,3 @@ def test_desuperheater_flexibility():
     assert whsystem3.UsesDesuperheater
     assert not hasattr(whsystem3, 'RelatedHeatingSystem')
     assert whsystem3.RelatedHVACSystem.attrib['idref'] == 'heating-system-2'
-
-
-def test_scrub_customer():
-    root = convert_hpxml_and_parse(hpxml_dir / 'scrub_customer.xml')
-
-    assert not hasattr(root, 'Customer')
