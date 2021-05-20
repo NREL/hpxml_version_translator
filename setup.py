@@ -31,4 +31,9 @@ setuptools.setup(
         ]
     },
     python_requires='>=3.6',
+    entry_points={
+        'console_scripts': [
+            'hpxml_version_translator=hpxml_version_translator:main'
+        ]
+    }
 )
