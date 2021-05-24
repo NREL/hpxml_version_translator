@@ -628,3 +628,23 @@ def test_cli(capsysbinary):
     f = io.BytesIO(capsysbinary.readouterr().out)
     root = objectify.parse(f).getroot()
     assert root.attrib['schemaVersion'] == '3.0'
+
+
+def test_desuperheater_flexibility():
+    root = convert_hpxml_and_parse(hpxml_dir / 'desuperheater_flexibility.xml')
+
+    whsystem1 = root.Building[0].BuildingDetails.Systems.WaterHeating.WaterHeatingSystem[0]
+    assert not hasattr(whsystem1, 'HasGeothermalDesuperheater')
+    assert whsystem1.UsesDesuperheater
+    assert not hasattr(whsystem1, 'RelatedHeatingSystem')
+    assert whsystem1.RelatedHVACSystem.attrib['idref'] == 'heating-system-1'
+    whsystem2 = root.Building[0].BuildingDetails.Systems.WaterHeating.WaterHeatingSystem[1]
+    assert not hasattr(whsystem2, 'HasGeothermalDesuperheater')
+    assert not whsystem2.UsesDesuperheater
+    assert not hasattr(whsystem2, 'RelatedHeatingSystem')
+    assert whsystem2.RelatedHVACSystem.attrib['idref'] == 'heatpump-1'
+    whsystem3 = root.Building[1].BuildingDetails.Systems.WaterHeating.WaterHeatingSystem[0]
+    assert not hasattr(whsystem3, 'HasGeothermalDesuperheater')
+    assert whsystem3.UsesDesuperheater
+    assert not hasattr(whsystem3, 'RelatedHeatingSystem')
+    assert whsystem3.RelatedHVACSystem.attrib['idref'] == 'heating-system-2'
