@@ -70,11 +70,6 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
 
     # Ensure we're working with valid HPXML v2.x (earlier versions should validate against v2.3 schema)
     hpxml2_doc = objectify.parse(pathobj_to_str(hpxml2_file))
-    # Scrub Customer in HPXML v2
-    hpxml2root = hpxml2_doc.getroot()
-    for customer in hpxml2root.xpath('//h:Customer', namespaces={'h': hpxml2_ns}):
-        hpxml2root.remove(customer)
-    hpxml2_doc.write(pathobj_to_str(hpxml2_file), pretty_print=True, encoding='utf-8')
     hpxml2_schema.assertValid(hpxml2_doc)
 
     # Change the namespace of every element to use the HPXML v3 namespace
