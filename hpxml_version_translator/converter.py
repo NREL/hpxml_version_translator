@@ -845,7 +845,11 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
                 ltggroup.LightingType.append(E.FluorescentTube())
             elif ltgfrac.tag == f'{{{hpxml3_ns}}}FractionLED':
                 ltggroup.LightingType.append(E.LightEmittingDiode())
-            ltg.append(ltggroup)
+            add_after(
+                ltg,
+                ['LightingGroup'],
+                ltggroup
+            )
         ltg.remove(ltgfracs)
 
     # Deprecated items
