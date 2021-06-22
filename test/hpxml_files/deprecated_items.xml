@@ -110,6 +110,9 @@
                         <PoolPump>
                             <SystemIdentifier id='poolpump-1'/>
                             <HoursPerDay>3</HoursPerDay>
+                            <extension>
+                                <DummyElement/>
+                            </extension>
                         </PoolPump>
                         <PoolPump>
                             <SystemIdentifier id='poolpump-2'/>
@@ -178,6 +181,9 @@
                             <HoursPerDay>5</HoursPerDay>
                             <PumpSpeed>
                                 <Power>250</Power>
+                                <extension>
+                                    <DummyElement/>
+                                </extension>
                             </PumpSpeed>
                         </PoolPump>
                     </PoolPumps>
