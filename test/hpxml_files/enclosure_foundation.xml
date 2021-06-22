@@ -20,6 +20,37 @@
                         <FoundationType>
                             <Basement/>
                         </FoundationType>
+                        <FrameFloor>
+                            <SystemIdentifier id='framefloor-1'/>
+                            <FloorCovering>hardwood</FloorCovering>
+                            <Area>1350.0</Area>
+                            <Insulation>
+                                <SystemIdentifier id='framefloor-insulation-1'/>
+                                <InsulationLocation>exterior</InsulationLocation>
+                                <AssemblyEffectiveRValue>39.3</AssemblyEffectiveRValue>
+                            </Insulation>
+                        </FrameFloor>
+                        <FrameFloor>
+                            <SystemIdentifier id='framefloor-2'/>
+                            <FloorCovering>carpet</FloorCovering>
+                            <Area>1350.0</Area>
+                            <Insulation>
+                                <SystemIdentifier id='framefloor-insulation-2'/>
+                                <InsulationGrade>1</InsulationGrade>
+                                <InsulationCondition>poor</InsulationCondition>
+                                <InsulationLocation>exterior</InsulationLocation>
+                                <Layer>
+                                    <InstallationType>continuous</InstallationType>
+                                    <NominalRValue>30.0</NominalRValue>
+                                    <Thickness>1.5</Thickness>
+                                </Layer>
+                                <Layer>
+                                    <InstallationType>continuous</InstallationType>
+                                    <NominalRValue>8.0</NominalRValue>
+                                    <Thickness>0.25</Thickness>
+                                </Layer>
+                            </Insulation>
+                        </FrameFloor>
                         <FoundationWall>
                             <SystemIdentifier id='foundationwall-1'/>
                             <Type>concrete block</Type>
@@ -71,6 +102,30 @@
                                 </Layer>
                             </Insulation>
                         </FoundationWall>
+                        <Slab>
+                            <SystemIdentifier id='slab-1'/>
+                            <Area>1350.0</Area>
+                            <Thickness>4.0</Thickness>
+                            <ExposedPerimeter>150.0</ExposedPerimeter>
+                            <PerimeterInsulationDepth>0.0</PerimeterInsulationDepth>
+                            <UnderSlabInsulationWidth>0.0</UnderSlabInsulationWidth>
+                            <PerimeterInsulation>
+                                <SystemIdentifier id='SlabPerimeterInsulation-1'/>
+                                <Layer>
+                                    <NominalRValue>0.0</NominalRValue>
+                                </Layer>
+                            </PerimeterInsulation>
+                            <UnderSlabInsulation>
+                                <SystemIdentifier id='SlabUnderSlabInsulation-1'/>
+                                <Layer>
+                                    <NominalRValue>0.0</NominalRValue>
+                                </Layer>
+                            </UnderSlabInsulation>
+                            <extension>
+                                <CarpetFraction>0.0</CarpetFraction>
+                                <CarpetRValue>0.0</CarpetRValue>
+                            </extension>
+                        </Slab>
                     </Foundation>
                 </Foundations>
             </Enclosure>
@@ -89,6 +144,16 @@
                         <FoundationType>
                             <Basement/>
                         </FoundationType>
+                        <FrameFloor>
+                            <SystemIdentifier id='framefloor-3'/>
+                            <FloorCovering>hardwood</FloorCovering>
+                            <Area>675.0</Area>
+                            <Insulation>
+                                <SystemIdentifier id='framefloor-insulation-3'/>
+                                <InsulationLocation>exterior</InsulationLocation>
+                                <AssemblyEffectiveRValue>39.3</AssemblyEffectiveRValue>
+                            </Insulation>
+                        </FrameFloor>
                         <FoundationWall>
                             <SystemIdentifier id='foundationwall-3'/>
                             <Type>solid concrete</Type>
@@ -107,6 +172,30 @@
                                 <AssemblyEffectiveRValue>3.0</AssemblyEffectiveRValue>
                             </Insulation>
                         </FoundationWall>
+                        <Slab>
+                            <SystemIdentifier id='slab-2'/>
+                            <Area>675.0</Area>
+                            <Thickness>4.0</Thickness>
+                            <ExposedPerimeter>75.0</ExposedPerimeter>
+                            <PerimeterInsulationDepth>0.0</PerimeterInsulationDepth>
+                            <UnderSlabInsulationWidth>0.0</UnderSlabInsulationWidth>
+                            <PerimeterInsulation>
+                                <SystemIdentifier id='SlabPerimeterInsulation-2'/>
+                                <Layer>
+                                    <NominalRValue>0.0</NominalRValue>
+                                </Layer>
+                            </PerimeterInsulation>
+                            <UnderSlabInsulation>
+                                <SystemIdentifier id='SlabUnderSlabInsulation-2'/>
+                                <Layer>
+                                    <NominalRValue>0.0</NominalRValue>
+                                </Layer>
+                            </UnderSlabInsulation>
+                            <extension>
+                                <CarpetFraction>0.0</CarpetFraction>
+                                <CarpetRValue>0.0</CarpetRValue>
+                            </extension>
+                        </Slab>
                     </Foundation>
                 </Foundations>
             </Enclosure>

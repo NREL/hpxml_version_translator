@@ -323,7 +323,14 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
         enclosure = fw.getparent().getparent().getparent()
         foundation = fw.getparent()
 
-        fw.addnext(E.AttachedToFoundationWall(idref=fw.SystemIdentifier.attrib['id']))
+        add_before(
+            foundation,
+            ['AttachedToFrameFloor',
+             'AttachedToSlab',
+             'AnnualEnergyUse',
+             'extension'],
+            E.AttachedToFoundationWall(idref=fw.SystemIdentifier.attrib['id'])
+        )
         if not hasattr(enclosure, 'FoundationWalls'):
             add_after(
                 enclosure,
@@ -576,11 +583,13 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
         enclosure = ff.getparent().getparent().getparent()
         foundation = ff.getparent()
 
-        el_attached_to_ff = E.AttachedToFrameFloor(idref=ff.SystemIdentifier.attrib['id'])
-        if hasattr(foundation, 'AttachedToFoundationWall'):
-            foundation.AttachedToFoundationWall.addnext(el_attached_to_ff)  # make the element order valid
-        else:
-            ff.addnext(el_attached_to_ff)
+        add_before(
+            foundation,
+            ['AttachedToSlab',
+             'AnnualEnergyUse',
+             'extension'],
+            E.AttachedToFrameFloor(idref=ff.SystemIdentifier.attrib['id'])
+        )
         if not hasattr(enclosure, 'FrameFloors'):
             add_before(
                 enclosure,
@@ -600,7 +609,12 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
         enclosure = slab.getparent().getparent().getparent()
         foundation = slab.getparent()
 
-        slab.addnext(E.AttachedToSlab(idref=slab.SystemIdentifier.attrib['id']))
+        add_before(
+            foundation,
+            ['AnnualEnergyUse',
+             'extension'],
+            E.AttachedToSlab(idref=slab.SystemIdentifier.attrib['id'])
+        )
         if not hasattr(enclosure, 'Slabs'):
             add_before(
                 enclosure,
