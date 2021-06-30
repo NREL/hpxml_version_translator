@@ -895,6 +895,13 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
     for el in root.xpath('//h:WaterHeatingSystem/h:HasGeothermalDesuperheater', **xpkw):
         el.tag = f'{{{hpxml3_ns}}}UsesDesuperheater'
 
+    # Handle PV inverter efficiency value
+    # https://github.com/hpxmlwg/hpxml/pull/207
+
+    for inverter_efficiency in root.xpath('//h:InverterEfficiency', **xpkw):
+        if float(inverter_efficiency) > 1:
+            inverter_efficiency._setText(str(float(inverter_efficiency) / 100.0))
+
     # TODO: Allow insulation location to be layer-specific
     # https://github.com/hpxmlwg/hpxml/pull/188
 
@@ -903,9 +910,6 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
 
     # TODO: Window sub-components
     # https://github.com/hpxmlwg/hpxml/pull/202
-
-    # TODO: Clarify PV inverter efficiency value
-    # https://github.com/hpxmlwg/hpxml/pull/207
 
     # TODO: updating BPI-2101 enums in GreenBuildingVerification/Type
     # https://github.com/hpxmlwg/hpxml/pull/210

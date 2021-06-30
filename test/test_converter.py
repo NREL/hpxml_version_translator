@@ -652,3 +652,10 @@ def test_desuperheater_flexibility():
     assert whsystem3.UsesDesuperheater
     assert not hasattr(whsystem3, 'RelatedHeatingSystem')
     assert whsystem3.RelatedHVACSystem.attrib['idref'] == 'heating-system-2'
+
+
+def test_inverter_efficiency():
+    root = convert_hpxml_and_parse(hpxml_dir / 'inverter_efficiency.xml')
+
+    for pv_system in root.Building[0].BuildingDetails.Systems.Photovoltaics.PVSystem:
+        assert pv_system.InverterEfficiency == 0.9
