@@ -19,6 +19,12 @@
                     <FractionCFL>0.1</FractionCFL>
                     <FractionLFL>0.4</FractionLFL>
                 </LightingFractions>
+                <CeilingFan>
+                    <SystemIdentifier id="ceilingfan1"/>
+                    <Airflow>
+                        <Efficiency>70</Efficiency>
+                    </Airflow>
+                </CeilingFan>
             </Lighting>
         </BuildingDetails>
     </Building>
@@ -35,6 +41,12 @@
                     <FractionLFL>0.2</FractionLFL>
                     <FractionLED>0.5</FractionLED>
                 </LightingFractions>
+                <CeilingFan>
+                    <SystemIdentifier id="ceilingfan2"/>
+                    <Airflow>
+                        <Efficiency>70</Efficiency>
+                    </Airflow>
+                </CeilingFan>
             </Lighting>
         </BuildingDetails>
     </Building>
