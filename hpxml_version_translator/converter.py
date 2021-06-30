@@ -4,6 +4,7 @@ import datetime as dt
 from lxml import etree, objectify
 import pathlib
 import re
+import tempfile
 
 from hpxml_version_translator import exceptions as exc
 
@@ -21,8 +22,98 @@ def pathobj_to_str(x):
     """
     if isinstance(x, pathlib.PurePath):
         return str(x)
-    else:
+    elif isinstance(x, str):
         return x
+    else:  # tempfile.NamedTemporaryFile
+        return x.name
+
+
+def detect_hpxml_version(hpxmlfilename):
+    doc = etree.parse(hpxmlfilename)
+    schema_version = list(map(int, doc.getroot().attrib['schemaVersion'].split('.')))
+    schema_version.extend((3 - len(schema_version)) * [0])
+    return schema_version
+
+
+def add_after(parent_el, list_of_el_names, el_to_add):
+    for sibling_name in reversed(list_of_el_names):
+        try:
+            sibling = getattr(parent_el, sibling_name)[-1]
+        except AttributeError:
+            continue
+        else:
+            sibling.addnext(el_to_add)
+            return
+    parent_el.insert(0, el_to_add)
+
+
+def add_before(parent_el, list_of_el_names, el_to_add):
+    for sibling_name in list_of_el_names:
+        try:
+            sibling = getattr(parent_el, sibling_name)[0]
+        except AttributeError:
+            continue
+        else:
+            sibling.addprevious(el_to_add)
+            return
+    parent_el.append(el_to_add)
+
+
+def convert_hpxml_to_3(hpxml_file, hpxml3_file):
+    schema_version = detect_hpxml_version(hpxml_file)
+    major_version = schema_version[0]
+    if major_version == 1:
+        hpxml2_file = tempfile.NamedTemporaryFile()
+        convert_hpxml1_to_2(hpxml_file, hpxml2_file)
+        convert_hpxml2_to_3(hpxml2_file, hpxml3_file)
+    elif major_version == 2:
+        convert_hpxml2_to_3(hpxml_file, hpxml3_file)
+
+
+def convert_hpxml1_to_2(hpxml1_file, hpxml2_file):
+    """Convert an HPXML v1 file to HPXML v2
+
+    :param hpxml1_file: HPXML v1 input file
+    :type hpxml1_file: pathlib.Path, str, or file-like
+    :param hpxml2_file: HPXML v2 output file
+    :type hpxml2_file: pathlib.Path, str, or file-like
+    """
+
+    # Load Schemas
+    schemas_dir = pathlib.Path(__file__).resolve().parent / 'schemas'
+    hpxml1_schema_doc = etree.parse(str(schemas_dir / 'v1.1.1' / 'HPXML.xsd'))
+    hpxml1_ns = hpxml1_schema_doc.getroot().attrib['targetNamespace']
+    hpxml1_schema = etree.XMLSchema(hpxml1_schema_doc)
+    hpxml2_schema_doc = etree.parse(str(schemas_dir / 'v2.3' / 'HPXML.xsd'))
+    hpxml2_ns = hpxml2_schema_doc.getroot().attrib['targetNamespace']
+    hpxml2_schema = etree.XMLSchema(hpxml2_schema_doc)
+
+    # E = objectify.ElementMaker(namespace=hpxml2_ns, nsmap={None: hpxml2_ns}, annotate=False)
+    # xpkw = {'namespaces': {'h': hpxml2_ns}}
+
+    # Ensure we're working with valid HPXML v1.x (earlier versions should validate against v1.1.1 schema)
+    hpxml1_doc = objectify.parse(pathobj_to_str(hpxml1_file))
+    hpxml1_schema.assertValid(hpxml1_doc)
+
+    # Change the namespace of every element to use the HPXML v3 namespace
+    # https://stackoverflow.com/a/51660868/11600307
+    change_ns_xslt = etree.parse(str(pathlib.Path(__file__).resolve().parent / 'change_namespace.xsl'))
+    hpxml2_doc = hpxml1_doc.xslt(change_ns_xslt, orig_namespace=f"'{hpxml1_ns}'", new_namespace=f"'{hpxml2_ns}'")
+    root = hpxml2_doc.getroot()
+
+    # Change version
+    root.attrib['schemaVersion'] = '2.3'
+
+    # TODO: Moved the BPI 2400 elements and renamed/reorganized them.
+
+    # TODO: Renamed element AttachedToCAZ under water heater to fix a typo.
+
+    # TODO: Removed "batch heater" from SolarCollectorLoopType in lieu of the previously
+    # added "integrated collector storage" enumeration on SolarThermalCollectorType.
+
+    # Write out new file
+    hpxml2_doc.write(pathobj_to_str(hpxml2_file), pretty_print=True, encoding='utf-8')
+    hpxml2_schema.assertValid(hpxml2_doc)
 
 
 def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
@@ -45,28 +136,6 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
 
     E = objectify.ElementMaker(namespace=hpxml3_ns, nsmap={None: hpxml3_ns}, annotate=False)
     xpkw = {'namespaces': {'h': hpxml3_ns}}
-
-    def add_after(parent_el, list_of_el_names, el_to_add):
-        for sibling_name in reversed(list_of_el_names):
-            try:
-                sibling = getattr(parent_el, sibling_name)[-1]
-            except AttributeError:
-                continue
-            else:
-                sibling.addnext(el_to_add)
-                return
-        parent_el.insert(0, el_to_add)
-
-    def add_before(parent_el, list_of_el_names, el_to_add):
-        for sibling_name in list_of_el_names:
-            try:
-                sibling = getattr(parent_el, sibling_name)[0]
-            except AttributeError:
-                continue
-            else:
-                sibling.addprevious(el_to_add)
-                return
-        parent_el.append(el_to_add)
 
     # Ensure we're working with valid HPXML v2.x (earlier versions should validate against v2.3 schema)
     hpxml2_doc = objectify.parse(pathobj_to_str(hpxml2_file))
