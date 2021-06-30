@@ -5,6 +5,7 @@ from lxml import etree, objectify
 import pathlib
 import re
 import tempfile
+import io
 
 from hpxml_version_translator import exceptions as exc
 
@@ -22,14 +23,14 @@ def pathobj_to_str(x):
     """
     if isinstance(x, pathlib.PurePath):
         return str(x)
-    elif isinstance(x, str):
+    elif isinstance(x, str) or isinstance(x, io.BufferedWriter) or isinstance(x, io.BytesIO):
         return x
     else:  # tempfile.NamedTemporaryFile
         return x.name
 
 
 def detect_hpxml_version(hpxmlfilename):
-    doc = etree.parse(hpxmlfilename)
+    doc = etree.parse(str(hpxmlfilename))
     schema_version = list(map(int, doc.getroot().attrib['schemaVersion'].split('.')))
     schema_version.extend((3 - len(schema_version)) * [0])
     return schema_version
