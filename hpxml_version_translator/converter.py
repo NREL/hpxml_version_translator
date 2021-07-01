@@ -451,8 +451,9 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
 
         # create a FrameFloor adjacent to the attic and assign the area below to Area
         # and then copy AtticFloorInsulation over to Insulation of the frame floor
-        if hasattr(this_attic, 'AtticFloorInsulation') or\
-            this_attic_type not in ['cathedral ceiling', 'flat roof', 'cape cod']:
+        if hasattr(this_attic, 'AtticFloorInsulation') or (
+            this_attic_type not in ['cathedral ceiling', 'flat roof', 'cape cod']
+        ):
             if not hasattr(enclosure, 'FrameFloors'):
                 add_before(
                     enclosure,
@@ -519,7 +520,8 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
                 try:
                     roof_idref = this_attic.AttachedToRoof.attrib['idref']
                     roof_attached_to_this_attic = root.xpath(
-                        'h:Building/h:BuildingDetails/h:Enclosure/h:AtticAndRoof/h:Roofs/h:Roof[h:SystemIdentifier/@id=$sysid]',
+                        'h:Building/h:BuildingDetails/h:Enclosure/h:AtticAndRoof/h:Roofs/\
+                         h:Roof[h:SystemIdentifier/@id=$sysid]',
                         sysid=roof_idref, **xpkw)[0]
                     add_after(
                         roof_attached_to_this_attic,
@@ -536,7 +538,8 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
                 try:
                     floor_idref = this_attic.AttachedToFrameFloor.attrib['idref']
                     floor_attached_to_this_attic = root.xpath(
-                        'h:Building/h:BuildingDetails/h:Enclosure/h:FrameFloors/h:FrameFloor[h:SystemIdentifier/@id=$sysid]',
+                        'h:Building/h:BuildingDetails/h:Enclosure/h:FrameFloors/\
+                         h:FrameFloor[h:SystemIdentifier/@id=$sysid]',
                         sysid=floor_idref, **xpkw)[0]
                     add_after(
                         floor_attached_to_this_attic,
