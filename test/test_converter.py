@@ -234,6 +234,9 @@ def test_enclosure_attics_and_roofs():
     assert roof4.Insulation.Layer.NominalRValue == 7.5
     assert not hasattr(roof4, 'Rafters')
 
+    roof5 = enclosure2.Roofs.Roof[2]
+    assert roof5.Area == 140.0
+
     assert enclosure2.Walls.Wall[0].AtticWallType == 'knee wall'
     assert not hasattr(enclosure2.Walls.Wall[1], 'AtticWallType')
 
