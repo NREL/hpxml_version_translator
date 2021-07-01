@@ -277,12 +277,11 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
     for i, ic in enumerate(root.xpath('h:Project/h:ProjectDetails/h:Measures/h:Measure/h:InstalledComponent', **xpkw)):
         ms = ic.getparent()
         if not hasattr(ms, 'InstalledComponents'):
-            try:
-                sibling = getattr(ms, 'extension')
-            except AttributeError:
-                ms.append(E.InstalledComponents())
-            else:
-                sibling.addprevious(E.InstalledComponents())
+            add_before(
+                ms,
+                ['extension'],
+                E.InstalledComponents()
+            )
         ms.InstalledComponents.append(deepcopy(ic))
         ms.remove(ic)
 
@@ -299,11 +298,23 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
     for bkupafue in root.xpath(
         'h:Building/h:BuildingDetails/h:Systems/h:HVAC/h:HVACPlant/h:HeatPump/h:BackupAFUE', **xpkw
     ):
-        bkupafue.addnext(E.BackupAnnualHeatingEfficiency(
-            E.Units('AFUE'),
-            E.Value(f'{float(bkupafue.text) / 100}')
-        ))
-        bkupafue.getparent().remove(bkupafue)
+        heatpump = bkupafue.getparent()
+        add_before(
+            heatpump,
+            ['BackupHeatingCapacity',
+             'BackupHeatingSwitchoverTemperature',
+             'FractionHeatLoadServed',
+             'FractionCoolLoadServed',
+             'FloorAreaServed',
+             'AnnualCoolingEfficiency',
+             'AnnualHeatingEfficiency',
+             'extension'],
+            E.BackupAnnualHeatingEfficiency(
+                E.Units('AFUE'),
+                E.Value(f'{float(bkupafue.text) / 100}')
+            )
+        )
+        heatpump.remove(bkupafue)
 
     # Renames FoundationWall/BelowGradeDepth to FoundationWall/DepthBelowGrade
     for el in root.xpath('//h:FoundationWall/h:BelowGradeDepth', **xpkw):
@@ -324,7 +335,14 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
         enclosure = fw.getparent().getparent().getparent()
         foundation = fw.getparent()
 
-        fw.addnext(E.AttachedToFoundationWall(idref=fw.SystemIdentifier.attrib['id']))
+        add_before(
+            foundation,
+            ['AttachedToFrameFloor',
+             'AttachedToSlab',
+             'AnnualEnergyUse',
+             'extension'],
+            E.AttachedToFoundationWall(idref=fw.SystemIdentifier.attrib['id'])
+        )
         if not hasattr(enclosure, 'FoundationWalls'):
             add_after(
                 enclosure,
@@ -624,11 +642,13 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
         enclosure = ff.getparent().getparent().getparent()
         foundation = ff.getparent()
 
-        el_attached_to_ff = E.AttachedToFrameFloor(idref=ff.SystemIdentifier.attrib['id'])
-        if hasattr(foundation, 'AttachedToFoundationWall'):
-            foundation.AttachedToFoundationWall.addnext(el_attached_to_ff)  # make the element order valid
-        else:
-            ff.addnext(el_attached_to_ff)
+        add_before(
+            foundation,
+            ['AttachedToSlab',
+             'AnnualEnergyUse',
+             'extension'],
+            E.AttachedToFrameFloor(idref=ff.SystemIdentifier.attrib['id'])
+        )
         if not hasattr(enclosure, 'FrameFloors'):
             add_before(
                 enclosure,
@@ -648,7 +668,12 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
         enclosure = slab.getparent().getparent().getparent()
         foundation = slab.getparent()
 
-        slab.addnext(E.AttachedToSlab(idref=slab.SystemIdentifier.attrib['id']))
+        add_before(
+            foundation,
+            ['AnnualEnergyUse',
+             'extension'],
+            E.AttachedToSlab(idref=slab.SystemIdentifier.attrib['id'])
+        )
         if not hasattr(enclosure, 'Slabs'):
             add_before(
                 enclosure,
@@ -780,9 +805,22 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
         if hasattr(win, 'InteriorShadingFactor'):
             # handles a case where `InteriorShadingFactor` is specified without `InteriorShading`
             if not hasattr(win, 'InteriorShading'):
-                win.InteriorShadingFactor.addnext(E.InteriorShading(
-                    E.SystemIdentifier(id=f'interior-shading-{i}')
-                ))
+                add_before(
+                    win,
+                    ['StormWindow',
+                     'MoveableInsulation',
+                     'Overhangs',
+                     'WeatherStripping',
+                     'Operable',
+                     'LeakinessDescription',
+                     'WindowtoWallRatio',
+                     'AttachedToWall',
+                     'AnnualEnergyUse',
+                     'extension'],
+                    E.InteriorShading(
+                        E.SystemIdentifier(id=f'interior-shading-{i}')
+                    )
+                )
             win.InteriorShading.extend([
                 E.SummerShadingCoefficient(float(win.InteriorShadingFactor)),
                 E.WinterShadingCoefficient(float(win.InteriorShadingFactor))
@@ -879,7 +917,11 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
                 ltggroup.LightingType.append(E.FluorescentTube())
             elif ltgfrac.tag == f'{{{hpxml3_ns}}}FractionLED':
                 ltggroup.LightingType.append(E.LightEmittingDiode())
-            ltg.append(ltggroup)
+            add_after(
+                ltg,
+                ['LightingGroup'],
+                ltggroup
+            )
         ltg.remove(ltgfracs)
 
     # Deprecated items
@@ -925,9 +967,19 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
     for poolpump_hour in root.xpath('//h:PoolPump/h:HoursPerDay', **xpkw):
         poolpump = poolpump_hour.getparent()
         if not hasattr(poolpump, 'PumpSpeed'):
-            poolpump_hour.addnext(E.PumpSpeed(E.HoursPerDay(float(poolpump_hour))))
+            add_before(
+                poolpump,
+                ['extension'],
+                E.PumpSpeed(
+                    E.HoursPerDay(float(poolpump_hour))
+                )
+            )
         else:
-            poolpump.PumpSpeed.append(E.HoursPerDay(float(poolpump_hour)))
+            add_before(
+                poolpump.PumpSpeed,
+                ['extension'],
+                E.HoursPerDay(float(poolpump_hour))
+            )
         poolpump.remove(poolpump_hour)
 
     # Removes "indoor water " (note extra trailing space) enumeration from WaterType
@@ -943,6 +995,13 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
     for el in root.xpath('//h:WaterHeatingSystem/h:HasGeothermalDesuperheater', **xpkw):
         el.tag = f'{{{hpxml3_ns}}}UsesDesuperheater'
 
+    # Handle PV inverter efficiency value
+    # https://github.com/hpxmlwg/hpxml/pull/207
+
+    for inverter_efficiency in root.xpath('//h:InverterEfficiency', **xpkw):
+        if float(inverter_efficiency) > 1:
+            inverter_efficiency._setText(str(float(inverter_efficiency) / 100.0))
+
     # TODO: Allow insulation location to be layer-specific
     # https://github.com/hpxmlwg/hpxml/pull/188
 
@@ -951,9 +1010,6 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
 
     # TODO: Window sub-components
     # https://github.com/hpxmlwg/hpxml/pull/202
-
-    # TODO: Clarify PV inverter efficiency value
-    # https://github.com/hpxmlwg/hpxml/pull/207
 
     # TODO: updating BPI-2101 enums in GreenBuildingVerification/Type
     # https://github.com/hpxmlwg/hpxml/pull/210

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<HPXML xmlns="http://hpxmlonline.com/2014/6" schemaVersion="2.3">
+    <XMLTransactionHeaderInformation>
+        <XMLType></XMLType>
+        <XMLGeneratedBy></XMLGeneratedBy>
+        <CreatedDateAndTime>2021-04-05T14:17:07.685077</CreatedDateAndTime>
+        <Transaction>create</Transaction>
+    </XMLTransactionHeaderInformation>
+    <SoftwareInfo/>
+    <Building>
+        <BuildingID id="bldg1"></BuildingID>
+        <ProjectStatus>
+            <EventType>audit</EventType>
+        </ProjectStatus>
+        <BuildingDetails>
+            <Systems>
+                <Photovoltaics>
+                    <PVSystem>
+                      <SystemIdentifier id='pv-1'/>
+                      <InverterEfficiency>0.9</InverterEfficiency>
+                    </PVSystem>
+                    <PVSystem>
+                      <SystemIdentifier id='pv-2'/>
+                      <InverterEfficiency>90</InverterEfficiency>
+                    </PVSystem>
+                </Photovoltaics>
+            </Systems>
+        </BuildingDetails>
+    </Building>
+    <Building>
+        <BuildingID id="bldg2"></BuildingID>
+        <ProjectStatus>
+            <EventType>proposed workscope</EventType>
+        </ProjectStatus>
+        <BuildingDetails>
+            <Systems>
+                <Photovoltaics>
+                    <PVSystem>
+                      <SystemIdentifier id='pv-3'/>
+                      <InverterEfficiency>90</InverterEfficiency>
+                    </PVSystem>
+                    <PVSystem>
+                      <SystemIdentifier id='pv-4'/>
+                      <InverterEfficiency>0.9</InverterEfficiency>
+                    </PVSystem>
+                </Photovoltaics>
+            </Systems>
+        </BuildingDetails>
+    </Building>
+</HPXML>
