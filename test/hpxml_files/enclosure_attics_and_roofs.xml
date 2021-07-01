@@ -118,6 +118,9 @@
                         <Roof>
                             <SystemIdentifier id='roof-4'/>
                         </Roof>
+                        <Roof>
+                            <SystemIdentifier id='roof-5'/>
+                        </Roof>
                     </Roofs>
                     <Attics>
                         <Attic>
@@ -151,6 +154,12 @@
                                 </Layer>
                             </AtticRoofInsulation>
                             <Area>700</Area>
+                        </Attic>
+                        <Attic>
+                            <SystemIdentifier id='attic-10'/>
+                            <AttachedToRoof idref='roof-5'/>
+                            <AtticType>cathedral ceiling</AtticType>
+                            <Area>140</Area>
                         </Attic>
                     </Attics>
                 </AtticAndRoof>
