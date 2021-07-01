@@ -200,20 +200,24 @@ def test_enclosure_attics_and_roofs():
     assert enclosure1.Walls.Wall[0].AtticWallType == 'knee wall'
     assert not hasattr(enclosure1.Walls.Wall[1], 'AtticWallType')
 
-    assert enclosure1.FrameFloors.FrameFloor[0].SystemIdentifier.attrib['id'] == 'attic-floor-1'
-    assert enclosure1.FrameFloors.FrameFloor[0].InteriorAdjacentTo == 'attic'
-    assert enclosure1.FrameFloors.FrameFloor[0].Area == 500.0
-    assert enclosure1.FrameFloors.FrameFloor[0].Insulation.SystemIdentifier.attrib['id'] == 'attic-floor-insulation-1'
-    assert enclosure1.FrameFloors.FrameFloor[0].Insulation.InsulationGrade == 1
-    assert enclosure1.FrameFloors.FrameFloor[0].Insulation.InsulationCondition == 'poor'
-    assert enclosure1.FrameFloors.FrameFloor[0].Insulation.AssemblyEffectiveRValue == 5.5
+    assert enclosure1.FrameFloors.FrameFloor[0].SystemIdentifier.attrib['id'] == 'attic-floor-0'
+    assert enclosure1.FrameFloors.FrameFloor[0].InteriorAdjacentTo == 'garage'
+    assert enclosure1.FrameFloors.FrameFloor[0].Area == 1000.0
+    assert not hasattr(enclosure1.FrameFloors.FrameFloor[0], 'Insulation')
+    assert enclosure1.FrameFloors.FrameFloor[1].SystemIdentifier.attrib['id'] == 'attic-floor-1'
+    assert enclosure1.FrameFloors.FrameFloor[1].InteriorAdjacentTo == 'living space'
+    assert enclosure1.FrameFloors.FrameFloor[1].Area == 500.0
+    assert enclosure1.FrameFloors.FrameFloor[1].Insulation.SystemIdentifier.attrib['id'] == 'attic-floor-insulation-1'
+    assert enclosure1.FrameFloors.FrameFloor[1].Insulation.InsulationGrade == 1
+    assert enclosure1.FrameFloors.FrameFloor[1].Insulation.InsulationCondition == 'poor'
+    assert enclosure1.FrameFloors.FrameFloor[1].Insulation.AssemblyEffectiveRValue == 5.5
 
     enclosure2 = root.Building[1].BuildingDetails.Enclosure
     assert not hasattr(enclosure2, 'AtticAndRoof')
     assert not hasattr(enclosure2, 'ExteriorAdjacentTo')
 
     attic8 = enclosure2.Attics.Attic[0]
-    assert attic8.AtticType.Attic.Vented  # vented attic
+    assert attic8.AtticType.Attic.CapeCod  # cape cod
     assert attic8.AttachedToRoof.attrib['idref'] == 'roof-3'
     assert attic8.AttachedToWall.attrib['idref'] == 'wall-3'
     attic9 = enclosure2.Attics.Attic[1]
@@ -238,7 +242,7 @@ def test_enclosure_attics_and_roofs():
     assert not hasattr(enclosure2.Walls.Wall[1], 'AtticWallType')
 
     assert enclosure2.FrameFloors.FrameFloor[0].SystemIdentifier.attrib['id'] == 'attic-floor-8'
-    assert enclosure2.FrameFloors.FrameFloor[0].InteriorAdjacentTo == 'attic'
+    assert enclosure2.FrameFloors.FrameFloor[0].InteriorAdjacentTo == 'living space'
     assert enclosure2.FrameFloors.FrameFloor[0].Area == 700.0
     assert enclosure2.FrameFloors.FrameFloor[0].Insulation.SystemIdentifier.attrib['id'] == 'attic-floor-insulation-2'
     assert enclosure2.FrameFloors.FrameFloor[0].Insulation.InsulationGrade == 1
@@ -270,7 +274,7 @@ def test_enclosure_foundation_walls():
     assert fw2.getparent().getparent().Foundations.Foundation.AttachedToFoundationWall[1].attrib['idref']\
         == 'foundationwall-2'
     assert not hasattr(fw2, 'ExteriorAdjacentTo')
-    assert not hasattr(fw2, 'InteriorAdjacentTo')
+    assert fw2.InteriorAdjacentTo == 'living space'
     assert fw2.Type == 'concrete block'
     assert fw2.Length == 60
     assert fw2.Height == 8
@@ -293,7 +297,7 @@ def test_enclosure_foundation_walls():
     fw3 = root.Building[1].BuildingDetails.Enclosure.FoundationWalls.FoundationWall[0]
     assert fw3.getparent().getparent().Foundations.Foundation.AttachedToFoundationWall[0].attrib['idref']\
         == 'foundationwall-3'
-    assert fw3.ExteriorAdjacentTo == 'ground'
+    assert fw3.ExteriorAdjacentTo == 'ground'  # make sure that 'ambient' maps to 'ground'
     assert not hasattr(fw3, 'InteriorAdjacentTo')
     assert fw3.Type == 'solid concrete'
     assert fw3.Length == 40

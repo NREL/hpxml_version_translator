@@ -47,7 +47,7 @@
                             <Thickness>7</Thickness>
                             <BelowGradeDepth>8</BelowGradeDepth>
                             <AdjacentToFoundation idref='foundation-1'/>
-                            <AdjacentTo>other</AdjacentTo>
+                            <AdjacentTo>living space</AdjacentTo>
                             <Insulation>
                                 <SystemIdentifier id='foundationwall-insulation-2'/>
                                 <InsulationGrade>1</InsulationGrade>
@@ -87,7 +87,9 @@
                     <Foundation>
                         <SystemIdentifier id='foundation-3'/>
                         <FoundationType>
-                            <Basement/>
+                            <Basement>
+                                <Conditioned>true</Conditioned>
+                            </Basement>
                         </FoundationType>
                         <FoundationWall>
                             <SystemIdentifier id='foundationwall-3'/>
@@ -98,7 +100,7 @@
                             <Thickness>3</Thickness>
                             <BelowGradeDepth>10</BelowGradeDepth>
                             <AdjacentToFoundation idref='foundation-3'/>
-                            <AdjacentTo>ground</AdjacentTo>
+                            <AdjacentTo>ambient</AdjacentTo>
                             <Insulation>
                                 <SystemIdentifier id='foundationwall-insulation-3'/>
                                 <InsulationGrade>2</InsulationGrade>

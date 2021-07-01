@@ -40,7 +40,7 @@
                             <SystemIdentifier id='attic-1'/>
                             <AttachedToRoof idref='roof-1'/>
                             <ExteriorAdjacentTo>ambient</ExteriorAdjacentTo>
-                            <InteriorAdjacentTo>attic</InteriorAdjacentTo>
+                            <InteriorAdjacentTo>garage</InteriorAdjacentTo>
                             <AtticKneeWall idref='wall-1'/>
                             <AtticType>unvented attic</AtticType>
                             <Area>1000</Area>
@@ -52,6 +52,8 @@
                         <Attic>
                             <SystemIdentifier id='attic-2'/>
                             <AttachedToRoof idref='roof-2'/>
+                            <ExteriorAdjacentTo>ambient</ExteriorAdjacentTo>
+                            <InteriorAdjacentTo>living space</InteriorAdjacentTo>
                             <AtticType>venting unknown attic</AtticType>
                             <AtticFloorInsulation>
                                 <SystemIdentifier id='attic-floor-insulation-1'/>
@@ -123,8 +125,10 @@
                         <Attic>
                             <SystemIdentifier id='attic-8'/>
                             <AttachedToRoof idref='roof-3'/>
+                            <ExteriorAdjacentTo>ambient</ExteriorAdjacentTo>
+                            <InteriorAdjacentTo>living space</InteriorAdjacentTo>
                             <AtticKneeWall idref='wall-3'/>
-                            <AtticType>vented attic</AtticType>
+                            <AtticType>cape cod</AtticType>
                             <Area>1000</Area>
                             <Rafters>
                                 <Size>2x6</Size>
@@ -134,6 +138,8 @@
                         <Attic>
                             <SystemIdentifier id='attic-9'/>
                             <AttachedToRoof idref='roof-4'/>
+                            <ExteriorAdjacentTo>ambient</ExteriorAdjacentTo>
+                            <InteriorAdjacentTo>living space</InteriorAdjacentTo>
                             <AtticType>venting unknown attic</AtticType>
                             <AtticFloorInsulation>
                                 <SystemIdentifier id='attic-floor-insulation-2'/>
