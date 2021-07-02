@@ -74,7 +74,20 @@
                         </Attic>
                         <Attic>
                             <SystemIdentifier id='attic-3'/>
+                            <AttachedToRoof idref='roof_not_exist'/>
                             <AtticType>vented attic</AtticType>
+                            <AtticRoofInsulation>
+                                <SystemIdentifier id='roof-insulation'/>
+                                <Layer>
+                                    <InstallationType>cavity</InstallationType>
+                                    <NominalRValue>0</NominalRValue>
+                                </Layer>
+                            </AtticRoofInsulation>
+                            <Area>300</Area>
+                            <Rafters>
+                                <Size>2x4</Size>
+                                <Material>wood</Material>
+                            </Rafters>
                         </Attic>
                         <Attic>
                             <SystemIdentifier id='attic-4'/>
@@ -120,6 +133,9 @@
                         <Roof>
                             <SystemIdentifier id='roof-4'/>
                         </Roof>
+                        <Roof>
+                            <SystemIdentifier id='roof-5'/>
+                        </Roof>
                     </Roofs>
                     <Attics>
                         <Attic>
@@ -140,6 +156,7 @@
                             <AttachedToRoof idref='roof-4'/>
                             <ExteriorAdjacentTo>ambient</ExteriorAdjacentTo>
                             <InteriorAdjacentTo>living space</InteriorAdjacentTo>
+                            <AtticKneeWall idref='wall_not_exist'/>
                             <AtticType>venting unknown attic</AtticType>
                             <AtticFloorInsulation>
                                 <SystemIdentifier id='attic-floor-insulation-2'/>
@@ -157,6 +174,12 @@
                                 </Layer>
                             </AtticRoofInsulation>
                             <Area>700</Area>
+                        </Attic>
+                        <Attic>
+                            <SystemIdentifier id='attic-10'/>
+                            <AttachedToRoof idref='roof-5'/>
+                            <AtticType>cathedral ceiling</AtticType>
+                            <Area>140</Area>
                         </Attic>
                     </Attics>
                 </AtticAndRoof>

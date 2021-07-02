@@ -147,7 +147,19 @@ def test_clothes_dryer():
 
 
 def test_enclosure_attics_and_roofs():
-    root = convert_hpxml_and_parse(hpxml_dir / 'enclosure_attics_and_roofs.xml')
+    with pytest.warns(None) as record:
+        root = convert_hpxml_and_parse(hpxml_dir / 'enclosure_attics_and_roofs.xml')
+    assert len(record) == 10
+    assert record[0].message.args[0] == 'Cannot find a roof attached to attic-3.'
+    assert record[1].message.args[0] == 'Cannot find a roof attached to attic-3.'
+    assert record[2].message.args[0] == 'attic-3 does not have \'InteriorAdjacentTo\' and \'AtticType\'.'
+    assert record[3].message.args[0] == 'attic-4 does not have \'InteriorAdjacentTo\' and \'AtticType\'.'
+    assert record[4].message.args[0] == 'attic-5 does not have \'InteriorAdjacentTo\' and \'AtticType\'.'
+    assert record[5].message.args[0] == 'attic-6 does not have \'InteriorAdjacentTo\' and \'AtticType\'.'
+    assert record[6].message.args[0] == 'attic-7 does not have \'InteriorAdjacentTo\' and \'AtticType\'.'
+    assert record[7].message.args[0] == 'Cannot find a frame floor attached to attic-8.'
+    assert record[8].message.args[0] == 'Cannot find a knee wall attached to attic-9.'
+    assert record[9].message.args[0] == 'attic-10 does not have \'InteriorAdjacentTo\' and \'AtticType\'.'
 
     enclosure1 = root.Building[0].BuildingDetails.Enclosure
     assert not hasattr(enclosure1, 'AtticAndRoof')
@@ -237,6 +249,9 @@ def test_enclosure_attics_and_roofs():
     assert roof4.Insulation.Layer.InstallationType == 'cavity'
     assert roof4.Insulation.Layer.NominalRValue == 7.5
     assert not hasattr(roof4, 'Rafters')
+
+    roof5 = enclosure2.Roofs.Roof[2]
+    assert roof5.Area == 140.0
 
     assert enclosure2.Walls.Wall[0].AtticWallType == 'knee wall'
     assert not hasattr(enclosure2.Walls.Wall[1], 'AtticWallType')
