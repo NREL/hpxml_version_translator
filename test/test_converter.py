@@ -152,7 +152,12 @@ def test_hpxml2_clothes_dryer():
 
 
 def test_hpxml2_enclosure_attics_and_roofs():
-    root = convert_hpxml_and_parse(hpxml_dir / 'enclosure_attics_and_roofs.xml')
+    with pytest.warns(None) as record:
+        root = convert_hpxml_and_parse(hpxml_dir / 'enclosure_attics_and_roofs.xml')
+    assert len(record) == 3
+    assert record[0].message.args[0] == 'Cannot find a roof attached to attic-3.'
+    assert record[1].message.args[0] == 'Cannot find a roof attached to attic-3.'
+    assert record[2].message.args[0] == 'Cannot find a knee wall attached to attic-9.'
 
     enclosure1 = root.Building[0].BuildingDetails.Enclosure
     assert not hasattr(enclosure1, 'AtticAndRoof')
@@ -239,6 +244,9 @@ def test_hpxml2_enclosure_attics_and_roofs():
     assert roof4.Insulation.Layer.NominalRValue == 7.5
     assert not hasattr(roof4, 'Rafters')
 
+    roof5 = enclosure2.Roofs.Roof[2]
+    assert roof5.Area == 140.0
+
     assert enclosure2.Walls.Wall[0].AtticWallType == 'knee wall'
     assert not hasattr(enclosure2.Walls.Wall[1], 'AtticWallType')
 
@@ -251,69 +259,8 @@ def test_hpxml2_enclosure_attics_and_roofs():
     assert enclosure2.FrameFloors.FrameFloor[0].Insulation.AssemblyEffectiveRValue == 5.5
 
 
-def test_hpxml2_enclosure_foundation_walls():
-    root = convert_hpxml_and_parse(hpxml_dir / 'enclosure_foundation_walls.xml')
-
-    fw1 = root.Building[0].BuildingDetails.Enclosure.FoundationWalls.FoundationWall[0]
-    assert fw1.getparent().getparent().Foundations.Foundation.AttachedToFoundationWall[0].attrib['idref']\
-        == 'foundationwall-1'
-    assert not hasattr(fw1, 'ExteriorAdjacentTo')
-    assert fw1.InteriorAdjacentTo == 'basement - unconditioned'
-    assert fw1.Type == 'concrete block'
-    assert fw1.Length == 120
-    assert fw1.Height == 8
-    assert fw1.Area == 960
-    assert fw1.Thickness == 4
-    assert fw1.DepthBelowGrade == 6
-    assert not hasattr(fw1, 'AdjacentTo')
-    assert fw1.Insulation.InsulationGrade == 3
-    assert fw1.Insulation.InsulationCondition == 'good'
-    assert fw1.Insulation.AssemblyEffectiveRValue == 5.0
-    assert not hasattr(fw1.Insulation, 'Location')
-
-    fw2 = root.Building[0].BuildingDetails.Enclosure.FoundationWalls.FoundationWall[1]
-    assert fw2.getparent().getparent().Foundations.Foundation.AttachedToFoundationWall[1].attrib['idref']\
-        == 'foundationwall-2'
-    assert not hasattr(fw2, 'ExteriorAdjacentTo')
-    assert not hasattr(fw2, 'InteriorAdjacentTo')
-    assert fw2.Type == 'concrete block'
-    assert fw2.Length == 60
-    assert fw2.Height == 8
-    assert fw2.Area == 480
-    assert fw2.Thickness == 7
-    assert fw2.DepthBelowGrade == 8
-    assert not hasattr(fw2, 'AdjacentTo')
-    assert fw2.Insulation.InsulationGrade == 1
-    assert fw2.Insulation.InsulationCondition == 'poor'
-    assert not hasattr(fw2.Insulation, 'Location')
-    assert fw2.Insulation.Layer[0].InstallationType == 'continuous - exterior'
-    assert fw2.Insulation.Layer[0].InsulationMaterial.Batt == 'fiberglass'
-    assert fw2.Insulation.Layer[0].NominalRValue == 8.9
-    assert fw2.Insulation.Layer[0].Thickness == 1.5
-    assert fw2.Insulation.Layer[1].InstallationType == 'cavity'
-    assert fw2.Insulation.Layer[1].InsulationMaterial.Rigid == 'eps'
-    assert fw2.Insulation.Layer[1].NominalRValue == 15.0
-    assert fw2.Insulation.Layer[1].Thickness == 3.0
-
-    fw3 = root.Building[1].BuildingDetails.Enclosure.FoundationWalls.FoundationWall[0]
-    assert fw3.getparent().getparent().Foundations.Foundation.AttachedToFoundationWall[0].attrib['idref']\
-        == 'foundationwall-3'
-    assert fw3.ExteriorAdjacentTo == 'ground'
-    assert not hasattr(fw3, 'InteriorAdjacentTo')
-    assert fw3.Type == 'solid concrete'
-    assert fw3.Length == 40
-    assert fw3.Height == 10
-    assert fw3.Area == 400
-    assert fw3.Thickness == 3
-    assert fw3.DepthBelowGrade == 10
-    assert not hasattr(fw3, 'AdjacentTo')
-    assert fw3.Insulation.InsulationGrade == 2
-    assert fw3.Insulation.InsulationCondition == 'fair'
-    assert not hasattr(fw3.Insulation, 'Location')
-
-
-def test_hpxml2_frame_floors():
-    root = convert_hpxml_and_parse(hpxml_dir / 'enclosure_frame_floors.xml')
+def test_hpxml2_enclosure_foundation():
+    root = convert_hpxml_and_parse(hpxml_dir / 'enclosure_foundation.xml')
 
     ff1 = root.Building.BuildingDetails.Enclosure.FrameFloors.FrameFloor[0]
     assert ff1.getparent().getparent().Foundations.Foundation.AttachedToFrameFloor[0].attrib['idref'] == 'framefloor-1'
@@ -337,9 +284,62 @@ def test_hpxml2_frame_floors():
     assert ff2.Insulation.Layer[1].Thickness == 0.25
     assert not hasattr(ff2.Insulation, 'InsulationLocation')
 
+    fw1 = root.Building[0].BuildingDetails.Enclosure.FoundationWalls.FoundationWall[0]
+    assert fw1.getparent().getparent().Foundations.Foundation.AttachedToFoundationWall[0].attrib['idref'] ==\
+        'foundationwall-1'
+    assert not hasattr(fw1, 'ExteriorAdjacentTo')
+    assert fw1.InteriorAdjacentTo == 'basement - unconditioned'
+    assert fw1.Type == 'concrete block'
+    assert fw1.Length == 120
+    assert fw1.Height == 8
+    assert fw1.Area == 960
+    assert fw1.Thickness == 4
+    assert fw1.DepthBelowGrade == 6
+    assert not hasattr(fw1, 'AdjacentTo')
+    assert fw1.Insulation.InsulationGrade == 3
+    assert fw1.Insulation.InsulationCondition == 'good'
+    assert fw1.Insulation.AssemblyEffectiveRValue == 5.0
+    assert not hasattr(fw1.Insulation, 'Location')
 
-def test_hpxml2_slabs():
-    root = convert_hpxml_and_parse(hpxml_dir / 'enclosure_slabs.xml')
+    fw2 = root.Building[0].BuildingDetails.Enclosure.FoundationWalls.FoundationWall[1]
+    assert fw2.getparent().getparent().Foundations.Foundation.AttachedToFoundationWall[1].attrib['idref'] ==\
+        'foundationwall-2'
+    assert not hasattr(fw2, 'ExteriorAdjacentTo')
+    assert not hasattr(fw2, 'InteriorAdjacentTo')
+    assert fw2.Type == 'concrete block'
+    assert fw2.Length == 60
+    assert fw2.Height == 8
+    assert fw2.Area == 480
+    assert fw2.Thickness == 7
+    assert fw2.DepthBelowGrade == 8
+    assert not hasattr(fw2, 'AdjacentTo')
+    assert fw2.Insulation.InsulationGrade == 1
+    assert fw2.Insulation.InsulationCondition == 'poor'
+    assert not hasattr(fw2.Insulation, 'Location')
+    assert fw2.Insulation.Layer[0].InstallationType == 'continuous - exterior'
+    assert fw2.Insulation.Layer[0].InsulationMaterial.Batt == 'fiberglass'
+    assert fw2.Insulation.Layer[0].NominalRValue == 8.9
+    assert fw2.Insulation.Layer[0].Thickness == 1.5
+    assert fw2.Insulation.Layer[1].InstallationType == 'cavity'
+    assert fw2.Insulation.Layer[1].InsulationMaterial.Rigid == 'eps'
+    assert fw2.Insulation.Layer[1].NominalRValue == 15.0
+    assert fw2.Insulation.Layer[1].Thickness == 3.0
+
+    fw3 = root.Building[1].BuildingDetails.Enclosure.FoundationWalls.FoundationWall[0]
+    assert fw3.getparent().getparent().Foundations.Foundation.AttachedToFoundationWall[0].attrib['idref'] ==\
+        'foundationwall-3'
+    assert fw3.ExteriorAdjacentTo == 'ground'
+    assert not hasattr(fw3, 'InteriorAdjacentTo')
+    assert fw3.Type == 'solid concrete'
+    assert fw3.Length == 40
+    assert fw3.Height == 10
+    assert fw3.Area == 400
+    assert fw3.Thickness == 3
+    assert fw3.DepthBelowGrade == 10
+    assert not hasattr(fw3, 'AdjacentTo')
+    assert fw3.Insulation.InsulationGrade == 2
+    assert fw3.Insulation.InsulationCondition == 'fair'
+    assert not hasattr(fw3.Insulation, 'Location')
 
     slab1 = root.Building.BuildingDetails.Enclosure.Slabs.Slab[0]
     assert slab1.getparent().getparent().Foundations.Foundation.AttachedToSlab.attrib['idref'] == 'slab-1'
@@ -657,3 +657,10 @@ def test_hpxml2_desuperheater_flexibility():
     assert whsystem3.UsesDesuperheater
     assert not hasattr(whsystem3, 'RelatedHeatingSystem')
     assert whsystem3.RelatedHVACSystem.attrib['idref'] == 'heating-system-2'
+
+
+def test_hpxml2_inverter_efficiency():
+    root = convert_hpxml_and_parse(hpxml_dir / 'inverter_efficiency.xml')
+
+    for pv_system in root.Building[0].BuildingDetails.Systems.Photovoltaics.PVSystem:
+        assert pv_system.InverterEfficiency == 0.9
