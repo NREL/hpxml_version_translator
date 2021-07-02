@@ -4,6 +4,7 @@ import datetime as dt
 from lxml import etree, objectify
 import pathlib
 import re
+import warnings
 
 from hpxml_version_translator import exceptions as exc
 
@@ -446,23 +447,27 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
         # find the wall with the same id and add AtticWallType = knee wall
         if hasattr(this_attic, 'AtticKneeWall'):
             knee_wall_id = this_attic.AtticKneeWall.attrib['idref']
-            knee_wall = root.xpath(
-                'h:Building/h:BuildingDetails/h:Enclosure/h:Walls/h:Wall[h:SystemIdentifier/@id=$sysid]',
-                sysid=knee_wall_id, **xpkw)[0]
-            add_after(
-                knee_wall,
-                ['SystemIdentifier',
-                 'ExteriorAdjacentTo',
-                 'InteriorAdjacentTo'],
-                E.AtticWallType('knee wall')
-            )
-            add_before(
-                this_attic,
-                ['AttachedToFrameFloor',
-                 'AnnualEnergyUse',
-                 'extension'],
-                E.AttachedToWall(idref=knee_wall_id)
-            )
+            try:
+                knee_wall = root.xpath(
+                    'h:Building/h:BuildingDetails/h:Enclosure/h:Walls/h:Wall[h:SystemIdentifier/@id=$sysid]',
+                    sysid=knee_wall_id, **xpkw)[0]
+            except IndexError:
+                warnings.warn(f"Cannot find a knee wall attached to {this_attic.SystemIdentifier.attrib['id']}.")
+            else:
+                add_after(
+                    knee_wall,
+                    ['SystemIdentifier',
+                     'ExteriorAdjacentTo',
+                     'InteriorAdjacentTo'],
+                    E.AtticWallType('knee wall')
+                )
+                add_before(
+                    this_attic,
+                    ['AttachedToFrameFloor',
+                     'AnnualEnergyUse',
+                     'extension'],
+                    E.AttachedToWall(idref=knee_wall_id)
+                )
 
         # create a FrameFloor adjacent to the attic and assign the area below to Area
         # and then copy AtticFloorInsulation over to Insulation of the frame floor
@@ -501,32 +506,42 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
             roof_insulation = deepcopy(this_attic.AtticRoofInsulation)
             roof_insulation.tag = f'{{{hpxml3_ns}}}Insulation'
             roof_idref = this_attic.AttachedToRoof.attrib['idref']
-            roof_attached_to_this_attic = root.xpath(
-                'h:Building/h:BuildingDetails/h:Enclosure/h:AtticAndRoof/h:Roofs/h:Roof[h:SystemIdentifier/@id=$sysid]',
-                sysid=roof_idref, **xpkw)[0]
-            add_before(
-                roof_attached_to_this_attic,
-                ['extension'],
-                roof_insulation
-            )
+            try:
+                roof_attached_to_this_attic = root.xpath(
+                    'h:Building/h:BuildingDetails/h:Enclosure/h:AtticAndRoof/\
+                        h:Roofs/h:Roof[h:SystemIdentifier/@id=$sysid]',
+                    sysid=roof_idref, **xpkw)[0]
+            except IndexError:
+                warnings.warn(f"Cannot find a roof attached to {this_attic.SystemIdentifier.attrib['id']}.")
+            else:
+                add_before(
+                    roof_attached_to_this_attic,
+                    ['extension'],
+                    roof_insulation
+                )
 
         # move Rafters to v2 Roofs and these roofs will be converted into hpxml v3 later
         if hasattr(this_attic, 'Rafters'):
             rafters = deepcopy(this_attic.Rafters)
             roof_idref = this_attic.AttachedToRoof.attrib['idref']
-            roof_attached_to_this_attic = root.xpath(
-                'h:Building/h:BuildingDetails/h:Enclosure/h:AtticAndRoof/h:Roofs/h:Roof[h:SystemIdentifier/@id=$sysid]',
-                sysid=roof_idref, **xpkw)[0]
-            add_after(
-                roof_attached_to_this_attic,
-                ['SystemIdentifier',
-                 'ExternalResource',
-                 'AttachedToSpace',
-                 'RoofColor',
-                 'SolarAbsorptance',
-                 'Emittance'],
-                rafters
-            )
+            try:
+                roof_attached_to_this_attic = root.xpath(
+                    'h:Building/h:BuildingDetails/h:Enclosure/h:AtticAndRoof/\
+                        h:Roofs/h:Roof[h:SystemIdentifier/@id=$sysid]',
+                    sysid=roof_idref, **xpkw)[0]
+            except IndexError:
+                warnings.warn(f"Cannot find a roof attached to {this_attic.SystemIdentifier.attrib['id']}.")
+            else:
+                add_after(
+                    roof_attached_to_this_attic,
+                    ['SystemIdentifier',
+                     'ExternalResource',
+                     'AttachedToSpace',
+                     'RoofColor',
+                     'SolarAbsorptance',
+                     'Emittance'],
+                    rafters
+                )
 
         el_not_in_v3 = ['ExteriorAdjacentTo',
                         'InteriorAdjacentTo',
