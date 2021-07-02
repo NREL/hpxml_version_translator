@@ -83,7 +83,7 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
     root.attrib['schemaVersion'] = '3.0'
 
     # Standardized location mapping
-    location_map = {'ambient': 'outside',
+    location_map = {'ambient': 'outside',  # 'ambient' will be mapped to 'ground' for FoundationWall
                     'conditioned space': 'living space',
                     'unconditioned basement': 'basement - unconditioned',
                     'unconditioned attic': 'attic - unconditioned',
