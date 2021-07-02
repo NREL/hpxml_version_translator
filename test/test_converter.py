@@ -149,6 +149,7 @@ def test_clothes_dryer():
 def test_enclosure_attics_and_roofs():
     with pytest.warns(None) as record:
         root = convert_hpxml_and_parse(hpxml_dir / 'enclosure_attics_and_roofs.xml')
+    assert len(record) == 3
     assert record[0].message.args[0] == 'Cannot find a roof attached to attic-3.'
     assert record[1].message.args[0] == 'Cannot find a roof attached to attic-3.'
     assert record[2].message.args[0] == 'Cannot find a knee wall attached to attic-9.'
