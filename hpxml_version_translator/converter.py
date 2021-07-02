@@ -539,8 +539,13 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
                     roof_idref = this_attic.AttachedToRoof.attrib['idref']
                     roof_attached_to_this_attic = root.xpath(
                         'h:Building/h:BuildingDetails/h:Enclosure/h:AtticAndRoof/h:Roofs/\
-                         h:Roof[h:SystemIdentifier/@id=$sysid]',
+                            h:Roof[h:SystemIdentifier/@id=$sysid]',
                         sysid=roof_idref, **xpkw)[0]
+                except (AttributeError, IndexError):
+                    warnings.warn(
+                        f"Cannot find a roof attached to {this_attic.SystemIdentifier.attrib['id']}."
+                    )
+                else:
                     add_after(
                         roof_attached_to_this_attic,
                         ['SystemIdentifier',
@@ -548,17 +553,18 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
                          'AttachedToSpace'],
                         E.InteriorAdjacentTo(this_attic.InteriorAdjacentTo.text)
                     )
-                except (AttributeError, IndexError):
-                    warnings.warn(
-                        f"Cannot find a roof attached to {this_attic.SystemIdentifier.attrib['id']}."
-                    )
             else:
                 try:
                     floor_idref = this_attic.AttachedToFrameFloor.attrib['idref']
                     floor_attached_to_this_attic = root.xpath(
                         'h:Building/h:BuildingDetails/h:Enclosure/h:FrameFloors/\
-                         h:FrameFloor[h:SystemIdentifier/@id=$sysid]',
+                            h:FrameFloor[h:SystemIdentifier/@id=$sysid]',
                         sysid=floor_idref, **xpkw)[0]
+                except (AttributeError, IndexError):
+                    warnings.warn(
+                        f"Cannot find a frame floor attached to {this_attic.SystemIdentifier.attrib['id']}."
+                    )
+                else:
                     add_after(
                         floor_attached_to_this_attic,
                         ['SystemIdentifier',
@@ -566,10 +572,6 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
                          'AttachedToSpace',
                          'ExteriorAdjacentTo'],
                         E.InteriorAdjacentTo(this_attic.InteriorAdjacentTo.text)
-                    )
-                except (AttributeError, IndexError):
-                    warnings.warn(
-                        f"Cannot find a frame floor attached to {this_attic.SystemIdentifier.attrib['id']}."
                     )
         else:
             warnings.warn(
