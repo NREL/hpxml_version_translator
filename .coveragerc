@@ -1,0 +1,3 @@
+[run]
+omit =
+    hpxml_version_translator/__main__.py
