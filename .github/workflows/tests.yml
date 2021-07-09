@@ -42,5 +42,7 @@ jobs:
           path: coverage/coverage.xml
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           minimum_coverage: 95
+          skip_covered: false
+          show_missing: true
       - name: Style Checks
         run: python -m flake8 --show-source --statistics
