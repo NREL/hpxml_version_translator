@@ -1,4 +1,3 @@
-import io
 from lxml import objectify
 import pathlib
 import pytest
@@ -6,7 +5,6 @@ import tempfile
 
 from hpxml_version_translator.converter import convert_hpxml_to_3
 from hpxml_version_translator import exceptions as exc
-from hpxml_version_translator import main
 
 
 hpxml_dir = pathlib.Path(__file__).resolve().parent / 'hpxml_files'
@@ -20,49 +18,44 @@ def convert_hpxml_and_parse(input_filename):
     return root
 
 
-def test_hpxml1_version_change():
-    root = convert_hpxml_and_parse(hpxml_dir / 'hpxml1_version_change.xml')
-    assert root.attrib['schemaVersion'] == '3.0'
-
-
-def test_hpxml2_version_change():
+def test_version_change():
     root = convert_hpxml_and_parse(hpxml_dir / 'version_change.xml')
     assert root.attrib['schemaVersion'] == '3.0'
 
 
-def test_hpxml2_project_ids():
+def test_project_ids():
     root = convert_hpxml_and_parse(hpxml_dir / 'project_ids.xml')
     assert root.Project.PreBuildingID.attrib['id'] == 'bldg1'
     assert root.Project.PostBuildingID.attrib['id'] == 'bldg2'
 
 
-def test_hpxml2_project_ids2():
+def test_project_ids2():
     root = convert_hpxml_and_parse(hpxml_dir / 'project_ids2.xml')
     assert root.Project.PreBuildingID.attrib['id'] == 'bldg1'
     assert root.Project.PostBuildingID.attrib['id'] == 'bldg2'
 
 
-def test_hpxml2_project_ids_fail1():
+def test_project_ids_fail1():
     with pytest.raises(exc.HpxmlTranslationError, match=r"Project\[\d\] has more than one reference.*audit"):
         convert_hpxml_and_parse(hpxml_dir / 'project_ids_fail1.xml')
 
 
-def test_hpxml2_project_ids_fail2():
+def test_project_ids_fail2():
     with pytest.raises(exc.HpxmlTranslationError, match=r"Project\[\d\] has no references.*audit"):
         convert_hpxml_and_parse(hpxml_dir / 'project_ids_fail2.xml')
 
 
-def test_hpxml2_project_ids_fail3():
+def test_project_ids_fail3():
     with pytest.raises(exc.HpxmlTranslationError, match=r"Project\[\d\] has more than one reference.*post retrofit"):
         convert_hpxml_and_parse(hpxml_dir / 'project_ids_fail3.xml')
 
 
-def test_hpxml2_project_ids_fail4():
+def test_project_ids_fail4():
     with pytest.raises(exc.HpxmlTranslationError, match=r"Project\[\d\] has no references.*post retrofit"):
         convert_hpxml_and_parse(hpxml_dir / 'project_ids_fail4.xml')
 
 
-def test_hpxml2_green_building_verification():
+def test_green_building_verification():
     root = convert_hpxml_and_parse(hpxml_dir / 'green_building_verification.xml')
 
     gbv0 = root.Building[0].BuildingDetails.GreenBuildingVerifications.GreenBuildingVerification[0]
@@ -102,7 +95,7 @@ def test_hpxml2_green_building_verification():
     assert gbv6.Year == 2019
 
 
-def test_hpxml2_inconsistencies():
+def test_inconsistencies():
     root = convert_hpxml_and_parse(hpxml_dir / 'inconsistencies.xml')
 
     ws = root.Building.BuildingDetails.ClimateandRiskZones.WeatherStation[0]
@@ -131,7 +124,7 @@ def test_hpxml2_inconsistencies():
     assert not hasattr(measure2, 'InstalledComponent')
 
 
-def test_hpxml2_clothes_dryer():
+def test_clothes_dryer():
     root = convert_hpxml_and_parse(hpxml_dir / 'clothes_dryer.xml')
 
     dryer1 = root.Building.BuildingDetails.Appliances.ClothesDryer[0]
@@ -151,7 +144,7 @@ def test_hpxml2_clothes_dryer():
     assert not hasattr(dryer2, 'EfficiencyFactor')
 
 
-def test_hpxml2_enclosure_attics_and_roofs():
+def test_enclosure_attics_and_roofs():
     with pytest.warns(None) as record:
         root = convert_hpxml_and_parse(hpxml_dir / 'enclosure_attics_and_roofs.xml')
     assert len(record) == 3
@@ -259,7 +252,7 @@ def test_hpxml2_enclosure_attics_and_roofs():
     assert enclosure2.FrameFloors.FrameFloor[0].Insulation.AssemblyEffectiveRValue == 5.5
 
 
-def test_hpxml2_enclosure_foundation():
+def test_enclosure_foundation():
     root = convert_hpxml_and_parse(hpxml_dir / 'enclosure_foundation.xml')
 
     ff1 = root.Building.BuildingDetails.Enclosure.FrameFloors.FrameFloor[0]
@@ -354,7 +347,7 @@ def test_hpxml2_enclosure_foundation():
     assert slab1.extension.CarpetRValue == 0.0
 
 
-def test_hpxml2_walls():
+def test_walls():
     root = convert_hpxml_and_parse(hpxml_dir / 'enclosure_walls.xml')
 
     wall1 = root.Building.BuildingDetails.Enclosure.Walls.Wall[0]
@@ -380,7 +373,7 @@ def test_hpxml2_walls():
     assert wall1.Insulation.Layer[1].Thickness == 3.5
 
 
-def test_hpxml2_windows():
+def test_windows():
     root = convert_hpxml_and_parse(hpxml_dir / 'enclosure_windows_skylights.xml')
 
     win1 = root.Building[0].BuildingDetails.Enclosure.Windows.Window[0]
@@ -455,7 +448,7 @@ def test_hpxml2_windows():
     assert not hasattr(skylight2, 'InteriorShadingFactor')
 
 
-def test_hpxml2_standard_locations():
+def test_standard_locations():
     root = convert_hpxml_and_parse(hpxml_dir / 'standard_locations.xml')
 
     wall1 = root.Building[0].BuildingDetails.Enclosure.Walls.Wall[0]
@@ -530,7 +523,7 @@ def test_hpxml2_standard_locations():
     assert root.XMLTransactionHeaderInformation.XMLGeneratedBy == 'unconditioned basement'
 
 
-def test_hpxml2_lighting():
+def test_lighting():
     root = convert_hpxml_and_parse(hpxml_dir / 'lighting.xml')
 
     ltg1 = root.Building[0].BuildingDetails.Lighting
@@ -568,7 +561,7 @@ def test_hpxml2_lighting():
     assert hasattr(ltg_grp8.LightingType, 'LightEmittingDiode')
 
 
-def test_hpxml2_deprecated_items():
+def test_deprecated_items():
     root = convert_hpxml_and_parse(hpxml_dir / 'deprecated_items.xml')
 
     whsystem1 = root.Building[0].BuildingDetails.Systems.WaterHeating.WaterHeatingSystem[0]
@@ -624,22 +617,7 @@ def test_hpxml2_deprecated_items():
     assert wh2.AnnualEnergyUse.ConsumptionInfo.ConsumptionDetail.Consumption == 600
 
 
-def test_cli(capsysbinary):
-    with tempfile.TemporaryDirectory() as tmpdir:
-        tmppath = pathlib.Path(tmpdir).resolve()
-        input_filename = str(hpxml_dir / 'version_change.xml')
-        output_filename = str(tmppath / 'out.xml')
-        main([input_filename, '-o', output_filename])
-        root = objectify.parse(output_filename).getroot()
-        assert root.attrib['schemaVersion'] == '3.0'
-
-    main([input_filename])
-    f = io.BytesIO(capsysbinary.readouterr().out)
-    root = objectify.parse(f).getroot()
-    assert root.attrib['schemaVersion'] == '3.0'
-
-
-def test_hpxml2_desuperheater_flexibility():
+def test_desuperheater_flexibility():
     root = convert_hpxml_and_parse(hpxml_dir / 'desuperheater_flexibility.xml')
 
     whsystem1 = root.Building[0].BuildingDetails.Systems.WaterHeating.WaterHeatingSystem[0]
@@ -659,7 +637,7 @@ def test_hpxml2_desuperheater_flexibility():
     assert whsystem3.RelatedHVACSystem.attrib['idref'] == 'heating-system-2'
 
 
-def test_hpxml2_inverter_efficiency():
+def test_inverter_efficiency():
     root = convert_hpxml_and_parse(hpxml_dir / 'inverter_efficiency.xml')
 
     for pv_system in root.Building[0].BuildingDetails.Systems.Photovoltaics.PVSystem:
