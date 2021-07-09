@@ -97,7 +97,7 @@ def convert_hpxml1_to_2(hpxml1_file, hpxml2_file):
     hpxml1_doc = objectify.parse(pathobj_to_str(hpxml1_file))
     hpxml1_schema.assertValid(hpxml1_doc)
 
-    # Change the namespace of every element to use the HPXML v3 namespace
+    # Change the namespace of every element to use the HPXML v2 namespace
     # https://stackoverflow.com/a/51660868/11600307
     change_ns_xslt = etree.parse(str(pathlib.Path(__file__).resolve().parent / 'change_namespace.xsl'))
     hpxml2_doc = hpxml1_doc.xslt(change_ns_xslt, orig_namespace=f"'{hpxml1_ns}'", new_namespace=f"'{hpxml2_ns}'")
