@@ -1,20 +1,18 @@
-import io
 from lxml import objectify
 import pathlib
 import pytest
 import tempfile
 
-from hpxml_version_translator.converter import convert_hpxml2_to_3
+from hpxml_version_translator.converter import convert_hpxml_to_3
 from hpxml_version_translator import exceptions as exc
-from hpxml_version_translator import main
 
 
 hpxml_dir = pathlib.Path(__file__).resolve().parent / 'hpxml_files'
 
 
 def convert_hpxml_and_parse(input_filename):
-    with tempfile.TemporaryFile('w+b') as f_out:
-        convert_hpxml2_to_3(input_filename, f_out)
+    with tempfile.NamedTemporaryFile('w+b') as f_out:
+        convert_hpxml_to_3(input_filename, f_out)
         f_out.seek(0)
         root = objectify.parse(f_out).getroot()
     return root
@@ -617,21 +615,6 @@ def test_deprecated_items():
     assert wh2.AnnualEnergyUse.ConsumptionInfo.ConsumptionType.Water.WaterType == 'indoor water'
     assert wh2.AnnualEnergyUse.ConsumptionInfo.ConsumptionType.Water.UnitofMeasure == 'gal'
     assert wh2.AnnualEnergyUse.ConsumptionInfo.ConsumptionDetail.Consumption == 600
-
-
-def test_cli(capsysbinary):
-    with tempfile.TemporaryDirectory() as tmpdir:
-        tmppath = pathlib.Path(tmpdir).resolve()
-        input_filename = str(hpxml_dir / 'version_change.xml')
-        output_filename = str(tmppath / 'out.xml')
-        main([input_filename, '-o', output_filename])
-        root = objectify.parse(output_filename).getroot()
-        assert root.attrib['schemaVersion'] == '3.0'
-
-    main([input_filename])
-    f = io.BytesIO(capsysbinary.readouterr().out)
-    root = objectify.parse(f).getroot()
-    assert root.attrib['schemaVersion'] == '3.0'
 
 
 def test_desuperheater_flexibility():

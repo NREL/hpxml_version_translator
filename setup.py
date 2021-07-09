@@ -7,9 +7,9 @@ with open('README.md', 'r', encoding='utf-8') as f:
 setuptools.setup(
     name='hpxml_version_translator',
     version='0.1',
-    author='Ben Park (NREL), Noel Merket (NREL)',
+    author='Ben Park (NREL), Noel Merket (NREL), Scott Horowitz (NREL)',
     author_email='ben.park@nrel.gov',
-    description='Convert HPXML v2 to v3',
+    description='Convert HPXML to v3',
     long_description=long_description,
     long_description_content_type='text/markdown',
     url='https://github.com/NREL/hpxml_version_translator',
