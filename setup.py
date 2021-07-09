@@ -13,7 +13,7 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type='text/markdown',
     url='https://github.com/NREL/hpxml_version_translator',
-    packages=setuptools.find_packages(include=['resstock_cambium']),
+    packages=setuptools.find_packages(include=['hpxml_version_translator']),
     package_data={
         'hpxml_version_translator': ['schemas/*/*.xsd', '*.xsl']
     },
