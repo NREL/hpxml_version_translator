@@ -89,6 +89,8 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
                     'unconditioned attic': 'attic - unconditioned',
                     'unvented crawlspace': 'crawlspace - unvented',
                     'vented crawlspace': 'crawlspace - vented'}
+    foundation_location_map = deepcopy(location_map)
+    foundation_location_map['ambient'] = 'ground'
 
     # Fixing project ids
     # https://github.com/hpxmlwg/hpxml/pull/197
@@ -360,24 +362,24 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
 
         if hasattr(this_fw, 'AdjacentTo'):
             try:
-                fw_boundary = location_map[str(fw.AdjacentTo)].replace('outside', 'ground')
+                fw_boundary = foundation_location_map[str(fw.AdjacentTo)]
             except KeyError:
                 fw_boundary = str(fw.AdjacentTo)  # retain unchanged location name
             try:
-                boundary_v3 = {'other housing unit': E.ExteriorAdjacentTo(fw_boundary),
-                               'ground': E.ExteriorAdjacentTo(fw_boundary),
-                               'ambient': E.ExteriorAdjacentTo(fw_boundary),
-                               'attic': E.ExteriorAdjacentTo(fw_boundary),
-                               'garage': E.ExteriorAdjacentTo(fw_boundary),
-                               'living space': E.InteriorAdjacentTo(fw_boundary),
-                               'unconditioned basement': E.InteriorAdjacentTo(fw_boundary),
-                               'crawlspace': E.InteriorAdjacentTo(fw_boundary)}[str(fw.AdjacentTo)]
+                boundary_v3 = {'other housing unit': 'Exterior',
+                               'ground': 'Exterior',
+                               'ambient': 'Exterior',
+                               'attic': 'Exterior',
+                               'garage': 'Exterior',
+                               'living space': 'Interior',
+                               'unconditioned basement': 'Interior',
+                               'crawlspace': 'Interior'}[str(fw.AdjacentTo)]
                 add_after(
                     this_fw,
                     ['SystemIdentifier',
                      'ExternalResource',
                      'AttachedToSpace'],
-                    boundary_v3
+                    getattr(E, f'{boundary_v3}AdjacentTo')(fw_boundary)
                 )
             except KeyError:
                 pass
