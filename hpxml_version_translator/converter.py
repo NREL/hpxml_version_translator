@@ -90,8 +90,8 @@ def convert_hpxml1_to_2(hpxml1_file, hpxml2_file):
     hpxml2_ns = hpxml2_schema_doc.getroot().attrib['targetNamespace']
     hpxml2_schema = etree.XMLSchema(hpxml2_schema_doc)
 
-    # E = objectify.ElementMaker(namespace=hpxml2_ns, nsmap={None: hpxml2_ns}, annotate=False)
-    # xpkw = {'namespaces': {'h': hpxml2_ns}}
+    E = objectify.ElementMaker(namespace=hpxml2_ns, nsmap={None: hpxml2_ns}, annotate=False)
+    xpkw = {'namespaces': {'h': hpxml2_ns}}
 
     # Ensure we're working with valid HPXML v1.x (earlier versions should validate against v1.1.1 schema)
     hpxml1_doc = objectify.parse(pathobj_to_str(hpxml1_file))
@@ -108,10 +108,20 @@ def convert_hpxml1_to_2(hpxml1_file, hpxml2_file):
 
     # TODO: Moved the BPI 2400 elements and renamed/reorganized them.
 
-    # TODO: Renamed element AttachedToCAZ under water heater to fix a typo.
+    # Renamed element AttachedToCAZ under water heater to fix a typo.
+    for el in root.xpath('//h:WaterHeatingSystem/h:AtachedToCAZ', **xpkw):
+        el.tag = f'{{{hpxml2_ns}}}AttachedToCAZ'
 
-    # TODO: Removed "batch heater" from SolarCollectorLoopType in lieu of the previously
+    # Removed "batch heater" from SolarCollectorLoopType in lieu of the previously
     # added "integrated collector storage" enumeration on SolarThermalCollectorType.
+    for batch_heater in root.xpath('//h:SolarThermal/h:SolarThermalSystem[h:CollectorLoopType="batch heater"]', **xpkw):
+        if not hasattr(batch_heater, 'CollectorType'):
+            add_after(
+                batch_heater,
+                ['CollectorLoopType'],
+                E.CollectorType('integrated collector storage')
+            )
+        batch_heater.remove(batch_heater.CollectorLoopType)
 
     # Write out new file
     hpxml2_doc.write(pathobj_to_str(hpxml2_file), pretty_print=True, encoding='utf-8')
