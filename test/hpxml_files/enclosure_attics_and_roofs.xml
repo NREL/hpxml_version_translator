@@ -79,7 +79,7 @@
                         </Attic>
                         <Attic>
                             <SystemIdentifier id='attic-3'/>
-                            <AttachedToRoof idref='roof_not_exist'/>
+                            <AttachedToRoof idref='roof_not_exist-1'/>
                             <AtticType>vented attic</AtticType>
                             <AtticRoofInsulation>
                                 <SystemIdentifier id='roof-insulation'/>
@@ -100,7 +100,7 @@
                         </Attic>
                         <Attic>
                             <SystemIdentifier id='attic-5'/>
-                            <AttachedToRoof idref='roof_not_exist2'/>
+                            <AttachedToRoof idref='roof_not_exist-2'/>
                             <AtticType>cathedral ceiling</AtticType>
                             <Area>500</Area>
                         </Attic>

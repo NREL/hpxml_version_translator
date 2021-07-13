@@ -689,9 +689,10 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
                          'ExteriorAdjacentTo'],
                         E.InteriorAdjacentTo(this_attic.InteriorAdjacentTo.text)
                     )
-        else:
+        elif hasattr(this_attic, 'InteriorAdjacentTo') and not hasattr(this_attic, 'AtticType'):
             warnings.warn(
-                f"{this_attic.SystemIdentifier.attrib['id']} does not have 'InteriorAdjacentTo' and 'AtticType'."
+                (f"{this_attic.SystemIdentifier.attrib['id']} 'InteriorAdjacentTo' was not able to be translated "
+                 "because 'AtticType' is unknown.")
             )
 
         el_not_in_v3 = ['ExteriorAdjacentTo',
