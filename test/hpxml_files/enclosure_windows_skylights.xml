@@ -93,7 +93,6 @@
                         <SHGC>0.45</SHGC>
                         <NFRCCertified>true</NFRCCertified>
                         <VisibleTransmittance>0.9</VisibleTransmittance>
-                        <InteriorShading>light shades</InteriorShading>
                         <InteriorShadingFactor>0.7</InteriorShadingFactor>
                         <ExteriorShading>evergreen tree</ExteriorShading>
                         <MovableInsulationRValue>5.5</MovableInsulationRValue>

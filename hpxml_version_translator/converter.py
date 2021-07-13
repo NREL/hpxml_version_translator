@@ -650,7 +650,7 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
                 )
 
         if hasattr(this_attic, 'InteriorAdjacentTo') and hasattr(this_attic, 'AtticType'):
-            if this_attic.AtticType in ['cathedral ceiling', 'flat roof', 'cape cod']:
+            if this_attic_type in ['cathedral ceiling', 'flat roof', 'cape cod']:
                 try:
                     roof_idref = this_attic.AttachedToRoof.attrib['idref']
                     roof_attached_to_this_attic = root.xpath(

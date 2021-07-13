@@ -13,6 +13,11 @@
             <EventType>audit</EventType>
         </ProjectStatus>
         <BuildingDetails>
+            <BuildingSummary>
+                <BuildingConstruction>
+                    <AtticType>venting unknown attic</AtticType>
+                </BuildingConstruction>
+            </BuildingSummary>
             <Enclosure>
                 <AtticAndRoof>
                     <Roofs>
@@ -95,7 +100,9 @@
                         </Attic>
                         <Attic>
                             <SystemIdentifier id='attic-5'/>
+                            <AttachedToRoof idref='roof_not_exist2'/>
                             <AtticType>cathedral ceiling</AtticType>
+                            <Area>500</Area>
                         </Attic>
                         <Attic>
                             <SystemIdentifier id='attic-6'/>
@@ -124,6 +131,11 @@
             <EventType>proposed workscope</EventType>
         </ProjectStatus>
         <BuildingDetails>
+            <BuildingSummary>
+                <BuildingConstruction>
+                    <AtticType>cathedral ceiling</AtticType>
+                </BuildingConstruction>
+            </BuildingSummary>
             <Enclosure>
                 <AtticAndRoof>
                     <Roofs>
@@ -178,6 +190,7 @@
                         <Attic>
                             <SystemIdentifier id='attic-10'/>
                             <AttachedToRoof idref='roof-5'/>
+                            <InteriorAdjacentTo>living space</InteriorAdjacentTo>
                             <AtticType>cathedral ceiling</AtticType>
                             <Area>140</Area>
                         </Attic>
@@ -191,6 +204,71 @@
                         <SystemIdentifier id='wall-4'/>
                     </Wall>
                 </Walls>
+            </Enclosure>
+        </BuildingDetails>
+    </Building>
+    <Building>
+        <BuildingID id="bldg3"></BuildingID>
+        <ProjectStatus>
+            <EventType>audit</EventType>
+        </ProjectStatus>
+        <BuildingDetails>
+            <BuildingSummary>
+                <BuildingConstruction>
+                    <AtticType>vented attic</AtticType>
+                </BuildingConstruction>
+            </BuildingSummary>
+        </BuildingDetails>
+    </Building>
+    <Building>
+        <BuildingID id="bldg4"></BuildingID>
+        <ProjectStatus>
+            <EventType>audit</EventType>
+        </ProjectStatus>
+        <BuildingDetails>
+            <BuildingSummary>
+                <BuildingConstruction>
+                    <AtticType>unvented attic</AtticType>
+                </BuildingConstruction>
+            </BuildingSummary>
+        </BuildingDetails>
+    </Building>
+    <Building>
+        <BuildingID id="bldg5"></BuildingID>
+        <ProjectStatus>
+            <EventType>audit</EventType>
+        </ProjectStatus>
+        <BuildingDetails>
+            <BuildingSummary>
+                <BuildingConstruction>
+                    <AtticType>flat roof</AtticType>
+                </BuildingConstruction>
+            </BuildingSummary>
+        </BuildingDetails>
+    </Building>
+    <Building>
+        <BuildingID id="bldg6"></BuildingID>
+        <ProjectStatus>
+            <EventType>audit</EventType>
+        </ProjectStatus>
+        <BuildingDetails>
+            <BuildingSummary>
+                <BuildingConstruction>
+                    <AtticType>cape cod</AtticType>
+                </BuildingConstruction>
+            </BuildingSummary>
+            <Enclosure>
+                <AtticAndRoof>
+                    <Attics>
+                        <Attic>
+                            <SystemIdentifier id='attic-11'/>
+                            <AttachedToRoof idref='roof-6'/>
+                            <InteriorAdjacentTo>living space</InteriorAdjacentTo>
+                            <AtticType>cape cod</AtticType>
+                            <Area>300</Area>
+                        </Attic>
+                    </Attics>
+                </AtticAndRoof>
             </Enclosure>
         </BuildingDetails>
     </Building>
