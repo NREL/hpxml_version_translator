@@ -276,7 +276,7 @@ def test_enclosure_attics_and_roofs():
     assert not buildingconstruction4.AtticType.Attic.Vented  # unvented attic
     assert hasattr(buildingconstruction5.AtticType, 'FlatRoof')
     assert buildingconstruction6.AtticType.Attic.CapeCod  # cape cod
-    assert hasattr(buildingconstruction7, 'Other')
+    assert hasattr(buildingconstruction7.AtticType, 'Other')
 
 
 def test_enclosure_foundation():
