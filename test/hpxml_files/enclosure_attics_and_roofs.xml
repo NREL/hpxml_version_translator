@@ -272,4 +272,17 @@
             </Enclosure>
         </BuildingDetails>
     </Building>
+    <Building>
+        <BuildingID id="bldg7"></BuildingID>
+        <ProjectStatus>
+            <EventType>audit</EventType>
+        </ProjectStatus>
+        <BuildingDetails>
+            <BuildingSummary>
+                <BuildingConstruction>
+                    <AtticType>other</AtticType>
+                </BuildingConstruction>
+            </BuildingSummary>
+        </BuildingDetails>
+    </Building>
 </HPXML>

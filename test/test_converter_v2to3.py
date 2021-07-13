@@ -269,12 +269,14 @@ def test_enclosure_attics_and_roofs():
     buildingconstruction4 = root.Building[3].BuildingDetails.BuildingSummary.BuildingConstruction
     buildingconstruction5 = root.Building[4].BuildingDetails.BuildingSummary.BuildingConstruction
     buildingconstruction6 = root.Building[5].BuildingDetails.BuildingSummary.BuildingConstruction
+    buildingconstruction7 = root.Building[6].BuildingDetails.BuildingSummary.BuildingConstruction
     assert buildingconstruction1.AtticType.Attic.extension.Vented == 'unknown'  # venting unknown attic
     assert hasattr(buildingconstruction2.AtticType, 'CathedralCeiling')
     assert buildingconstruction3.AtticType.Attic.Vented  # vented attic
     assert not buildingconstruction4.AtticType.Attic.Vented  # unvented attic
     assert hasattr(buildingconstruction5.AtticType, 'FlatRoof')
     assert buildingconstruction6.AtticType.Attic.CapeCod  # cape cod
+    assert hasattr(buildingconstruction7, 'Other')
 
 
 def test_enclosure_foundation():
