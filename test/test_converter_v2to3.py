@@ -11,10 +11,17 @@ hpxml_dir = pathlib.Path(__file__).resolve().parent / 'hpxml_files'
 
 
 def convert_hpxml_and_parse(input_filename):
-    with tempfile.NamedTemporaryFile('w+b') as f_out:
-        convert_hpxml_to_3(input_filename, f_out)
-        f_out.seek(0)
-        root = objectify.parse(f_out).getroot()
+    f_out = tempfile.NamedTemporaryFile('w+b', delete=False)
+    convert_hpxml_to_3(input_filename, f_out)
+    f_out.seek(0)
+    root = objectify.parse(f_out).getroot()
+    f_out.close()
+    import os
+    os.unlink(f_out.name)
+    # with tempfile.NamedTemporaryFile('w+b') as f_out:
+    #     convert_hpxml_to_3(input_filename, f_out)
+    #     f_out.seek(0)
+    #     root = objectify.parse(f_out).getroot()
     return root
 
 
@@ -147,10 +154,12 @@ def test_clothes_dryer():
 def test_enclosure_attics_and_roofs():
     with pytest.warns(None) as record:
         root = convert_hpxml_and_parse(hpxml_dir / 'enclosure_attics_and_roofs.xml')
-    assert len(record) == 3
+    assert len(record) == 5
     assert record[0].message.args[0] == 'Cannot find a roof attached to attic-3.'
     assert record[1].message.args[0] == 'Cannot find a roof attached to attic-3.'
-    assert record[2].message.args[0] == 'Cannot find a knee wall attached to attic-9.'
+    assert record[2].message.args[0] == 'Cannot find a roof attached to attic-5.'
+    assert record[3].message.args[0] == 'Cannot find a knee wall attached to attic-9.'
+    assert record[4].message.args[0] == 'Cannot find a roof attached to attic-11.'
 
     enclosure1 = root.Building[0].BuildingDetails.Enclosure
     assert not hasattr(enclosure1, 'AtticAndRoof')
@@ -203,20 +212,24 @@ def test_enclosure_attics_and_roofs():
     assert enclosure1.Walls.Wall[0].AtticWallType == 'knee wall'
     assert not hasattr(enclosure1.Walls.Wall[1], 'AtticWallType')
 
-    assert enclosure1.FrameFloors.FrameFloor[0].SystemIdentifier.attrib['id'] == 'attic-floor-1'
-    assert enclosure1.FrameFloors.FrameFloor[0].InteriorAdjacentTo == 'attic'
-    assert enclosure1.FrameFloors.FrameFloor[0].Area == 500.0
-    assert enclosure1.FrameFloors.FrameFloor[0].Insulation.SystemIdentifier.attrib['id'] == 'attic-floor-insulation-1'
-    assert enclosure1.FrameFloors.FrameFloor[0].Insulation.InsulationGrade == 1
-    assert enclosure1.FrameFloors.FrameFloor[0].Insulation.InsulationCondition == 'poor'
-    assert enclosure1.FrameFloors.FrameFloor[0].Insulation.AssemblyEffectiveRValue == 5.5
+    assert enclosure1.FrameFloors.FrameFloor[0].SystemIdentifier.attrib['id'] == 'attic-floor-0'
+    assert enclosure1.FrameFloors.FrameFloor[0].InteriorAdjacentTo == 'garage'
+    assert enclosure1.FrameFloors.FrameFloor[0].Area == 1000.0
+    assert not hasattr(enclosure1.FrameFloors.FrameFloor[0], 'Insulation')
+    assert enclosure1.FrameFloors.FrameFloor[1].SystemIdentifier.attrib['id'] == 'attic-floor-1'
+    assert enclosure1.FrameFloors.FrameFloor[1].InteriorAdjacentTo == 'living space'
+    assert enclosure1.FrameFloors.FrameFloor[1].Area == 500.0
+    assert enclosure1.FrameFloors.FrameFloor[1].Insulation.SystemIdentifier.attrib['id'] == 'attic-floor-insulation-1'
+    assert enclosure1.FrameFloors.FrameFloor[1].Insulation.InsulationGrade == 1
+    assert enclosure1.FrameFloors.FrameFloor[1].Insulation.InsulationCondition == 'poor'
+    assert enclosure1.FrameFloors.FrameFloor[1].Insulation.AssemblyEffectiveRValue == 5.5
 
     enclosure2 = root.Building[1].BuildingDetails.Enclosure
     assert not hasattr(enclosure2, 'AtticAndRoof')
     assert not hasattr(enclosure2, 'ExteriorAdjacentTo')
 
     attic8 = enclosure2.Attics.Attic[0]
-    assert attic8.AtticType.Attic.Vented  # vented attic
+    assert attic8.AtticType.Attic.CapeCod  # cape cod
     assert attic8.AttachedToRoof.attrib['idref'] == 'roof-3'
     assert attic8.AttachedToWall.attrib['idref'] == 'wall-3'
     attic9 = enclosure2.Attics.Attic[1]
@@ -238,18 +251,39 @@ def test_enclosure_attics_and_roofs():
     assert not hasattr(roof4, 'Rafters')
 
     roof5 = enclosure2.Roofs.Roof[2]
+    assert roof5.InteriorAdjacentTo == 'living space'
     assert roof5.Area == 140.0
 
     assert enclosure2.Walls.Wall[0].AtticWallType == 'knee wall'
     assert not hasattr(enclosure2.Walls.Wall[1], 'AtticWallType')
 
     assert enclosure2.FrameFloors.FrameFloor[0].SystemIdentifier.attrib['id'] == 'attic-floor-8'
-    assert enclosure2.FrameFloors.FrameFloor[0].InteriorAdjacentTo == 'attic'
+    assert enclosure2.FrameFloors.FrameFloor[0].InteriorAdjacentTo == 'living space'
     assert enclosure2.FrameFloors.FrameFloor[0].Area == 700.0
     assert enclosure2.FrameFloors.FrameFloor[0].Insulation.SystemIdentifier.attrib['id'] == 'attic-floor-insulation-2'
     assert enclosure2.FrameFloors.FrameFloor[0].Insulation.InsulationGrade == 1
     assert enclosure2.FrameFloors.FrameFloor[0].Insulation.InsulationCondition == 'poor'
     assert enclosure2.FrameFloors.FrameFloor[0].Insulation.AssemblyEffectiveRValue == 5.5
+
+    buildingconstruction1 = root.Building[0].BuildingDetails.BuildingSummary.BuildingConstruction
+    buildingconstruction2 = root.Building[1].BuildingDetails.BuildingSummary.BuildingConstruction
+    buildingconstruction3 = root.Building[2].BuildingDetails.BuildingSummary.BuildingConstruction
+    buildingconstruction4 = root.Building[3].BuildingDetails.BuildingSummary.BuildingConstruction
+    buildingconstruction5 = root.Building[4].BuildingDetails.BuildingSummary.BuildingConstruction
+    buildingconstruction6 = root.Building[5].BuildingDetails.BuildingSummary.BuildingConstruction
+    buildingconstruction7 = root.Building[6].BuildingDetails.BuildingSummary.BuildingConstruction
+    assert buildingconstruction1.AtticType.Attic.extension.Vented == 'unknown'  # venting unknown attic
+    assert hasattr(buildingconstruction2.AtticType, 'CathedralCeiling')
+    assert buildingconstruction3.AtticType.Attic.Vented  # vented attic
+    assert not buildingconstruction4.AtticType.Attic.Vented  # unvented attic
+    assert hasattr(buildingconstruction5.AtticType, 'FlatRoof')
+    assert buildingconstruction6.AtticType.Attic.CapeCod  # cape cod
+    assert hasattr(buildingconstruction7.AtticType, 'Other')
+
+    with pytest.raises(Exception) as execinfo:
+        convert_hpxml_and_parse(hpxml_dir / 'enclosure_missing_attic_type.xml')
+    assert execinfo.value.args[0] == ("enclosure_missing_attic_type.xml was not able to be translated "
+                                      "because 'AtticType' of attic-1 is unknown.")
 
 
 def test_enclosure_foundation():
@@ -298,7 +332,7 @@ def test_enclosure_foundation():
     assert fw2.getparent().getparent().Foundations.Foundation.AttachedToFoundationWall[1].attrib['idref'] ==\
         'foundationwall-2'
     assert not hasattr(fw2, 'ExteriorAdjacentTo')
-    assert not hasattr(fw2, 'InteriorAdjacentTo')
+    assert fw2.InteriorAdjacentTo == 'living space'
     assert fw2.Type == 'concrete block'
     assert fw2.Length == 60
     assert fw2.Height == 8
@@ -321,7 +355,7 @@ def test_enclosure_foundation():
     fw3 = root.Building[1].BuildingDetails.Enclosure.FoundationWalls.FoundationWall[0]
     assert fw3.getparent().getparent().Foundations.Foundation.AttachedToFoundationWall[0].attrib['idref'] ==\
         'foundationwall-3'
-    assert fw3.ExteriorAdjacentTo == 'ground'
+    assert fw3.ExteriorAdjacentTo == 'ground'  # make sure that 'ambient' maps to 'ground'
     assert not hasattr(fw3, 'InteriorAdjacentTo')
     assert fw3.Type == 'solid concrete'
     assert fw3.Length == 40
@@ -429,7 +463,6 @@ def test_windows():
     assert win4.VisibleTransmittance == 0.9
     assert win4.ExteriorShading[0].Type == 'evergreen tree'
     assert win4.InteriorShading.SystemIdentifier.attrib['id'] == 'interior-shading-4'
-    assert win4.InteriorShading.Type == 'light shades'
     assert win4.InteriorShading.SummerShadingCoefficient == 0.7
     assert win4.InteriorShading.WinterShadingCoefficient == 0.7
     assert win4.MoveableInsulation.RValue == 5.5

@@ -163,12 +163,14 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
     root.attrib['schemaVersion'] = '3.0'
 
     # Standardized location mapping
-    location_map = {'ambient': 'outside',
+    location_map = {'ambient': 'outside',  # 'ambient' will be mapped to 'ground' for FoundationWall
                     'conditioned space': 'living space',
                     'unconditioned basement': 'basement - unconditioned',
                     'unconditioned attic': 'attic - unconditioned',
                     'unvented crawlspace': 'crawlspace - unvented',
                     'vented crawlspace': 'crawlspace - vented'}
+    foundation_location_map = deepcopy(location_map)
+    foundation_location_map['ambient'] = 'ground'
 
     # Fixing project ids
     # https://github.com/hpxmlwg/hpxml/pull/197
@@ -442,24 +444,24 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
 
         if hasattr(this_fw, 'AdjacentTo'):
             try:
-                fw_boundary = location_map[str(fw.AdjacentTo)]
+                fw_boundary = foundation_location_map[str(fw.AdjacentTo)]
             except KeyError:
                 fw_boundary = str(fw.AdjacentTo)  # retain unchanged location name
             try:
-                boundary_v3 = {'other housing unit': E.ExteriorAdjacentTo(fw_boundary),
-                               'unconditioned basement': E.InteriorAdjacentTo(fw_boundary),
-                               'living space': E.InteriorAdjacentTo(fw_boundary),
-                               'ground': E.ExteriorAdjacentTo(fw_boundary),
-                               'crawlspace': E.InteriorAdjacentTo(fw_boundary),
-                               'attic': E.InteriorAdjacentTo(fw_boundary),  # FIXME: double-check
-                               'garage': E.InteriorAdjacentTo(fw_boundary),
-                               'ambient': E.ExteriorAdjacentTo(fw_boundary)}[str(fw.AdjacentTo)]
+                boundary_v3 = {'other housing unit': 'Exterior',
+                               'ground': 'Exterior',
+                               'ambient': 'Exterior',
+                               'attic': 'Exterior',
+                               'garage': 'Exterior',
+                               'living space': 'Interior',
+                               'unconditioned basement': 'Interior',
+                               'crawlspace': 'Interior'}[str(fw.AdjacentTo)]
                 add_after(
                     this_fw,
                     ['SystemIdentifier',
                      'ExternalResource',
                      'AttachedToSpace'],
-                    boundary_v3
+                    getattr(E, f'{boundary_v3}AdjacentTo')(fw_boundary)
                 )
             except KeyError:
                 pass
@@ -489,14 +491,7 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
         root.xpath('h:Building/h:BuildingDetails/h:Enclosure/h:AtticAndRoof/h:Attics/h:Attic', **xpkw)
     ):
         enclosure = attic.getparent().getparent().getparent()
-        if not hasattr(enclosure, 'Attics'):
-            add_after(
-                enclosure,
-                ['AirInfiltration'],
-                E.Attics()
-            )
         this_attic = deepcopy(attic)
-
         this_attic_type = None
         if hasattr(this_attic, 'AtticType'):
             this_attic_type = this_attic.AtticType
@@ -514,8 +509,20 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
                 this_attic.AtticType = E.AtticType(E.Other())
             elif this_attic.AtticType == 'venting unknown attic':
                 this_attic.AtticType = E.AtticType(E.Attic(E.extension(E.Vented('unknown'))))
+        else:
+            raise exc.HpxmlTranslationError(
+                f"{hpxml2_file.name} was not able to be translated "
+                f"because 'AtticType' of {this_attic.SystemIdentifier.attrib['id']} is unknown."
+            )
 
-        # move AttachedToRoof to after VentilationRate
+        if not hasattr(enclosure, 'Attics'):
+            add_after(
+                enclosure,
+                ['AirInfiltration'],
+                E.Attics()
+            )
+
+        # rearrange AttachedToRoof
         if hasattr(this_attic, 'AttachedToRoof'):
             attached_to_roof = deepcopy(this_attic.AttachedToRoof)
             this_attic.remove(this_attic.AttachedToRoof)  # remove the AttachedToRoof of HPXML v2
@@ -555,7 +562,9 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
 
         # create a FrameFloor adjacent to the attic and assign the area below to Area
         # and then copy AtticFloorInsulation over to Insulation of the frame floor
-        if hasattr(this_attic, 'AtticFloorInsulation'):
+        if hasattr(this_attic, 'AtticFloorInsulation') or (
+            this_attic_type not in ['cathedral ceiling', 'flat roof', 'cape cod']
+        ):
             if not hasattr(enclosure, 'FrameFloors'):
                 add_before(
                     enclosure,
@@ -567,8 +576,7 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
                     E.FrameFloors()
                 )
             attic_floor_el = E.FrameFloor(
-                E.SystemIdentifier(id=f'attic-floor-{i}'),
-                E.InteriorAdjacentTo('attic'),
+                E.SystemIdentifier(id=f'attic-floor-{i}')
             )
             attic_floor_id = attic_floor_el.SystemIdentifier.attrib['id']
             add_before(
@@ -579,12 +587,13 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
             )
             if hasattr(this_attic, 'Area'):
                 attic_floor_el.append(E.Area(float(this_attic.Area)))
-            attic_floor_insulation = deepcopy(this_attic.AtticFloorInsulation)
-            attic_floor_insulation.tag = f'{{{hpxml3_ns}}}Insulation'
-            attic_floor_el.append(attic_floor_insulation)
+            if hasattr(this_attic, 'AtticFloorInsulation'):
+                attic_floor_insulation = deepcopy(this_attic.AtticFloorInsulation)
+                attic_floor_insulation.tag = f'{{{hpxml3_ns}}}Insulation'
+                attic_floor_el.append(attic_floor_insulation)
             enclosure.FrameFloors.append(attic_floor_el)
 
-        # find the roof whose InteriorAdjacentTo is attic and then copy it to Insulation of the roof
+        # find Roof attached to Attic and move Insulation to Roof
         # add insulation to v2 Roofs and these roofs will be converted into hpxml v3 later
         if hasattr(this_attic, 'AtticRoofInsulation'):
             roof_insulation = deepcopy(this_attic.AtticRoofInsulation)
@@ -619,8 +628,8 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
                     add_before(
                         roof_attached_to_this_attic,
                         ['RadiantBarrier',
-                            'RadiantBarrierLocation',
-                            'extension'],
+                         'RadiantBarrierLocation',
+                         'extension'],
                         E.RoofArea(this_attic.Area.text)
                     )
 
@@ -646,6 +655,47 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
                      'Emittance'],
                     rafters
                 )
+
+        if hasattr(this_attic, 'InteriorAdjacentTo') and hasattr(this_attic, 'AtticType'):
+            if this_attic_type in ['cathedral ceiling', 'flat roof', 'cape cod']:
+                try:
+                    roof_idref = this_attic.AttachedToRoof.attrib['idref']
+                    roof_attached_to_this_attic = root.xpath(
+                        'h:Building/h:BuildingDetails/h:Enclosure/h:AtticAndRoof/h:Roofs/\
+                            h:Roof[h:SystemIdentifier/@id=$sysid]',
+                        sysid=roof_idref, **xpkw)[0]
+                except (AttributeError, IndexError):
+                    warnings.warn(
+                        f"Cannot find a roof attached to {this_attic.SystemIdentifier.attrib['id']}."
+                    )
+                else:
+                    add_after(
+                        roof_attached_to_this_attic,
+                        ['SystemIdentifier',
+                         'ExternalResource',
+                         'AttachedToSpace'],
+                        E.InteriorAdjacentTo(this_attic.InteriorAdjacentTo.text)
+                    )
+            else:
+                try:
+                    floor_idref = this_attic.AttachedToFrameFloor.attrib['idref']
+                    floor_attached_to_this_attic = root.xpath(
+                        'h:Building/h:BuildingDetails/h:Enclosure/h:FrameFloors/\
+                            h:FrameFloor[h:SystemIdentifier/@id=$sysid]',
+                        sysid=floor_idref, **xpkw)[0]
+                except (AttributeError, IndexError):
+                    warnings.warn(
+                        f"Cannot find a frame floor attached to {this_attic.SystemIdentifier.attrib['id']}."
+                    )
+                else:
+                    add_after(
+                        floor_attached_to_this_attic,
+                        ['SystemIdentifier',
+                         'ExternalResource',
+                         'AttachedToSpace',
+                         'ExteriorAdjacentTo'],
+                        E.InteriorAdjacentTo(this_attic.InteriorAdjacentTo.text)
+                    )
 
         el_not_in_v3 = ['ExteriorAdjacentTo',
                         'InteriorAdjacentTo',

@@ -47,7 +47,6 @@
                             <ExteriorAdjacentTo>ambient</ExteriorAdjacentTo>
                             <InteriorAdjacentTo>garage</InteriorAdjacentTo>
                             <AtticKneeWall idref='wall-1'/>
-                            <AtticType>unvented attic</AtticType>
                             <Area>1000</Area>
                             <Rafters>
                                 <Size>2x4</Size>
@@ -205,84 +204,6 @@
                     </Wall>
                 </Walls>
             </Enclosure>
-        </BuildingDetails>
-    </Building>
-    <Building>
-        <BuildingID id="bldg3"></BuildingID>
-        <ProjectStatus>
-            <EventType>audit</EventType>
-        </ProjectStatus>
-        <BuildingDetails>
-            <BuildingSummary>
-                <BuildingConstruction>
-                    <AtticType>vented attic</AtticType>
-                </BuildingConstruction>
-            </BuildingSummary>
-        </BuildingDetails>
-    </Building>
-    <Building>
-        <BuildingID id="bldg4"></BuildingID>
-        <ProjectStatus>
-            <EventType>audit</EventType>
-        </ProjectStatus>
-        <BuildingDetails>
-            <BuildingSummary>
-                <BuildingConstruction>
-                    <AtticType>unvented attic</AtticType>
-                </BuildingConstruction>
-            </BuildingSummary>
-        </BuildingDetails>
-    </Building>
-    <Building>
-        <BuildingID id="bldg5"></BuildingID>
-        <ProjectStatus>
-            <EventType>audit</EventType>
-        </ProjectStatus>
-        <BuildingDetails>
-            <BuildingSummary>
-                <BuildingConstruction>
-                    <AtticType>flat roof</AtticType>
-                </BuildingConstruction>
-            </BuildingSummary>
-        </BuildingDetails>
-    </Building>
-    <Building>
-        <BuildingID id="bldg6"></BuildingID>
-        <ProjectStatus>
-            <EventType>audit</EventType>
-        </ProjectStatus>
-        <BuildingDetails>
-            <BuildingSummary>
-                <BuildingConstruction>
-                    <AtticType>cape cod</AtticType>
-                </BuildingConstruction>
-            </BuildingSummary>
-            <Enclosure>
-                <AtticAndRoof>
-                    <Attics>
-                        <Attic>
-                            <SystemIdentifier id='attic-11'/>
-                            <AttachedToRoof idref='roof-6'/>
-                            <InteriorAdjacentTo>living space</InteriorAdjacentTo>
-                            <AtticType>cape cod</AtticType>
-                            <Area>300</Area>
-                        </Attic>
-                    </Attics>
-                </AtticAndRoof>
-            </Enclosure>
-        </BuildingDetails>
-    </Building>
-    <Building>
-        <BuildingID id="bldg7"></BuildingID>
-        <ProjectStatus>
-            <EventType>audit</EventType>
-        </ProjectStatus>
-        <BuildingDetails>
-            <BuildingSummary>
-                <BuildingConstruction>
-                    <AtticType>other</AtticType>
-                </BuildingConstruction>
-            </BuildingSummary>
         </BuildingDetails>
     </Building>
 </HPXML>
