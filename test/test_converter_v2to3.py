@@ -11,10 +11,17 @@ hpxml_dir = pathlib.Path(__file__).resolve().parent / 'hpxml_files'
 
 
 def convert_hpxml_and_parse(input_filename):
-    with tempfile.NamedTemporaryFile('w+b') as f_out:
-        convert_hpxml_to_3(input_filename, f_out)
-        f_out.seek(0)
-        root = objectify.parse(f_out).getroot()
+    f_out = tempfile.NamedTemporaryFile('w+b', delete=False)
+    convert_hpxml_to_3(input_filename, f_out)
+    f_out.seek(0)
+    root = objectify.parse(f_out).getroot()
+    f_out.close()
+    import os
+    os.unlink(f_out.name)
+    # with tempfile.NamedTemporaryFile('w+b') as f_out:
+    #     convert_hpxml_to_3(input_filename, f_out)
+    #     f_out.seek(0)
+    #     root = objectify.parse(f_out).getroot()
     return root
 
 
@@ -272,6 +279,11 @@ def test_enclosure_attics_and_roofs():
     assert hasattr(buildingconstruction5.AtticType, 'FlatRoof')
     assert buildingconstruction6.AtticType.Attic.CapeCod  # cape cod
     assert hasattr(buildingconstruction7.AtticType, 'Other')
+
+    with pytest.raises(Exception) as execinfo:
+        convert_hpxml_and_parse(hpxml_dir / 'enclosure_missing_attic_type.xml')
+    assert execinfo.value.args[0] == ("enclosure_missing_attic_type.xml was not able to be translated "
+                                      "because 'AtticType' of attic-1 is unknown.")
 
 
 def test_enclosure_foundation():

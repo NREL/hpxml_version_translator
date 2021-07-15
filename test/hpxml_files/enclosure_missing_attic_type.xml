@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<HPXML xmlns="http://hpxmlonline.com/2014/6" schemaVersion="2.3">
+    <XMLTransactionHeaderInformation>
+        <XMLType></XMLType>
+        <XMLGeneratedBy></XMLGeneratedBy>
+        <CreatedDateAndTime>2021-04-05T14:17:07.685077</CreatedDateAndTime>
+        <Transaction>create</Transaction>
+    </XMLTransactionHeaderInformation>
+    <SoftwareInfo/>
+    <Building>
+        <BuildingID id="bldg1"></BuildingID>
+        <ProjectStatus>
+            <EventType>audit</EventType>
+        </ProjectStatus>
+        <BuildingDetails>
+            <BuildingSummary>
+                <BuildingConstruction>
+                    <AtticType>venting unknown attic</AtticType>
+                </BuildingConstruction>
+            </BuildingSummary>
+            <Enclosure>
+                <AtticAndRoof>
+                    <Roofs>
+                        <Roof>
+                            <SystemIdentifier id='roof-1'/>
+                            <RoofColor>dark</RoofColor>
+                            <SolarAbsorptance>0.7</SolarAbsorptance>
+                            <Emittance>0.9</Emittance>
+                            <RoofType>shingles</RoofType>
+                            <Pitch>6.0</Pitch>
+                            <RoofArea>1118.5</RoofArea>
+                        </Roof>
+                        <Roof>
+                            <SystemIdentifier id='roof-2'/>
+                            <RoofColor>medium</RoofColor>
+                            <SolarAbsorptance>0.6</SolarAbsorptance>
+                            <Emittance>0.7</Emittance>
+                            <RoofType>shingles</RoofType>
+                            <Pitch>6.0</Pitch>
+                            <RoofArea>559.25</RoofArea>
+                        </Roof>
+                    </Roofs>
+                    <Attics>
+                        <Attic>
+                            <SystemIdentifier id='attic-1'/>
+                            <AttachedToRoof idref='roof-1'/>
+                            <ExteriorAdjacentTo>ambient</ExteriorAdjacentTo>
+                            <InteriorAdjacentTo>garage</InteriorAdjacentTo>
+                            <AtticKneeWall idref='wall-1'/>
+                            <Area>1000</Area>
+                            <Rafters>
+                                <Size>2x4</Size>
+                                <Material>wood</Material>
+                            </Rafters>
+                        </Attic>
+                        <Attic>
+                            <SystemIdentifier id='attic-2'/>
+                            <AttachedToRoof idref='roof-2'/>
+                            <ExteriorAdjacentTo>ambient</ExteriorAdjacentTo>
+                            <InteriorAdjacentTo>living space</InteriorAdjacentTo>
+                            <AtticType>venting unknown attic</AtticType>
+                            <AtticFloorInsulation>
+                                <SystemIdentifier id='attic-floor-insulation-1'/>
+                                <InsulationGrade>1</InsulationGrade>
+                                <InsulationCondition>poor</InsulationCondition>
+                                <AssemblyEffectiveRValue>5.5</AssemblyEffectiveRValue>
+                            </AtticFloorInsulation>
+                            <AtticRoofInsulation>
+                                <SystemIdentifier id='attic-roof-insulation-1'/>
+                                <InsulationGrade>3</InsulationGrade>
+                                <InsulationCondition>good</InsulationCondition>
+                                <Layer>
+                                    <InstallationType>cavity</InstallationType>
+                                    <NominalRValue>7.5</NominalRValue>
+                                </Layer>
+                            </AtticRoofInsulation>
+                            <Area>500</Area>
+                        </Attic>
+                        <Attic>
+                            <SystemIdentifier id='attic-3'/>
+                            <AttachedToRoof idref='roof_not_exist-1'/>
+                            <AtticType>vented attic</AtticType>
+                            <AtticRoofInsulation>
+                                <SystemIdentifier id='roof-insulation'/>
+                                <Layer>
+                                    <InstallationType>cavity</InstallationType>
+                                    <NominalRValue>0</NominalRValue>
+                                </Layer>
+                            </AtticRoofInsulation>
+                            <Area>300</Area>
+                            <Rafters>
+                                <Size>2x4</Size>
+                                <Material>wood</Material>
+                            </Rafters>
+                        </Attic>
+                        <Attic>
+                            <SystemIdentifier id='attic-4'/>
+                            <AtticType>flat roof</AtticType>
+                        </Attic>
+                        <Attic>
+                            <SystemIdentifier id='attic-5'/>
+                            <AttachedToRoof idref='roof_not_exist-2'/>
+                            <AtticType>cathedral ceiling</AtticType>
+                            <Area>500</Area>
+                        </Attic>
+                        <Attic>
+                            <SystemIdentifier id='attic-6'/>
+                            <AtticType>cape cod</AtticType>
+                        </Attic>
+                        <Attic>
+                            <SystemIdentifier id='attic-7'/>
+                            <AtticType>other</AtticType>
+                        </Attic>
+                    </Attics>
+                </AtticAndRoof>
+                <Walls>
+                    <Wall>
+                        <SystemIdentifier id='wall-1'/>
+                    </Wall>
+                    <Wall>
+                        <SystemIdentifier id='wall-2'/>
+                    </Wall>
+                </Walls>
+            </Enclosure>
+        </BuildingDetails>
+    </Building>
+    <Building>
+        <BuildingID id="bldg2"></BuildingID>
+        <ProjectStatus>
+            <EventType>proposed workscope</EventType>
+        </ProjectStatus>
+        <BuildingDetails>
+            <BuildingSummary>
+                <BuildingConstruction>
+                    <AtticType>cathedral ceiling</AtticType>
+                </BuildingConstruction>
+            </BuildingSummary>
+            <Enclosure>
+                <AtticAndRoof>
+                    <Roofs>
+                        <Roof>
+                            <SystemIdentifier id='roof-3'/>
+                        </Roof>
+                        <Roof>
+                            <SystemIdentifier id='roof-4'/>
+                        </Roof>
+                        <Roof>
+                            <SystemIdentifier id='roof-5'/>
+                        </Roof>
+                    </Roofs>
+                    <Attics>
+                        <Attic>
+                            <SystemIdentifier id='attic-8'/>
+                            <AttachedToRoof idref='roof-3'/>
+                            <ExteriorAdjacentTo>ambient</ExteriorAdjacentTo>
+                            <InteriorAdjacentTo>living space</InteriorAdjacentTo>
+                            <AtticKneeWall idref='wall-3'/>
+                            <AtticType>cape cod</AtticType>
+                            <Area>1000</Area>
+                            <Rafters>
+                                <Size>2x6</Size>
+                                <Material>wood</Material>
+                            </Rafters>
+                        </Attic>
+                        <Attic>
+                            <SystemIdentifier id='attic-9'/>
+                            <AttachedToRoof idref='roof-4'/>
+                            <ExteriorAdjacentTo>ambient</ExteriorAdjacentTo>
+                            <InteriorAdjacentTo>living space</InteriorAdjacentTo>
+                            <AtticKneeWall idref='wall_not_exist'/>
+                            <AtticType>venting unknown attic</AtticType>
+                            <AtticFloorInsulation>
+                                <SystemIdentifier id='attic-floor-insulation-2'/>
+                                <InsulationGrade>1</InsulationGrade>
+                                <InsulationCondition>poor</InsulationCondition>
+                                <AssemblyEffectiveRValue>5.5</AssemblyEffectiveRValue>
+                            </AtticFloorInsulation>
+                            <AtticRoofInsulation>
+                                <SystemIdentifier id='attic-roof-insulation-2'/>
+                                <InsulationGrade>2</InsulationGrade>
+                                <InsulationCondition>fair</InsulationCondition>
+                                <Layer>
+                                    <InstallationType>cavity</InstallationType>
+                                    <NominalRValue>7.5</NominalRValue>
+                                </Layer>
+                            </AtticRoofInsulation>
+                            <Area>700</Area>
+                        </Attic>
+                        <Attic>
+                            <SystemIdentifier id='attic-10'/>
+                            <AttachedToRoof idref='roof-5'/>
+                            <InteriorAdjacentTo>living space</InteriorAdjacentTo>
+                            <AtticType>cathedral ceiling</AtticType>
+                            <Area>140</Area>
+                        </Attic>
+                    </Attics>
+                </AtticAndRoof>
+                <Walls>
+                    <Wall>
+                        <SystemIdentifier id='wall-3'/>
+                    </Wall>
+                    <Wall>
+                        <SystemIdentifier id='wall-4'/>
+                    </Wall>
+                </Walls>
+            </Enclosure>
+        </BuildingDetails>
+    </Building>
+</HPXML>

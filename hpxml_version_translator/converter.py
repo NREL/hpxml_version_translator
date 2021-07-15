@@ -489,14 +489,7 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
         root.xpath('h:Building/h:BuildingDetails/h:Enclosure/h:AtticAndRoof/h:Attics/h:Attic', **xpkw)
     ):
         enclosure = attic.getparent().getparent().getparent()
-        if not hasattr(enclosure, 'Attics'):
-            add_after(
-                enclosure,
-                ['AirInfiltration'],
-                E.Attics()
-            )
         this_attic = deepcopy(attic)
-
         this_attic_type = None
         if hasattr(this_attic, 'AtticType'):
             this_attic_type = this_attic.AtticType
@@ -514,6 +507,18 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
                 this_attic.AtticType = E.AtticType(E.Other())
             elif this_attic.AtticType == 'venting unknown attic':
                 this_attic.AtticType = E.AtticType(E.Attic(E.extension(E.Vented('unknown'))))
+        else:
+            raise exc.HpxmlTranslationError(
+                f"{hpxml2_file.name} was not able to be translated "
+                f"because 'AtticType' of {this_attic.SystemIdentifier.attrib['id']} is unknown."
+            )
+
+        if not hasattr(enclosure, 'Attics'):
+            add_after(
+                enclosure,
+                ['AirInfiltration'],
+                E.Attics()
+            )
 
         # rearrange AttachedToRoof
         if hasattr(this_attic, 'AttachedToRoof'):
@@ -689,11 +694,6 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
                          'ExteriorAdjacentTo'],
                         E.InteriorAdjacentTo(this_attic.InteriorAdjacentTo.text)
                     )
-        elif hasattr(this_attic, 'InteriorAdjacentTo') and not hasattr(this_attic, 'AtticType'):
-            warnings.warn(
-                (f"{this_attic.SystemIdentifier.attrib['id']} 'InteriorAdjacentTo' was not able to be translated "
-                 "because 'AtticType' is unknown.")
-            )
 
         el_not_in_v3 = ['ExteriorAdjacentTo',
                         'InteriorAdjacentTo',
