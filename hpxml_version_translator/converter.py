@@ -259,6 +259,8 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
 
     # Green Building Verification
     # https://github.com/hpxmlwg/hpxml/pull/66
+    # This next one is covered here because the BPI-2101 verification didn't exist in v2, so no need to translate it
+    # https://github.com/hpxmlwg/hpxml/pull/210
 
     energy_score_els = root.xpath(
         'h:Building/h:BuildingDetails/h:BuildingSummary/h:BuildingConstruction/h:EnergyScore', **xpkw
@@ -1129,9 +1131,6 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
 
     # TODO: Window sub-components
     # https://github.com/hpxmlwg/hpxml/pull/202
-
-    # TODO: updating BPI-2101 enums in GreenBuildingVerification/Type
-    # https://github.com/hpxmlwg/hpxml/pull/210
 
     # Write out new file
     hpxml3_doc.write(pathobj_to_str(hpxml3_file), pretty_print=True, encoding='utf-8')
