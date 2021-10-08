@@ -456,6 +456,12 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
                                'living space': 'Interior',
                                'unconditioned basement': 'Interior',
                                'crawlspace': 'Interior'}[str(fw.AdjacentTo)]
+                if boundary_v3 == 'Interior' and hasattr(foundation, 'FoundationType'):
+                    # Check that this matches the Foundation/FoundationType if available
+                    if fw.AdjacentTo == 'unconditioned basement' and not hasattr(foundation, 'Basement'):
+                        boundary_v3 = 'Exterior'
+                    elif fw.AdjacentTo == 'crawlspace' and not hasattr(foundation, 'Crawlspace'):
+                        boundary_v3 = 'Exterior'
                 add_after(
                     this_fw,
                     ['SystemIdentifier',
