@@ -369,29 +369,21 @@ def test_enclosure_foundation():
     assert not hasattr(fw3.Insulation, 'Location')
 
     fw4 = root.Building[1].BuildingDetails.Enclosure.FoundationWalls.FoundationWall[1]
-    assert fw4.getparent().getparent().Foundations.Foundation[1].AttachedToFoundationWall[0].attrib['idref'] ==\
-        'foundationwall-4'
     assert fw4.ExteriorAdjacentTo == 'crawlspace'
     assert not hasattr(fw4, 'InteriorAdjacentTo')
     assert not hasattr(fw4, 'AdjacentTo')
 
     fw5 = root.Building[1].BuildingDetails.Enclosure.FoundationWalls.FoundationWall[2]
-    assert fw5.getparent().getparent().Foundations.Foundation[1].AttachedToFoundationWall[1].attrib['idref'] ==\
-        'foundationwall-5'
-    assert fw5.InteriorAdjacentTo == 'basement - unconditioned'
-    assert not hasattr(fw5, 'ExteriorAdjacentTo')
+    assert fw5.ExteriorAdjacentTo == 'basement - unconditioned'
+    assert not hasattr(fw5, 'InteriorAdjacentTo')
     assert not hasattr(fw5, 'AdjacentTo')
 
     fw6 = root.Building[1].BuildingDetails.Enclosure.FoundationWalls.FoundationWall[3]
-    assert fw6.getparent().getparent().Foundations.Foundation[2].AttachedToFoundationWall[0].attrib['idref'] ==\
-        'foundationwall-6'
     assert fw6.InteriorAdjacentTo == 'crawlspace'
     assert not hasattr(fw6, 'ExteriorAdjacentTo')
     assert not hasattr(fw6, 'AdjacentTo')
 
     fw7 = root.Building[1].BuildingDetails.Enclosure.FoundationWalls.FoundationWall[4]
-    assert fw7.getparent().getparent().Foundations.Foundation[2].AttachedToFoundationWall[1].attrib['idref'] ==\
-        'foundationwall-7'
     assert fw7.ExteriorAdjacentTo == 'basement - unconditioned'
     assert not hasattr(fw7, 'InteriorAdjacentTo')
     assert not hasattr(fw7, 'AdjacentTo')

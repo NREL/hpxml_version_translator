@@ -458,7 +458,9 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
                                'crawlspace': 'Interior'}[str(fw.AdjacentTo)]
                 if boundary_v3 == 'Interior' and hasattr(foundation, 'FoundationType'):
                     # Check that this matches the Foundation/FoundationType if available
-                    if fw.AdjacentTo == 'unconditioned basement' and not hasattr(foundation.FoundationType, 'Basement'):
+                    if fw.AdjacentTo == 'unconditioned basement' and\
+                        (foundation.xpath('count(h:FoundationType/h:Basement/h:Conditioned[text()="true"])', **xpkw) > 0
+                            or not hasattr(foundation.FoundationType, 'Basement')):
                         boundary_v3 = 'Exterior'
                     elif fw.AdjacentTo == 'crawlspace' and not hasattr(foundation.FoundationType, 'Crawlspace'):
                         boundary_v3 = 'Exterior'
