@@ -208,12 +208,10 @@
                         </FoundationType>
                         <FoundationWall>
                             <SystemIdentifier id='foundationwall-4'/>
-                            <AdjacentToFoundation idref='foundation-4'/>
                             <AdjacentTo>crawlspace</AdjacentTo>
                         </FoundationWall>
                         <FoundationWall>
                             <SystemIdentifier id='foundationwall-5'/>
-                            <AdjacentToFoundation idref='foundation-4'/>
                             <AdjacentTo>unconditioned basement</AdjacentTo>
                         </FoundationWall>                        
                     </Foundation>
@@ -224,12 +222,10 @@
                         </FoundationType>
                         <FoundationWall>
                             <SystemIdentifier id='foundationwall-6'/>
-                            <AdjacentToFoundation idref='foundation-5'/>
                             <AdjacentTo>crawlspace</AdjacentTo>
                         </FoundationWall>
                         <FoundationWall>
                             <SystemIdentifier id='foundationwall-7'/>
-                            <AdjacentToFoundation idref='foundation-5'/>
                             <AdjacentTo>unconditioned basement</AdjacentTo>
                         </FoundationWall>                        
                     </Foundation>
