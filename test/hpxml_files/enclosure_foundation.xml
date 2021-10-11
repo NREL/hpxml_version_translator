@@ -199,6 +199,36 @@
                             </extension>
                         </Slab>
                     </Foundation>
+                    <Foundation>
+                        <SystemIdentifier id='foundation-4'/>
+                        <FoundationType>
+                            <Basement>
+                                <Conditioned>true</Conditioned>
+                            </Basement>
+                        </FoundationType>
+                        <FoundationWall>
+                            <SystemIdentifier id='foundationwall-4'/>
+                            <AdjacentTo>crawlspace</AdjacentTo>
+                        </FoundationWall>
+                        <FoundationWall>
+                            <SystemIdentifier id='foundationwall-5'/>
+                            <AdjacentTo>unconditioned basement</AdjacentTo>
+                        </FoundationWall>                        
+                    </Foundation>
+                    <Foundation>
+                        <SystemIdentifier id='foundation-5'/>
+                        <FoundationType>
+                            <Crawlspace/>
+                        </FoundationType>
+                        <FoundationWall>
+                            <SystemIdentifier id='foundationwall-6'/>
+                            <AdjacentTo>crawlspace</AdjacentTo>
+                        </FoundationWall>
+                        <FoundationWall>
+                            <SystemIdentifier id='foundationwall-7'/>
+                            <AdjacentTo>unconditioned basement</AdjacentTo>
+                        </FoundationWall>                        
+                    </Foundation>
                 </Foundations>
             </Enclosure>
         </BuildingDetails>
