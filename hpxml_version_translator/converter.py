@@ -553,13 +553,14 @@ def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
             except IndexError:
                 warnings.warn(f"Cannot find a knee wall attached to {this_attic.SystemIdentifier.attrib['id']}.")
             else:
-                add_after(
-                    knee_wall,
-                    ['SystemIdentifier',
-                     'ExteriorAdjacentTo',
-                     'InteriorAdjacentTo'],
-                    E.AtticWallType('knee wall')
-                )
+                if not hasattr(knee_wall, 'AtticWallType'):
+                    add_after(
+                        knee_wall,
+                        ['SystemIdentifier',
+                         'ExteriorAdjacentTo',
+                         'InteriorAdjacentTo'],
+                        E.AtticWallType('knee wall')
+                    )
                 add_before(
                     this_attic,
                     ['AttachedToFrameFloor',
