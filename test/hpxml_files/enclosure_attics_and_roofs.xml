@@ -59,6 +59,7 @@
                             <AttachedToRoof idref='roof-2'/>
                             <ExteriorAdjacentTo>ambient</ExteriorAdjacentTo>
                             <InteriorAdjacentTo>living space</InteriorAdjacentTo>
+                            <AtticKneeWall idref='wall-1'/>
                             <AtticType>venting unknown attic</AtticType>
                             <AtticFloorInsulation>
                                 <SystemIdentifier id='attic-floor-insulation-1'/>
