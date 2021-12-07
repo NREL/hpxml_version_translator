@@ -15,6 +15,12 @@ def main(argv=sys.argv[1:]):
         default=sys.stdout.buffer,
         help='Filename of output HPXML v3 file. If not provided, will go to stdout'
     )
+    parser.add_argument(
+        '-v', '--to_hpxml_version',
+        type=int,
+        default=3,
+        help='Major version of HPXML to translate to, default: 3'
+    )
     args = parser.parse_args(argv)
     convert_hpxml_to_3(args.hpxml_input, args.output)
 

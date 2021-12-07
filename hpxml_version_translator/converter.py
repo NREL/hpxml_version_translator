@@ -2,16 +2,20 @@ from collections import defaultdict
 from copy import deepcopy
 import datetime as dt
 from lxml import etree, objectify
+import os
 import pathlib
 import re
 import tempfile
+from typing import Union, BinaryIO, List
 import io
 import warnings
 
 from hpxml_version_translator import exceptions as exc
 
+File = Union[str, bytes, os.PathLike, BinaryIO]
 
-def pathobj_to_str(x):
+
+def pathobj_to_str(x: File) -> Union[str, BinaryIO]:
     """Convert pathlib.Path object (if it is one) to a path string
 
     lxml doesn't like pathlib.Path objects, so change them to a string if
@@ -30,14 +34,14 @@ def pathobj_to_str(x):
         return x.name
 
 
-def detect_hpxml_version(hpxmlfilename):
-    doc = etree.parse(str(hpxmlfilename))
+def detect_hpxml_version(hpxmlfilename: File) -> List[int]:
+    doc = etree.parse(pathobj_to_str(hpxmlfilename))
     schema_version = list(map(int, doc.getroot().attrib['schemaVersion'].split('.')))
     schema_version.extend((3 - len(schema_version)) * [0])
     return schema_version
 
 
-def add_after(parent_el, list_of_el_names, el_to_add):
+def add_after(parent_el: etree._Element, list_of_el_names: List[str], el_to_add: etree._Element) -> None:
     for sibling_name in reversed(list_of_el_names):
         try:
             sibling = getattr(parent_el, sibling_name)[-1]
@@ -49,7 +53,7 @@ def add_after(parent_el, list_of_el_names, el_to_add):
     parent_el.insert(0, el_to_add)
 
 
-def add_before(parent_el, list_of_el_names, el_to_add):
+def add_before(parent_el: etree._Element, list_of_el_names: List[str], el_to_add: etree._Element) -> None:
     for sibling_name in list_of_el_names:
         try:
             sibling = getattr(parent_el, sibling_name)[0]
@@ -61,18 +65,29 @@ def add_before(parent_el, list_of_el_names, el_to_add):
     parent_el.append(el_to_add)
 
 
-def convert_hpxml_to_3(hpxml_file, hpxml3_file):
+def convert_hpxml_to_version(hpxml_version: int, hpxml_file: File, hpxml_out_file: File) -> None:
     schema_version = detect_hpxml_version(hpxml_file)
     major_version = schema_version[0]
-    if major_version == 1:
-        hpxml2_file = tempfile.NamedTemporaryFile()
-        convert_hpxml1_to_2(hpxml_file, hpxml2_file)
-        convert_hpxml2_to_3(hpxml2_file, hpxml3_file)
-    elif major_version == 2:
-        convert_hpxml2_to_3(hpxml_file, hpxml3_file)
+    if hpxml_version <= major_version:
+        raise RuntimeError(f"HPXML version requested is {hpxml_version} but input file version is {major_version}")
+    version_translator_funcs = {
+        1: convert_hpxml1_to_2,
+        2: convert_hpxml2_to_3
+    }
+    current_file = hpxml_file
+    with tempfile.TemporaryDirectory() as tmpdir:
+        for current_version in range(major_version, hpxml_version):
+            next_version = current_version + 1
+            next_file = hpxml_out_file if current_version + 1 == hpxml_version else pathlib.Path(tmpdir, f"{next_version}.xml")
+            version_translator_funcs[current_version](current_file, next_file)
+            current_file = next_file
 
 
-def convert_hpxml1_to_2(hpxml1_file, hpxml2_file):
+def convert_hpxml_to_3(hpxml_file: File, hpxml3_file: File) -> None:
+    convert_hpxml_to_version(3, hpxml_file, hpxml3_file)
+
+
+def convert_hpxml1_to_2(hpxml1_file: File, hpxml2_file: File) -> None:
     """Convert an HPXML v1 file to HPXML v2
 
     :param hpxml1_file: HPXML v1 input file
@@ -128,7 +143,7 @@ def convert_hpxml1_to_2(hpxml1_file, hpxml2_file):
     hpxml2_schema.assertValid(hpxml2_doc)
 
 
-def convert_hpxml2_to_3(hpxml2_file, hpxml3_file):
+def convert_hpxml2_to_3(hpxml2_file: File, hpxml3_file: File) -> None:
     """Convert an HPXML v2 file to HPXML v3
 
     :param hpxml2_file: HPXML v2 input file
