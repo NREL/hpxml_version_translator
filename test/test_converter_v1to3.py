@@ -2,18 +2,23 @@ from lxml import objectify
 import pathlib
 import tempfile
 
-from hpxml_version_translator.converter import convert_hpxml_to_3
+from hpxml_version_translator.converter import convert_hpxml_to_version
 
 
 hpxml_dir = pathlib.Path(__file__).resolve().parent / "hpxml_v1_files"
 
 
-def convert_hpxml_and_parse(input_filename):
+def convert_hpxml_and_parse(input_filename, version=3):
     with tempfile.NamedTemporaryFile("w+b") as f_out:
-        convert_hpxml_to_3(input_filename, f_out)
+        convert_hpxml_to_version(version, input_filename, f_out)
         f_out.seek(0)
         root = objectify.parse(f_out).getroot()
     return root
+
+
+def test_version_change_to_2():
+    root = convert_hpxml_and_parse(hpxml_dir / "version_change.xml", 2)
+    assert root.attrib["schemaVersion"] == "2.3"
 
 
 def test_version_change():

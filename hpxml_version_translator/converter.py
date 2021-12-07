@@ -1,6 +1,7 @@
 from collections import defaultdict
 from copy import deepcopy
 import datetime as dt
+from deprecated import deprecated
 from lxml import etree, objectify
 import os
 import pathlib
@@ -79,10 +80,12 @@ def convert_hpxml_to_version(
     schema_version = detect_hpxml_version(hpxml_file)
     major_version = schema_version[0]
     if hpxml_version <= major_version:
-        raise RuntimeError(
+        raise exc.HpxmlTranslationError(
             f"HPXML version requested is {hpxml_version} but input file version is {major_version}"
         )
     version_translator_funcs = {1: convert_hpxml1_to_2, 2: convert_hpxml2_to_3}
+    if hpxml_version - 1 not in version_translator_funcs.keys():
+        raise exc.HpxmlTranslationError(f"HPXML version {hpxml_version} not available")
     current_file = hpxml_file
     with tempfile.TemporaryDirectory() as tmpdir:
         for current_version in range(major_version, hpxml_version):
@@ -96,6 +99,7 @@ def convert_hpxml_to_version(
             current_file = next_file
 
 
+@deprecated(version="0.2", reason="Use convert_hpxml_to_version instead")
 def convert_hpxml_to_3(hpxml_file: File, hpxml3_file: File) -> None:
     convert_hpxml_to_version(3, hpxml_file, hpxml3_file)
 

@@ -1,5 +1,5 @@
 import argparse
-from hpxml_version_translator.converter import convert_hpxml_to_3
+from hpxml_version_translator.converter import convert_hpxml_to_version
 import sys
 
 
@@ -23,7 +23,7 @@ def main(argv=sys.argv[1:]):
         help="Major version of HPXML to translate to, default: 3",
     )
     args = parser.parse_args(argv)
-    convert_hpxml_to_3(args.hpxml_input, args.output)
+    convert_hpxml_to_version(args.to_hpxml_version, args.hpxml_input, args.output)
 
 
 if __name__ == "__main__":

@@ -22,3 +22,15 @@ def test_cli(capsysbinary):
     f = io.BytesIO(capsysbinary.readouterr().out)
     root = objectify.parse(f).getroot()
     assert root.attrib["schemaVersion"] == "3.0"
+
+
+def test_cli_to_v2(capsysbinary):
+    input_filename = str(
+        pathlib.Path(__file__).resolve().parent
+        / "hpxml_v1_files"
+        / "version_change.xml"
+    )
+    main([input_filename, "-v", "2"])
+    f = io.BytesIO(capsysbinary.readouterr().out)
+    root = objectify.parse(f).getroot()
+    assert root.attrib["schemaVersion"] == "2.3"

@@ -3,31 +3,50 @@ import pathlib
 import pytest
 import tempfile
 
-from hpxml_version_translator.converter import convert_hpxml_to_3
+from hpxml_version_translator.converter import (
+    convert_hpxml_to_3,
+    convert_hpxml_to_version,
+)
 from hpxml_version_translator import exceptions as exc
 
 
 hpxml_dir = pathlib.Path(__file__).resolve().parent / "hpxml_files"
 
 
-def convert_hpxml_and_parse(input_filename):
-    f_out = tempfile.NamedTemporaryFile("w+b", delete=False)
-    convert_hpxml_to_3(input_filename, f_out)
-    f_out.seek(0)
-    root = objectify.parse(f_out).getroot()
-    f_out.close()
-    import os
-
-    os.unlink(f_out.name)
-    # with tempfile.NamedTemporaryFile('w+b') as f_out:
-    #     convert_hpxml_to_3(input_filename, f_out)
-    #     f_out.seek(0)
-    #     root = objectify.parse(f_out).getroot()
+def convert_hpxml_and_parse(input_filename, version=3):
+    with tempfile.NamedTemporaryFile("w+b") as f_out:
+        convert_hpxml_to_version(version, input_filename, f_out)
+        f_out.seek(0)
+        root = objectify.parse(f_out).getroot()
     return root
 
 
 def test_version_change():
     root = convert_hpxml_and_parse(hpxml_dir / "version_change.xml")
+    assert root.attrib["schemaVersion"] == "3.0"
+
+
+def test_attempt_to_change_to_same_version():
+    with pytest.raises(
+        exc.HpxmlTranslationError,
+        match=r"HPXML version requested is 2 but input file version is 2",
+    ):
+        convert_hpxml_and_parse(hpxml_dir / "version_change.xml", version=2)
+
+
+def test_attempt_to_use_nonexistent_version():
+    with pytest.raises(
+        exc.HpxmlTranslationError, match=r"HPXML version \d+ not available"
+    ):
+        convert_hpxml_and_parse(hpxml_dir / "version_change.xml", version=5)
+
+
+def test_convert_hpxml_to_3():
+    with tempfile.NamedTemporaryFile("w+b") as f_out:
+        with pytest.deprecated_call():
+            convert_hpxml_to_3(hpxml_dir / "version_change.xml", f_out)
+        f_out.seek(0)
+        root = objectify.parse(f_out).getroot()
     assert root.attrib["schemaVersion"] == "3.0"
 
 
