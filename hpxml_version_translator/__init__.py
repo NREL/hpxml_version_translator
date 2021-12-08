@@ -5,7 +5,7 @@ import sys
 
 def main(argv=sys.argv[1:]):
     parser = argparse.ArgumentParser(
-        description="HPXML Version Translator, convert an HPXML file to 3.0"
+        description="HPXML Version Translator, convert an HPXML file to a newer version"
     )
     parser.add_argument("hpxml_input", help="Filename of hpxml file")
     parser.add_argument(
