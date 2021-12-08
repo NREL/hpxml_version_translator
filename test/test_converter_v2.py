@@ -10,7 +10,7 @@ from hpxml_version_translator.converter import (
 from hpxml_version_translator import exceptions as exc
 
 
-hpxml_dir = pathlib.Path(__file__).resolve().parent / "hpxml_files"
+hpxml_dir = pathlib.Path(__file__).resolve().parent / "hpxml_v2_files"
 
 
 def convert_hpxml_and_parse(input_filename, version=3):
