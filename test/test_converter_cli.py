@@ -6,7 +6,7 @@ import tempfile
 from hpxml_version_translator import main
 
 
-hpxml_dir = pathlib.Path(__file__).resolve().parent / "hpxml_files"
+hpxml_dir = pathlib.Path(__file__).resolve().parent / "hpxml_v2_files"
 
 
 def test_cli(capsysbinary):
