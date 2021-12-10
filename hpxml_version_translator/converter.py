@@ -928,7 +928,9 @@ def convert_hpxml2_to_3(hpxml2_file: File, hpxml3_file: File) -> None:
         enclosure.Slabs.append(deepcopy(slab))
         foundation.remove(slab)
 
-    # Remove 'Insulation/InsulationLocation'
+    # Allow insulation location to be layer-specific
+    # https://github.com/hpxmlwg/hpxml/pull/188
+
     for insulation_location in root.xpath(
         "//h:Insulation/h:InsulationLocation", **xpkw
     ):
@@ -943,6 +945,8 @@ def convert_hpxml2_to_3(hpxml2_file: File, hpxml3_file: File) -> None:
         insulation.remove(insulation.InsulationLocation)
 
     # Windows and Skylights
+    # Window sub-components
+    # https://github.com/hpxmlwg/hpxml/pull/202
     for i, win in enumerate(root.xpath("//h:Window|//h:Skylight", **xpkw)):
         if hasattr(win, "VisibleTransmittance"):
             vis_trans = float(win.VisibleTransmittance)
@@ -1055,6 +1059,9 @@ def convert_hpxml2_to_3(hpxml2_file: File, hpxml3_file: File) -> None:
             win.InteriorShading.clear()
             win.InteriorShading.append(E.SystemIdentifier(id=f"interior-shading-{i}"))
             win.InteriorShading.append(E.Type(cache_interior_shading_type))
+
+        # Window/Skylight Interior Shading Fraction
+        # https://github.com/hpxmlwg/hpxml/pull/189
         if hasattr(win, "InteriorShadingFactor"):
             # handles a case where `InteriorShadingFactor` is specified without `InteriorShading`
             if not hasattr(win, "InteriorShading"):
@@ -1258,15 +1265,6 @@ def convert_hpxml2_to_3(hpxml2_file: File, hpxml3_file: File) -> None:
     for inverter_efficiency in root.xpath("//h:InverterEfficiency", **xpkw):
         if float(inverter_efficiency) > 1:
             inverter_efficiency._setText(str(float(inverter_efficiency) / 100.0))
-
-    # TODO: Allow insulation location to be layer-specific
-    # https://github.com/hpxmlwg/hpxml/pull/188
-
-    # TODO: Window/Skylight Interior Shading Fraction
-    # https://github.com/hpxmlwg/hpxml/pull/189
-
-    # TODO: Window sub-components
-    # https://github.com/hpxmlwg/hpxml/pull/202
 
     # Write out new file
     hpxml3_doc.write(pathobj_to_str(hpxml3_file), pretty_print=True, encoding="utf-8")
