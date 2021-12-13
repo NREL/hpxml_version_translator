@@ -41,7 +41,7 @@ jobs:
         with:
           path: coverage/coverage.xml
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          minimum_coverage: 95
+          minimum_coverage: 98
           skip_covered: false
           show_missing: true
       - name: Style Checks

@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<HPXML xmlns="http://hpxmlonline.com/2019/10" schemaVersion="3.0">
+    <XMLTransactionHeaderInformation>
+        <XMLType></XMLType>
+        <XMLGeneratedBy></XMLGeneratedBy>
+        <CreatedDateAndTime>2021-04-05T14:17:07.685077</CreatedDateAndTime>
+        <Transaction>create</Transaction>
+    </XMLTransactionHeaderInformation>
+    <SoftwareInfo/>
+    <Building>
+        <BuildingID id="bldg1"></BuildingID>
+        <ProjectStatus>
+            <EventType>audit</EventType>
+        </ProjectStatus>
+        <BuildingDetails>
+            <Enclosure>
+                <FoundationWalls>
+                  <FoundationWall>
+                      <SystemIdentifier id='foundationwall-1'/>
+                      <DistanceToTopOfInsulation>0.0</DistanceToTopOfInsulation>
+                      <DistanceToBottomOfInsulation>8.0</DistanceToBottomOfInsulation>
+                      <Insulation>
+                          <SystemIdentifier id='foundationwall-1-insulation'/>
+                          <InsulationGrade>3</InsulationGrade>
+                          <InsulationCondition>good</InsulationCondition>
+                          <AssemblyEffectiveRValue>5.0</AssemblyEffectiveRValue>
+                      </Insulation>
+                  </FoundationWall>
+                  <FoundationWall>
+                      <SystemIdentifier id='foundationwall-2'/>
+                      <DistanceToTopOfInsulation>1.0</DistanceToTopOfInsulation>
+                      <DistanceToBottomOfInsulation>5.0</DistanceToBottomOfInsulation>
+                      <Insulation>
+                          <SystemIdentifier id='foundationwall-2-insulation'/>
+                          <Layer>
+                              <InstallationType>continuous</InstallationType>
+                              <InsulationMaterial>
+                                  <Batt>fiberglass</Batt>
+                              </InsulationMaterial>
+                              <NominalRValue>8.9</NominalRValue>
+                              <Thickness>1.5</Thickness>
+                          </Layer>
+                          <Layer>
+                              <InstallationType>cavity</InstallationType>
+                              <InsulationMaterial>
+                                  <Rigid>eps</Rigid>
+                              </InsulationMaterial>
+                              <NominalRValue>15.0</NominalRValue>
+                              <Thickness>3.0</Thickness>
+                          </Layer>
+                      </Insulation>
+                  </FoundationWall>
+                </FoundationWalls>
+                <Slabs>
+                    <Slab>
+                        <SystemIdentifier id='slab-1'/>
+                        <PerimeterInsulationDepth>2.0</PerimeterInsulationDepth>
+                        <UnderSlabInsulationWidth>1.0</UnderSlabInsulationWidth>
+                        <UnderSlabInsulationSpansEntireSlab>false</UnderSlabInsulationSpansEntireSlab>
+                        <PerimeterInsulation>
+                            <SystemIdentifier id='slab-1-perimeter-insulation'/>
+                            <Layer>
+                                <NominalRValue>10.0</NominalRValue>
+                            </Layer>
+                        </PerimeterInsulation>
+                        <UnderSlabInsulation>
+                            <SystemIdentifier id='slab-1-under-slab-insulation'/>
+                            <Layer>
+                                <NominalRValue>5.0</NominalRValue>
+                            </Layer>
+                        </UnderSlabInsulation>
+                    </Slab>
+                  </Slabs>
+            </Enclosure>
+        </BuildingDetails>
+    </Building>
+    <Building>
+        <BuildingID id="bldg2"></BuildingID>
+        <ProjectStatus>
+            <EventType>proposed workscope</EventType>
+        </ProjectStatus>
+        <BuildingDetails>
+            <Enclosure>
+                <FoundationWalls>
+                  <FoundationWall>
+                      <SystemIdentifier id='foundationwall-3'/>
+                      <DistanceToTopOfInsulation>0.0</DistanceToTopOfInsulation>
+                      <DistanceToBottomOfInsulation>8.0</DistanceToBottomOfInsulation>
+                      <Insulation>
+                          <SystemIdentifier id='foundationwall-3-insulation'/>
+                          <InsulationGrade>3</InsulationGrade>
+                          <InsulationCondition>good</InsulationCondition>
+                          <AssemblyEffectiveRValue>5.0</AssemblyEffectiveRValue>
+                      </Insulation>
+                  </FoundationWall>
+                  <FoundationWall>
+                      <SystemIdentifier id='foundationwall-4'/>
+                      <DistanceToTopOfInsulation>1.0</DistanceToTopOfInsulation>
+                      <DistanceToBottomOfInsulation>5.0</DistanceToBottomOfInsulation>
+                      <Insulation>
+                          <SystemIdentifier id='foundationwall-4-insulation'/>
+                          <Layer>
+                              <InstallationType>continuous</InstallationType>
+                              <InsulationMaterial>
+                                  <Batt>fiberglass</Batt>
+                              </InsulationMaterial>
+                              <NominalRValue>8.9</NominalRValue>
+                              <Thickness>1.5</Thickness>
+                          </Layer>
+                          <Layer>
+                              <InstallationType>cavity</InstallationType>
+                              <InsulationMaterial>
+                                  <Rigid>eps</Rigid>
+                              </InsulationMaterial>
+                              <NominalRValue>15.0</NominalRValue>
+                              <Thickness>3.0</Thickness>
+                          </Layer>
+                      </Insulation>
+                  </FoundationWall>
+                </FoundationWalls>
+                <Slabs>
+                    <Slab>
+                        <SystemIdentifier id='slab-2'/>
+                        <PerimeterInsulationDepth>2.0</PerimeterInsulationDepth>
+                        <UnderSlabInsulationWidth>1.0</UnderSlabInsulationWidth>
+                        <UnderSlabInsulationSpansEntireSlab>false</UnderSlabInsulationSpansEntireSlab>
+                        <PerimeterInsulation>
+                            <SystemIdentifier id='slab-2-perimeter-insulation'/>
+                            <Layer>
+                                <NominalRValue>10.0</NominalRValue>
+                            </Layer>
+                        </PerimeterInsulation>
+                        <UnderSlabInsulation>
+                            <SystemIdentifier id='slab-2-under-slab-insulation'/>
+                            <Layer>
+                                <NominalRValue>5.0</NominalRValue>
+                            </Layer>
+                        </UnderSlabInsulation>
+                    </Slab>
+                  </Slabs>
+            </Enclosure>
+        </BuildingDetails>
+    </Building>
+</HPXML>

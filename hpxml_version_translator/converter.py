@@ -125,7 +125,11 @@ def convert_hpxml_to_version(
             f"HPXML version requested is {hpxml_version} but input file major version is {schema_version_file[0]}"
         )
 
-    version_translator_funcs = {1: convert_hpxml1_to_2, 2: convert_hpxml2_to_3}
+    version_translator_funcs = {
+        1: convert_hpxml1_to_2,
+        2: convert_hpxml2_to_3,
+        3: convert_hpxml3_to_4,
+    }
     current_file = hpxml_file
     with tempfile.TemporaryDirectory() as tmpdir:
         for current_version in range(major_version_file, major_version_requested):
@@ -161,7 +165,7 @@ def convert_hpxml1_to_2(
 
     if version not in get_hpxml_versions(major_version=2):
         raise exc.HpxmlTranslationError(
-            "convert_hpxml2_to_3 must have valid target version of 3.x, got {version}."
+            "convert_hpxml1_to_2 must have valid target version of 2.x, got {version}."
         )
 
     # Load Schemas
@@ -1329,3 +1333,120 @@ def convert_hpxml2_to_3(
     # Write out new file
     hpxml3_doc.write(pathobj_to_str(hpxml3_file), pretty_print=True, encoding="utf-8")
     hpxml3_schema.assertValid(hpxml3_doc)
+
+
+def convert_hpxml3_to_4(
+    hpxml3_file: File, hpxml4_file: File, version: str = "4.0"
+) -> None:
+    """Convert an HPXML v3 file to HPXML v4
+
+    :param hpxml3_file: HPXML v3 input file
+    :type hpxml3_file: pathlib.Path, str, or file-like
+    :param hpxml4_file: HPXML v4 output file
+    :type hpxml4_file: pathlib.Path, str, or file-like
+    """
+    if version not in get_hpxml_versions(major_version=4):
+        raise exc.HpxmlTranslationError(
+            "convert_hpxml3_to_4 must have valid target version of 4.x, got {version}."
+        )
+
+    # Load Schemas
+    schemas_dir = pathlib.Path(__file__).resolve().parent / "schemas"
+    hpxml3_schema_doc = etree.parse(str(schemas_dir / "v3.0" / "HPXML.xsd"))
+    hpxml3_ns = hpxml3_schema_doc.getroot().attrib["targetNamespace"]
+    hpxml3_schema = etree.XMLSchema(hpxml3_schema_doc)
+    hpxml4_schema_doc = etree.parse(str(schemas_dir / "v4.0" / "HPXML.xsd"))
+    hpxml4_ns = hpxml4_schema_doc.getroot().attrib["targetNamespace"]
+    hpxml4_schema = etree.XMLSchema(hpxml4_schema_doc)
+
+    E = objectify.ElementMaker(
+        namespace=hpxml3_ns, nsmap={None: hpxml3_ns}, annotate=False
+    )
+    xpkw = {"namespaces": {"h": hpxml3_ns}}
+
+    # Ensure we're working with valid HPXML v3.x
+    hpxml3_doc = objectify.parse(pathobj_to_str(hpxml3_file))
+    hpxml3_schema.assertValid(hpxml3_doc)
+
+    # Change the namespace of every element to use the HPXML v4 namespace
+    # https://stackoverflow.com/a/51660868/11600307
+    change_ns_xslt = etree.parse(
+        str(pathlib.Path(__file__).resolve().parent / "change_namespace.xsl")
+    )
+    hpxml4_doc = hpxml3_doc.xslt(
+        change_ns_xslt, orig_namespace=f"'{hpxml3_ns}'", new_namespace=f"'{hpxml4_ns}'"
+    )
+    root = hpxml4_doc.getroot()
+
+    # Change version
+    root.attrib["schemaVersion"] = "4.0"
+
+    # Move some FoundationWall/Slab insulation properties into their Layer elements
+    # https://github.com/hpxmlwg/hpxml/pull/215
+
+    for fwall in root.xpath("//h:FoundationWall", **xpkw):
+        if hasattr(fwall, "DistanceToTopOfInsulation"):
+            for il in fwall.xpath("h:Insulation/h:Layer", **xpkw):
+                add_before(
+                    il,
+                    ["extension"],
+                    E.DistanceToTopOfInsulation(fwall.DistanceToTopOfInsulation.text),
+                )
+            fwall.remove(fwall.DistanceToTopOfInsulation)
+        if hasattr(fwall, "DistanceToBottomOfInsulation"):
+            for il in fwall.xpath("h:Insulation/h:Layer", **xpkw):
+                add_before(
+                    il,
+                    ["extension"],
+                    E.DistanceToBottomOfInsulation(
+                        fwall.DistanceToBottomOfInsulation.text
+                    ),
+                )
+            fwall.remove(fwall.DistanceToBottomOfInsulation)
+
+    for slab in root.xpath("//h:Slab", **xpkw):
+        if hasattr(slab, "PerimeterInsulationDepth"):
+            for il in slab.xpath("h:PerimeterInsulation/h:Layer", **xpkw):
+                add_before(
+                    il,
+                    ["extension"],
+                    E.InsulationDepth(slab.PerimeterInsulationDepth.text),
+                )
+            slab.remove(slab.PerimeterInsulationDepth)
+        if hasattr(slab, "UnderSlabInsulationWidth"):
+            for il in slab.xpath("h:UnderSlabInsulation/h:Layer", **xpkw):
+                add_before(
+                    il,
+                    ["extension"],
+                    E.InsulationWidth(slab.UnderSlabInsulationWidth.text),
+                )
+            slab.remove(slab.UnderSlabInsulationWidth)
+        if hasattr(slab, "UnderSlabInsulationSpansEntireSlab"):
+            for il in slab.xpath("h:UnderSlabInsulation/h:Layer", **xpkw):
+                add_before(
+                    il,
+                    ["extension"],
+                    E.InsulationSpansEntireSlab(
+                        slab.UnderSlabInsulationSpansEntireSlab.text
+                    ),
+                )
+            slab.remove(slab.UnderSlabInsulationSpansEntireSlab)
+
+    # Battery Capacity
+    # https://github.com/hpxmlwg/hpxml/pull/296
+
+    for battery in root.xpath("//h:Battery", **xpkw):
+        if hasattr(battery, "NominalCapacity"):
+            value = battery.NominalCapacity.text
+            battery.NominalCapacity._setText(None)
+            battery.NominalCapacity.append(E.Units("Ah"))
+            battery.NominalCapacity.append(E.Value(value))
+        if hasattr(battery, "UsableCapacity"):
+            value = battery.UsableCapacity.text
+            battery.UsableCapacity._setText(None)
+            battery.UsableCapacity.append(E.Units("Ah"))
+            battery.UsableCapacity.append(E.Value(value))
+
+    # Write out new file
+    hpxml4_doc.write(pathobj_to_str(hpxml4_file), pretty_print=True, encoding="utf-8")
+    hpxml4_schema.assertValid(hpxml4_doc)
