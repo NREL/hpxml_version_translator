@@ -13,7 +13,7 @@ from hpxml_version_translator import exceptions as exc
 hpxml_dir = pathlib.Path(__file__).resolve().parent / "hpxml_v2_files"
 
 
-def convert_hpxml_and_parse(input_filename, version=3):
+def convert_hpxml_and_parse(input_filename, version="3.0"):
     with tempfile.NamedTemporaryFile("w+b") as f_out:
         convert_hpxml_to_version(version, input_filename, f_out)
         f_out.seek(0)
@@ -29,16 +29,17 @@ def test_version_change():
 def test_attempt_to_change_to_same_version():
     with pytest.raises(
         exc.HpxmlTranslationError,
-        match=r"HPXML version requested is 2 but input file version is 2",
+        match=r"HPXML version requested is 2\.3 but input file major version is 2",
     ):
-        convert_hpxml_and_parse(hpxml_dir / "version_change.xml", version=2)
+        convert_hpxml_and_parse(hpxml_dir / "version_change.xml", version="2.3")
 
 
 def test_attempt_to_use_nonexistent_version():
     with pytest.raises(
-        exc.HpxmlTranslationError, match=r"HPXML version \d+ not available"
+        exc.HpxmlTranslationError,
+        match=r"HPXML version 5\.0 is not valid\. Must be one of",
     ):
-        convert_hpxml_and_parse(hpxml_dir / "version_change.xml", version=5)
+        convert_hpxml_and_parse(hpxml_dir / "version_change.xml", version="5.0")
 
 
 def test_convert_hpxml_to_3():

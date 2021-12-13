@@ -7,7 +7,7 @@ import os
 import pathlib
 import re
 import tempfile
-from typing import Union, BinaryIO, List
+from typing import Tuple, Union, BinaryIO, List
 import io
 import warnings
 
@@ -39,11 +39,41 @@ def pathobj_to_str(x: File) -> Union[str, BinaryIO]:
         return x.name
 
 
-def detect_hpxml_version(hpxmlfilename: File) -> List[int]:
-    doc = etree.parse(pathobj_to_str(hpxmlfilename))
-    schema_version = list(map(int, doc.getroot().attrib["schemaVersion"].split(".")))
+def convert_str_version_to_tuple(version: str) -> Tuple[int]:
+    schema_version = list(map(int, version.split(".")))
     schema_version.extend((3 - len(schema_version)) * [0])
     return schema_version
+
+
+def detect_hpxml_version(hpxmlfilename: File) -> List[int]:
+    doc = etree.parse(pathobj_to_str(hpxmlfilename))
+    return convert_str_version_to_tuple(doc.getroot().attrib["schemaVersion"])
+
+
+def get_hpxml_versions(major_version: Union[int, None] = None) -> List[str]:
+    schemas_dir = pathlib.Path(__file__).resolve().parent / "schemas"
+    schema_versions = []
+    for schema_dir in schemas_dir.iterdir():
+        if not schema_dir.is_dir() or schema_dir.name == "v1.1.1":
+            continue
+        tree = etree.parse(str(schema_dir / "HPXMLDataTypes.xsd"))
+        root = tree.getroot()
+        ns = {"xs": root.nsmap["xs"]}
+        schema_versions.extend(
+            root.xpath(
+                '//xs:simpleType[@name="schemaVersionType"]/xs:restriction/xs:enumeration/@value',
+                namespaces=ns,
+                smart_strings=False,
+            )
+        )
+        if major_version:
+            schema_versions = list(
+                filter(
+                    lambda x: convert_str_version_to_tuple(x)[0] == major_version,
+                    schema_versions,
+                )
+            )
+    return schema_versions
 
 
 def add_after(
@@ -75,43 +105,64 @@ def add_before(
 
 
 def convert_hpxml_to_version(
-    hpxml_version: int, hpxml_file: File, hpxml_out_file: File
+    hpxml_version: str, hpxml_file: File, hpxml_out_file: File
 ) -> None:
-    schema_version = detect_hpxml_version(hpxml_file)
-    major_version = schema_version[0]
-    if hpxml_version <= major_version:
+
+    # Validate that the hpxml_version requested is a valid one.
+    hpxml_version_strs = get_hpxml_versions()
+    schema_version_requested = convert_str_version_to_tuple(hpxml_version)
+    major_version_requested = schema_version_requested[0]
+    if hpxml_version not in hpxml_version_strs:
         raise exc.HpxmlTranslationError(
-            f"HPXML version requested is {hpxml_version} but input file version is {major_version}"
+            f"HPXML version {hpxml_version} is not valid. Must be one of {', '.join(hpxml_version_strs)}."
         )
+
+    # Validate that the hpxml_version requested is a newer one that the current one.
+    schema_version_file = detect_hpxml_version(hpxml_file)
+    major_version_file = schema_version_file[0]
+    if major_version_requested <= major_version_file:
+        raise exc.HpxmlTranslationError(
+            f"HPXML version requested is {hpxml_version} but input file major version is {schema_version_file[0]}"
+        )
+
     version_translator_funcs = {1: convert_hpxml1_to_2, 2: convert_hpxml2_to_3}
-    if hpxml_version - 1 not in version_translator_funcs.keys():
-        raise exc.HpxmlTranslationError(f"HPXML version {hpxml_version} not available")
     current_file = hpxml_file
     with tempfile.TemporaryDirectory() as tmpdir:
-        for current_version in range(major_version, hpxml_version):
+        for current_version in range(major_version_file, major_version_requested):
             next_version = current_version + 1
-            next_file = (
-                hpxml_out_file
-                if current_version + 1 == hpxml_version
-                else pathlib.Path(tmpdir, f"{next_version}.xml")
-            )
-            version_translator_funcs[current_version](current_file, next_file)
+            if current_version + 1 == major_version_requested:
+                next_file = hpxml_out_file
+                version_translator_funcs[current_version](
+                    current_file, next_file, hpxml_version
+                )
+            else:
+                next_file = pathlib.Path(tmpdir, f"{next_version}.xml")
+                version_translator_funcs[current_version](current_file, next_file)
             current_file = next_file
 
 
 @deprecated(version="0.2", reason="Use convert_hpxml_to_version instead")
 def convert_hpxml_to_3(hpxml_file: File, hpxml3_file: File) -> None:
-    convert_hpxml_to_version(3, hpxml_file, hpxml3_file)
+    convert_hpxml_to_version("3.0", hpxml_file, hpxml3_file)
 
 
-def convert_hpxml1_to_2(hpxml1_file: File, hpxml2_file: File) -> None:
+def convert_hpxml1_to_2(
+    hpxml1_file: File, hpxml2_file: File, version: str = "2.3"
+) -> None:
     """Convert an HPXML v1 file to HPXML v2
 
     :param hpxml1_file: HPXML v1 input file
     :type hpxml1_file: pathlib.Path, str, or file-like
     :param hpxml2_file: HPXML v2 output file
     :type hpxml2_file: pathlib.Path, str, or file-like
+    :param version: Target version
+    :type version: str
     """
+
+    if version not in get_hpxml_versions(major_version=2):
+        raise exc.HpxmlTranslationError(
+            "convert_hpxml2_to_3 must have valid target version of 3.x, got {version}."
+        )
 
     # Load Schemas
     schemas_dir = pathlib.Path(__file__).resolve().parent / "schemas"
@@ -142,7 +193,7 @@ def convert_hpxml1_to_2(hpxml1_file: File, hpxml2_file: File) -> None:
     root = hpxml2_doc.getroot()
 
     # Change version
-    root.attrib["schemaVersion"] = "2.3"
+    root.attrib["schemaVersion"] = version
 
     # TODO: Moved the BPI 2400 elements and renamed/reorganized them.
 
@@ -169,14 +220,23 @@ def convert_hpxml1_to_2(hpxml1_file: File, hpxml2_file: File) -> None:
     hpxml2_schema.assertValid(hpxml2_doc)
 
 
-def convert_hpxml2_to_3(hpxml2_file: File, hpxml3_file: File) -> None:
+def convert_hpxml2_to_3(
+    hpxml2_file: File, hpxml3_file: File, version: str = "3.0"
+) -> None:
     """Convert an HPXML v2 file to HPXML v3
 
     :param hpxml2_file: HPXML v2 input file
     :type hpxml2_file: pathlib.Path, str, or file-like
     :param hpxml3_file: HPXML v3 output file
     :type hpxml3_file: pathlib.Path, str, or file-like
+    :param version: Target version
+    :type version: str
     """
+
+    if version not in get_hpxml_versions(major_version=3):
+        raise exc.HpxmlTranslationError(
+            "convert_hpxml2_to_3 must have valid target version of 3.x, got {version}."
+        )
 
     # Load Schemas
     schemas_dir = pathlib.Path(__file__).resolve().parent / "schemas"
@@ -207,7 +267,7 @@ def convert_hpxml2_to_3(hpxml2_file: File, hpxml3_file: File) -> None:
     root = hpxml3_doc.getroot()
 
     # Change version
-    root.attrib["schemaVersion"] = "3.0"
+    root.attrib["schemaVersion"] = version
 
     # Standardized location mapping
     location_map = {
