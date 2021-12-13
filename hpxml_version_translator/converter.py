@@ -163,7 +163,7 @@ def convert_hpxml1_to_2(
 
     if version not in get_hpxml_versions(major_version=2):
         raise exc.HpxmlTranslationError(
-            "convert_hpxml2_to_3 must have valid target version of 3.x, got {version}."
+            "convert_hpxml1_to_2 must have valid target version of 2.x, got {version}."
         )
 
     # Load Schemas
@@ -1333,7 +1333,7 @@ def convert_hpxml2_to_3(
     hpxml3_schema.assertValid(hpxml3_doc)
 
 
-def convert_hpxml3_to_4(hpxml3_file: File, hpxml4_file: File) -> None:
+def convert_hpxml3_to_4(hpxml3_file: File, hpxml4_file: File, version: str = "4.0") -> None:
     """Convert an HPXML v3 file to HPXML v4
 
     :param hpxml3_file: HPXML v3 input file
@@ -1341,6 +1341,10 @@ def convert_hpxml3_to_4(hpxml3_file: File, hpxml4_file: File) -> None:
     :param hpxml4_file: HPXML v4 output file
     :type hpxml4_file: pathlib.Path, str, or file-like
     """
+    if version not in get_hpxml_versions(major_version=4):
+        raise exc.HpxmlTranslationError(
+            "convert_hpxml3_to_4 must have valid target version of 4.x, got {version}."
+        )
 
     # Load Schemas
     schemas_dir = pathlib.Path(__file__).resolve().parent / "schemas"

@@ -8,7 +8,7 @@ from hpxml_version_translator.converter import convert_hpxml_to_version
 hpxml_dir = pathlib.Path(__file__).resolve().parent / "hpxml_v3_files"
 
 
-def convert_hpxml_and_parse(input_filename, version=4):
+def convert_hpxml_and_parse(input_filename, version="4.0"):
     with tempfile.NamedTemporaryFile("w+b") as f_out:
         convert_hpxml_to_version(version, input_filename, f_out)
         f_out.seek(0)
