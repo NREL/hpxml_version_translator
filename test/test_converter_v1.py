@@ -4,7 +4,10 @@ import pathlib
 import pytest
 import tempfile
 
-from hpxml_version_translator.converter import convert_hpxml_to_version, convert_hpxml1_to_2
+from hpxml_version_translator.converter import (
+    convert_hpxml_to_version,
+    convert_hpxml1_to_2,
+)
 from hpxml_version_translator import exceptions as exc
 
 
@@ -38,7 +41,7 @@ def test_mismatch_version():
     f_out = io.BytesIO()
     with pytest.raises(
         exc.HpxmlTranslationError,
-        match=r"convert_hpxml2_to_3 must have valid target version of 3\.x"
+        match=r"convert_hpxml1_to_2 must have valid target version of 2\.x",
     ):
         convert_hpxml1_to_2(hpxml_dir / "version_change.xml", f_out, "3.0")
 

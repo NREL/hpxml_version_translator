@@ -125,9 +125,11 @@ def convert_hpxml_to_version(
             f"HPXML version requested is {hpxml_version} but input file major version is {schema_version_file[0]}"
         )
 
-    version_translator_funcs = {1: convert_hpxml1_to_2,
-                                2: convert_hpxml2_to_3,
-                                3: convert_hpxml3_to_4}
+    version_translator_funcs = {
+        1: convert_hpxml1_to_2,
+        2: convert_hpxml2_to_3,
+        3: convert_hpxml3_to_4,
+    }
     current_file = hpxml_file
     with tempfile.TemporaryDirectory() as tmpdir:
         for current_version in range(major_version_file, major_version_requested):
@@ -1333,7 +1335,9 @@ def convert_hpxml2_to_3(
     hpxml3_schema.assertValid(hpxml3_doc)
 
 
-def convert_hpxml3_to_4(hpxml3_file: File, hpxml4_file: File, version: str = "4.0") -> None:
+def convert_hpxml3_to_4(
+    hpxml3_file: File, hpxml4_file: File, version: str = "4.0"
+) -> None:
     """Convert an HPXML v3 file to HPXML v4
 
     :param hpxml3_file: HPXML v3 input file
@@ -1383,40 +1387,64 @@ def convert_hpxml3_to_4(hpxml3_file: File, hpxml4_file: File, version: str = "4.
     for fwall in root.xpath("//h:FoundationWall", **xpkw):
         if hasattr(fwall, "DistanceToTopOfInsulation"):
             for il in fwall.xpath("h:Insulation/h:Layer", **xpkw):
-                add_before(il, ["extension"], E.DistanceToTopOfInsulation(fwall.DistanceToTopOfInsulation.text))
+                add_before(
+                    il,
+                    ["extension"],
+                    E.DistanceToTopOfInsulation(fwall.DistanceToTopOfInsulation.text),
+                )
             fwall.remove(fwall.DistanceToTopOfInsulation)
         if hasattr(fwall, "DistanceToBottomOfInsulation"):
             for il in fwall.xpath("h:Insulation/h:Layer", **xpkw):
-                add_before(il, ["extension"], E.DistanceToBottomOfInsulation(fwall.DistanceToBottomOfInsulation.text))
+                add_before(
+                    il,
+                    ["extension"],
+                    E.DistanceToBottomOfInsulation(
+                        fwall.DistanceToBottomOfInsulation.text
+                    ),
+                )
             fwall.remove(fwall.DistanceToBottomOfInsulation)
 
     for slab in root.xpath("//h:Slab", **xpkw):
         if hasattr(slab, "PerimeterInsulationDepth"):
             for il in slab.xpath("h:PerimeterInsulation/h:Layer", **xpkw):
-                add_before(il, ["extension"], E.InsulationDepth(slab.PerimeterInsulationDepth.text))
+                add_before(
+                    il,
+                    ["extension"],
+                    E.InsulationDepth(slab.PerimeterInsulationDepth.text),
+                )
             slab.remove(slab.PerimeterInsulationDepth)
         if hasattr(slab, "UnderSlabInsulationWidth"):
             for il in slab.xpath("h:UnderSlabInsulation/h:Layer", **xpkw):
-                add_before(il, ["extension"], E.InsulationWidth(slab.UnderSlabInsulationWidth.text))
+                add_before(
+                    il,
+                    ["extension"],
+                    E.InsulationWidth(slab.UnderSlabInsulationWidth.text),
+                )
             slab.remove(slab.UnderSlabInsulationWidth)
         if hasattr(slab, "UnderSlabInsulationSpansEntireSlab"):
             for il in slab.xpath("h:UnderSlabInsulation/h:Layer", **xpkw):
-                add_before(il, ["extension"], E.InsulationSpansEntireSlab(slab.UnderSlabInsulationSpansEntireSlab.text))
+                add_before(
+                    il,
+                    ["extension"],
+                    E.InsulationSpansEntireSlab(
+                        slab.UnderSlabInsulationSpansEntireSlab.text
+                    ),
+                )
             slab.remove(slab.UnderSlabInsulationSpansEntireSlab)
 
     # Battery Capacity
     # https://github.com/hpxmlwg/hpxml/pull/296
 
-    for battery in root.xpath('//h:Battery', **xpkw):
-        if hasattr(battery, 'NominalCapacity'):
+    for battery in root.xpath("//h:Battery", **xpkw):
+        if hasattr(battery, "NominalCapacity"):
             value = battery.NominalCapacity.text
             battery.NominalCapacity._setText(None)
-            battery.NominalCapacity.append(E.Units('Ah'))
+            battery.NominalCapacity.append(E.Units("Ah"))
             battery.NominalCapacity.append(E.Value(value))
-        if hasattr(battery, 'UsableCapacity'):
+        if hasattr(battery, "UsableCapacity"):
             value = battery.UsableCapacity.text
             battery.UsableCapacity._setText(None)
-            battery.UsableCapacity.append(E.Units('Ah'))
+            battery.UsableCapacity.append(E.Units("Ah"))
             battery.UsableCapacity.append(E.Value(value))
 
     # Write out new file
