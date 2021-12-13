@@ -1,23 +1,34 @@
 import argparse
-from hpxml_version_translator.converter import convert_hpxml_to_3
+from hpxml_version_translator.converter import (
+    convert_hpxml_to_version,
+    get_hpxml_versions,
+)
 import sys
 
 
 def main(argv=sys.argv[1:]):
-    parser = argparse.ArgumentParser(description='HPXML Version Translator, convert an HPXML file to 3.0')
+    parser = argparse.ArgumentParser(
+        description="HPXML Version Translator, convert an HPXML file to a newer version"
+    )
+    parser.add_argument("hpxml_input", help="Filename of hpxml file")
     parser.add_argument(
-        'hpxml_input',
-        help='Filename of hpxml file'
+        "-o",
+        "--output",
+        type=argparse.FileType("wb"),
+        default=sys.stdout.buffer,
+        help="Filename of output HPXML v3 file. If not provided, will go to stdout",
     )
     parser.add_argument(
-        '-o', '--output',
-        type=argparse.FileType('wb'),
-        default=sys.stdout.buffer,
-        help='Filename of output HPXML v3 file. If not provided, will go to stdout'
+        "-v",
+        "--to_hpxml_version",
+        type=str,
+        default="3.0",
+        choices=get_hpxml_versions(),
+        help="Major version of HPXML to translate to, default: 3.0",
     )
     args = parser.parse_args(argv)
-    convert_hpxml_to_3(args.hpxml_input, args.output)
+    convert_hpxml_to_version(args.to_hpxml_version, args.hpxml_input, args.output)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()  # pragma: no cover
