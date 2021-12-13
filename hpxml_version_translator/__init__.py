@@ -24,7 +24,7 @@ def main(argv=sys.argv[1:]):
         type=str,
         default="3.0",
         choices=get_hpxml_versions(),
-        help="Major version of HPXML to translate to, default: 3.0",
+        help="Version of HPXML to translate to, default: 3.0",
     )
     args = parser.parse_args(argv)
     convert_hpxml_to_version(args.to_hpxml_version, args.hpxml_input, args.output)
