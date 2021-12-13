@@ -1,6 +1,6 @@
 # HPXML Version Translator
 
-This package converts an HPXML v1/v2 file to v3. 
+This package converts an HPXML file to a newer version.
 
 ## Developer Installation
 
