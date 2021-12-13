@@ -1,8 +1,11 @@
+import io
 from lxml import objectify
 import pathlib
+import pytest
 import tempfile
 
-from hpxml_version_translator.converter import convert_hpxml_to_version
+from hpxml_version_translator.converter import convert_hpxml_to_version, convert_hpxml1_to_2
+from hpxml_version_translator import exceptions as exc
 
 
 hpxml_dir = pathlib.Path(__file__).resolve().parent / "hpxml_v1_files"
@@ -29,6 +32,15 @@ def test_version_change_to_2_2():
 def test_version_change():
     root = convert_hpxml_and_parse(hpxml_dir / "version_change.xml")
     assert root.attrib["schemaVersion"] == "3.0"
+
+
+def test_mismatch_version():
+    f_out = io.BytesIO()
+    with pytest.raises(
+        exc.HpxmlTranslationError,
+        match=r"convert_hpxml2_to_3 must have valid target version of 3\.x"
+    ):
+        convert_hpxml1_to_2(hpxml_dir / "version_change.xml", f_out, "3.0")
 
 
 def test_water_heater_caz():
