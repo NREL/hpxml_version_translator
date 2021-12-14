@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<HPXML xmlns="http://hpxml.org/hpxml/2011/1" schemaVersion="1.1.1">
+    <XMLTransactionHeaderInformation>
+        <XMLType></XMLType>
+        <XMLGeneratedBy></XMLGeneratedBy>
+        <CreatedDateAndTime>2021-04-05T13:01:49.803920</CreatedDateAndTime>
+        <Transaction>create</Transaction>
+    </XMLTransactionHeaderInformation>
+    <SoftwareInfo/>
+    <Consumption>
+        <BuildingID/>
+        <CustomerID/>
+        <BPI2400Inputs>
+            <BaseloadBillingPeriodStartDate>2021-12-01</BaseloadBillingPeriodStartDate>
+            <BaseloadBillingPeriodEndDate>2021-12-31</BaseloadBillingPeriodEndDate>
+            <BaseloadHeatingFuelType>electricity</BaseloadHeatingFuelType>
+        </BPI2400Inputs>
+    </Consumption>
+</HPXML>

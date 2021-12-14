@@ -219,6 +219,20 @@ def convert_hpxml1_to_2(
             )
         batch_heater.remove(batch_heater.CollectorLoopType)
 
+    # Throw a warning if there are BPI2400 elements and move it into an extension
+    bpi2400_els = root.xpath("//h:BPI2400Inputs", **xpkw)
+    if bpi2400_els:
+        warnings.warn(
+            "BPI2400Inputs in v1.1.1 are ambiguous and aren't translated into their "
+            "corresponding elements in v2.x. They have been moved to an extension instead."
+        )
+    for el in bpi2400_els:
+        parent_el = el.getparent()
+        if not hasattr(parent_el, "extension"):
+            parent_el.append(E.extension())
+        parent_el.extension.append(deepcopy(el))
+        parent_el.remove(el)
+
     # Write out new file
     hpxml2_doc.write(pathobj_to_str(hpxml2_file), pretty_print=True, encoding="utf-8")
     hpxml2_schema.assertValid(hpxml2_doc)

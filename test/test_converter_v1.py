@@ -66,3 +66,11 @@ def test_solar_thermal():
     sts2 = root.Building.BuildingDetails.Systems.SolarThermal.SolarThermalSystem[1]
     assert not hasattr(sts2, "CollectorLoopType")
     assert sts2.CollectorType == "single glazing black"
+
+
+def test_bpi2400():
+    with pytest.warns(UserWarning, match=r"BPI2400Inputs .+ are ambiguous"):
+        root = convert_hpxml_and_parse(hpxml_dir / "bpi2400.xml")
+
+    assert not hasattr(root.Consumption, "BPI2400Inputs")
+    assert hasattr(root.Consumption.extension, "BPI2400Inputs")
