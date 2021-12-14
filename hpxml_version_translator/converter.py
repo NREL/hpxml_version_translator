@@ -145,7 +145,7 @@ def convert_hpxml_to_version(
             current_file = next_file
 
 
-@deprecated(version="0.2", reason="Use convert_hpxml_to_version instead")
+@deprecated(version="1.0.0", reason="Use convert_hpxml_to_version instead")
 def convert_hpxml_to_3(hpxml_file: File, hpxml3_file: File) -> None:
     convert_hpxml_to_version("3.0", hpxml_file, hpxml3_file)
 
