@@ -11,7 +11,7 @@ Python >=3.6
 In general, we recommended to use a virtual environment or conda environment and then installing with pip, like so:
 
 ```
-pip install hpxml_version_translator
+pip install hpxml-version-translator
 ```
 
 ### Developer Installation
