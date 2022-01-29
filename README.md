@@ -29,7 +29,7 @@ pip install -e ".[dev]"
 
 ```
 hpxml_version_translator -h
-usage: hpxml_version_translator [-h] [-o OUTPUT] [-v {2.0,2.1,2.2,2.2.1,2.3,4.0,3.0}] hpxml_input
+usage: hpxml_version_translator [-h] [-o OUTPUT] [-v {2.0,2.1,2.2,2.2.1,2.3,3.0}] hpxml_input
 
 HPXML Version Translator, convert an HPXML file to a newer version
 
@@ -40,7 +40,7 @@ optional arguments:
   -h, --help            show this help message and exit
   -o OUTPUT, --output OUTPUT
                         Filename of output HPXML file. If not provided, will go to stdout
-  -v {2.0,2.1,2.2,2.2.1,2.3,4.0,3.0}, --to_hpxml_version {2.0,2.1,2.2,2.2.1,2.3,4.0,3.0}
+  -v {2.0,2.1,2.2,2.2.1,2.3,4.0,3.0}, --to_hpxml_version {2.0,2.1,2.2,2.2.1,2.3,3.0}
                         Version of HPXML to translate to, default: 3.0
 ```
 
