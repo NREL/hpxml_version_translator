@@ -1461,6 +1461,15 @@ def convert_hpxml3_to_4(
             battery.UsableCapacity.append(E.Units("Ah"))
             battery.UsableCapacity.append(E.Value(value))
 
+    # Convert DSE to fractions if needed
+    # https://github.com/hpxmlwg/hpxml/pull/246
+
+    for dist_system_eff in root.xpath('//h:AnnualHeatingDistributionSystemEfficiency | \
+                                      //h:AnnualCoolingDistributionSystemEfficiency', **xpkw):
+        if dist_system_eff > 1:
+            frac_dist_system_eff = float(dist_system_eff) / 100
+            dist_system_eff._setText(str(frac_dist_system_eff))
+
     # Write out new file
     hpxml4_doc.write(pathobj_to_str(hpxml4_file), pretty_print=True, encoding="utf-8")
     hpxml4_schema.assertValid(hpxml4_doc)
