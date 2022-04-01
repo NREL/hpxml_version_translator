@@ -72,6 +72,18 @@ def test_battery():
     assert b2.UsableCapacity.Value == 1600
 
 
+def test_dse():
+    root = convert_hpxml_and_parse(hpxml_dir / "dse.xml")
+
+    hvacdist1 = root.Building[0].BuildingDetails.Systems.HVAC.HVACDistribution[0]
+    assert hvacdist1.AnnualHeatingDistributionSystemEfficiency == 0.83
+    assert hvacdist1.AnnualCoolingDistributionSystemEfficiency == 0.89
+
+    hvacdist2 = root.Building[0].BuildingDetails.Systems.HVAC.HVACDistribution[1]
+    assert hvacdist2.AnnualHeatingDistributionSystemEfficiency == 0.66
+    assert hvacdist2.AnnualCoolingDistributionSystemEfficiency == 0.77
+
+
 def test_mismatch_version():
     f_out = io.BytesIO()
     with pytest.raises(
