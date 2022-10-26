@@ -883,3 +883,15 @@ def test_inverter_efficiency():
 
     for pv_system in root.Building[0].BuildingDetails.Systems.Photovoltaics.PVSystem:
         assert pv_system.InverterEfficiency == 0.9
+
+
+def test_dse():
+    root = convert_hpxml_and_parse(hpxml_dir / "dse.xml")
+
+    hvacdist1 = root.Building[0].BuildingDetails.Systems.HVAC.HVACDistribution[0]
+    assert hvacdist1.AnnualHeatingDistributionSystemEfficiency == 0.83
+    assert hvacdist1.AnnualCoolingDistributionSystemEfficiency == 0.89
+
+    hvacdist2 = root.Building[0].BuildingDetails.Systems.HVAC.HVACDistribution[1]
+    assert hvacdist2.AnnualHeatingDistributionSystemEfficiency == 0.66
+    assert hvacdist2.AnnualCoolingDistributionSystemEfficiency == 0.77

@@ -1344,6 +1344,15 @@ def convert_hpxml2_to_3(
         if float(inverter_efficiency) > 1:
             inverter_efficiency._setText(str(float(inverter_efficiency) / 100.0))
 
+    # Convert DSE to fractions if needed
+    # https://github.com/hpxmlwg/hpxml/pull/246
+
+    for dist_system_eff in root.xpath('//h:AnnualHeatingDistributionSystemEfficiency | \
+                                      //h:AnnualCoolingDistributionSystemEfficiency', **xpkw):
+        if dist_system_eff > 1:
+            frac_dist_system_eff = float(dist_system_eff) / 100
+            dist_system_eff._setText(str(frac_dist_system_eff))
+
     # Write out new file
     hpxml3_doc.write(pathobj_to_str(hpxml3_file), pretty_print=True, encoding="utf-8")
     hpxml3_schema.assertValid(hpxml3_doc)
