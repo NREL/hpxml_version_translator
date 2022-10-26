@@ -1468,7 +1468,7 @@ def convert_hpxml3_to_4(
         el.tag = f"{{{hpxml4_ns}}}BranchPipingLength"
 
     # Removed deprecated Dehumidifier/Efficiency field
-    # https://github.com/hpxmlwg/hpxml/pull
+    # https://github.com/hpxmlwg/hpxml/pull/345
 
     for dehumidifier in root.xpath("//h:Dehumidifier", **xpkw):
         if hasattr(dehumidifier, "Efficiency"):
