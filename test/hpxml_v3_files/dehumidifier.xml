@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<HPXML xmlns="http://hpxmlonline.com/2019/10" schemaVersion="3.1">
+    <XMLTransactionHeaderInformation>
+        <XMLType></XMLType>
+        <XMLGeneratedBy></XMLGeneratedBy>
+        <CreatedDateAndTime>2021-04-05T14:17:07.685077</CreatedDateAndTime>
+        <Transaction>create</Transaction>
+    </XMLTransactionHeaderInformation>
+    <SoftwareInfo/>
+    <Building>
+        <BuildingID id="bldg1"></BuildingID>
+        <ProjectStatus>
+            <EventType>audit</EventType>
+        </ProjectStatus>
+        <BuildingDetails>
+            <Appliances>
+                <Dehumidifier>
+                    <SystemIdentifier id='Dehumidifier1'/>
+                    <Type>portable</Type>
+                    <Location>living space</Location>
+                    <Efficiency>1.8</Efficiency>
+                    <Capacity>40.0</Capacity>
+                    <DehumidistatSetpoint>0.5</DehumidistatSetpoint>
+                </Dehumidifier>
+                <Dehumidifier>
+                    <SystemIdentifier id='Dehumidifier2'/>
+                    <Type>portable</Type>
+                    <Location>living space</Location>
+                    <Capacity>40.0</Capacity>
+                    <DehumidistatSetpoint>0.5</DehumidistatSetpoint>
+                </Dehumidifier>
+            </Appliances>
+        </BuildingDetails>
+    </Building>
+</HPXML>

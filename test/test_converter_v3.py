@@ -72,16 +72,35 @@ def test_battery():
     assert b2.UsableCapacity.Value == 1600
 
 
-def test_dse():
-    root = convert_hpxml_and_parse(hpxml_dir / "dse.xml")
+def test_dhw_recirculation():
+    root = convert_hpxml_and_parse(hpxml_dir / "hot_water_recirculation.xml")
 
-    hvacdist1 = root.Building[0].BuildingDetails.Systems.HVAC.HVACDistribution[0]
-    assert hvacdist1.AnnualHeatingDistributionSystemEfficiency == 0.83
-    assert hvacdist1.AnnualCoolingDistributionSystemEfficiency == 0.89
+    hwd = root.Building[0].BuildingDetails.Systems.WaterHeating.HotWaterDistribution
+    assert not hasattr(hwd, "BranchPipingLoopLength")
+    assert hwd.SystemType.Recirculation.BranchPipingLength == 50
 
-    hvacdist2 = root.Building[0].BuildingDetails.Systems.HVAC.HVACDistribution[1]
-    assert hvacdist2.AnnualHeatingDistributionSystemEfficiency == 0.66
-    assert hvacdist2.AnnualCoolingDistributionSystemEfficiency == 0.77
+
+def test_dehumidifier():
+    root = convert_hpxml_and_parse(hpxml_dir / "dehumidifier.xml")
+
+    d1 = root.Building[0].BuildingDetails.Appliances.Dehumidifier[0]
+    assert not hasattr(d1, "Efficiency")
+    assert d1.EnergyFactor == 1.8
+
+    d2 = root.Building[0].BuildingDetails.Appliances.Dehumidifier[1]
+    assert not hasattr(d2, "Efficiency")
+    assert not hasattr(d2, "EnergyFactor")
+
+
+def test_standby_loss():
+    root = convert_hpxml_and_parse(hpxml_dir / "commercial_water_heater.xml")
+
+    wh1 = root.Building[0].BuildingDetails.Systems.WaterHeating.WaterHeatingSystem[0]
+    assert wh1.StandbyLoss.Units == "F/hr"
+    assert wh1.StandbyLoss.Value == 1.0
+
+    wh2 = root.Building[0].BuildingDetails.Systems.WaterHeating.WaterHeatingSystem[1]
+    assert not hasattr(wh2, "StandbyLoss")
 
 
 def test_mismatch_version():
