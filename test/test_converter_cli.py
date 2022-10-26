@@ -17,12 +17,12 @@ def test_cli(capsysbinary):
         output_filename = str(tmppath / "out.xml")
         main([input_filename, "-o", output_filename])
         root = objectify.parse(output_filename).getroot()
-        assert root.attrib["schemaVersion"] == "3.0"
+        assert root.attrib["schemaVersion"] == "3.1"
 
     main([input_filename])
     f = io.BytesIO(capsysbinary.readouterr().out)
     root = objectify.parse(f).getroot()
-    assert root.attrib["schemaVersion"] == "3.0"
+    assert root.attrib["schemaVersion"] == "3.1"
 
 
 def test_cli_to_v2(capsysbinary):
@@ -39,11 +39,11 @@ def test_cli_to_v2(capsysbinary):
 
 def test_schema_versions():
     hpxml_versions = get_hpxml_versions()
-    assert "3.0" in hpxml_versions
+    assert "3.1" in hpxml_versions
     assert "2.3" in hpxml_versions
     assert "1.1.1" not in hpxml_versions
 
     hpxml_versions = get_hpxml_versions(major_version=3)
-    assert "3.0" in hpxml_versions
+    assert "3.1" in hpxml_versions
     assert "2.3" not in hpxml_versions
     assert "1.1.1" not in hpxml_versions

@@ -72,6 +72,37 @@ def test_battery():
     assert b2.UsableCapacity.Value == 1600
 
 
+def test_dhw_recirculation():
+    root = convert_hpxml_and_parse(hpxml_dir / "hot_water_recirculation.xml")
+
+    hwd = root.Building[0].BuildingDetails.Systems.WaterHeating.HotWaterDistribution
+    assert not hasattr(hwd, "BranchPipingLoopLength")
+    assert hwd.SystemType.Recirculation.BranchPipingLength == 50
+
+
+def test_dehumidifier():
+    root = convert_hpxml_and_parse(hpxml_dir / "dehumidifier.xml")
+
+    d1 = root.Building[0].BuildingDetails.Appliances.Dehumidifier[0]
+    assert not hasattr(d1, "Efficiency")
+    assert d1.EnergyFactor == 1.8
+
+    d2 = root.Building[0].BuildingDetails.Appliances.Dehumidifier[1]
+    assert not hasattr(d2, "Efficiency")
+    assert not hasattr(d2, "EnergyFactor")
+
+
+def test_standby_loss():
+    root = convert_hpxml_and_parse(hpxml_dir / "commercial_water_heater.xml")
+
+    wh1 = root.Building[0].BuildingDetails.Systems.WaterHeating.WaterHeatingSystem[0]
+    assert wh1.StandbyLoss.Units == "F/hr"
+    assert wh1.StandbyLoss.Value == 1.0
+
+    wh2 = root.Building[0].BuildingDetails.Systems.WaterHeating.WaterHeatingSystem[1]
+    assert not hasattr(wh2, "StandbyLoss")
+
+
 def test_mismatch_version():
     f_out = io.BytesIO()
     with pytest.raises(

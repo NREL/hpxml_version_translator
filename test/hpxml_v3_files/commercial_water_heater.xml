@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<HPXML xmlns="http://hpxmlonline.com/2019/10" schemaVersion="3.0">
+    <XMLTransactionHeaderInformation>
+        <XMLType></XMLType>
+        <XMLGeneratedBy></XMLGeneratedBy>
+        <CreatedDateAndTime>2021-04-05T14:17:07.685077</CreatedDateAndTime>
+        <Transaction>create</Transaction>
+    </XMLTransactionHeaderInformation>
+    <SoftwareInfo/>
+    <Building>
+        <BuildingID id="bldg1"></BuildingID>
+        <ProjectStatus>
+            <EventType>audit</EventType>
+        </ProjectStatus>
+        <BuildingDetails>
+            <Systems>
+                <WaterHeating>
+                    <WaterHeatingSystem>
+                        <SystemIdentifier id='WaterHeatingSystem1'/>
+                        <WaterHeaterType>space-heating boiler with storage tank</WaterHeaterType>
+                        <Location>living space</Location>
+                        <TankVolume>50.0</TankVolume>
+                        <FractionDHWLoadServed>1.0</FractionDHWLoadServed>
+                        <StandbyLoss>1.0</StandbyLoss>
+                        <HotWaterTemperature>125.0</HotWaterTemperature>
+                    </WaterHeatingSystem>
+                    <WaterHeatingSystem>
+                        <SystemIdentifier id='WaterHeatingSystem2'/>
+                        <WaterHeaterType>space-heating boiler with storage tank</WaterHeaterType>
+                        <Location>living space</Location>
+                        <TankVolume>50.0</TankVolume>
+                        <FractionDHWLoadServed>1.0</FractionDHWLoadServed>
+                        <HotWaterTemperature>125.0</HotWaterTemperature>
+                    </WaterHeatingSystem>
+                  </WaterHeating>
+            </Systems>
+        </BuildingDetails>
+    </Building>
+</HPXML>

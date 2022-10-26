@@ -147,7 +147,7 @@ def convert_hpxml_to_version(
 
 @deprecated(version="1.0.0", reason="Use convert_hpxml_to_version instead")
 def convert_hpxml_to_3(hpxml_file: File, hpxml3_file: File) -> None:
-    convert_hpxml_to_version("3.0", hpxml_file, hpxml3_file)
+    convert_hpxml_to_version("3.1", hpxml_file, hpxml3_file)
 
 
 def convert_hpxml1_to_2(
@@ -239,7 +239,7 @@ def convert_hpxml1_to_2(
 
 
 def convert_hpxml2_to_3(
-    hpxml2_file: File, hpxml3_file: File, version: str = "3.0"
+    hpxml2_file: File, hpxml3_file: File, version: str = "3.1"
 ) -> None:
     """Convert an HPXML v2 file to HPXML v3
 
@@ -261,7 +261,7 @@ def convert_hpxml2_to_3(
     hpxml2_schema_doc = etree.parse(str(schemas_dir / "v2.3" / "HPXML.xsd"))
     hpxml2_ns = hpxml2_schema_doc.getroot().attrib["targetNamespace"]
     hpxml2_schema = etree.XMLSchema(hpxml2_schema_doc)
-    hpxml3_schema_doc = etree.parse(str(schemas_dir / "v3.0" / "HPXML.xsd"))
+    hpxml3_schema_doc = etree.parse(str(schemas_dir / "v3.1" / "HPXML.xsd"))
     hpxml3_ns = hpxml3_schema_doc.getroot().attrib["targetNamespace"]
     hpxml3_schema = etree.XMLSchema(hpxml3_schema_doc)
 
@@ -1366,7 +1366,7 @@ def convert_hpxml3_to_4(
 
     # Load Schemas
     schemas_dir = pathlib.Path(__file__).resolve().parent / "schemas"
-    hpxml3_schema_doc = etree.parse(str(schemas_dir / "v3.0" / "HPXML.xsd"))
+    hpxml3_schema_doc = etree.parse(str(schemas_dir / "v3.1" / "HPXML.xsd"))
     hpxml3_ns = hpxml3_schema_doc.getroot().attrib["targetNamespace"]
     hpxml3_schema = etree.XMLSchema(hpxml3_schema_doc)
     hpxml4_schema_doc = etree.parse(str(schemas_dir / "v4.0" / "HPXML.xsd"))
@@ -1460,6 +1460,47 @@ def convert_hpxml3_to_4(
             battery.UsableCapacity._setText(None)
             battery.UsableCapacity.append(E.Units("Ah"))
             battery.UsableCapacity.append(E.Value(value))
+
+    # Renamed element BranchPipingLoopLength to BranchPipingLength.
+    # https://github.com/hpxmlwg/hpxml/pull/342
+
+    for el in root.xpath("//h:Recirculation/h:BranchPipingLoopLength", **xpkw):
+        el.tag = f"{{{hpxml4_ns}}}BranchPipingLength"
+
+    # Removed deprecated Dehumidifier/Efficiency field
+    # https://github.com/hpxmlwg/hpxml/pull
+
+    for dehumidifier in root.xpath("//h:Dehumidifier", **xpkw):
+        if hasattr(dehumidifier, "Efficiency"):
+            value = dehumidifier.Efficiency.text
+            dehumidifier.remove(dehumidifier.Efficiency)
+            add_before(
+                dehumidifier,
+                [
+                 "IntegratedEnergyFactor",
+                 "DehumidistatSetpoint",
+                 "Airflow",
+                 "FractionDehumidificationLoadServed",
+                 "extension"
+                ],
+                E.EnergyFactor(value)
+            )
+
+    # Replaced StandbyLoss with StandbyLoss[Units]/Value
+    # https://github.com/hpxmlwg/hpxml/pull/334
+
+    for water_heater in root.xpath("//h:WaterHeatingSystem", **xpkw):
+        if hasattr(water_heater, "StandbyLoss"):
+            value = water_heater.StandbyLoss.text
+            add_after(
+                water_heater,
+                ["StandbyLoss"],
+                E.StandbyLoss(
+                    E.Units("F/hr"),
+                    E.Value(value)
+                )
+            )
+            water_heater.remove(water_heater.StandbyLoss)
 
     # Write out new file
     hpxml4_doc.write(pathobj_to_str(hpxml4_file), pretty_print=True, encoding="utf-8")
