@@ -103,6 +103,53 @@ def test_standby_loss():
     assert not hasattr(wh2, "StandbyLoss")
 
 
+def test_enclosure_floors():
+    root = convert_hpxml_and_parse(hpxml_dir / "enclosure_floors.xml")
+
+    atc = root.Building.BuildingDetails.Enclosure.Attics.Attic
+    assert not hasattr(atc, "AttachedToFrameFloor")
+    assert hasattr(atc, "AttachedToFloor")
+
+    fnd = root.Building.BuildingDetails.Enclosure.Foundations.Foundation
+    assert not hasattr(fnd, "AttachedToFrameFloor")
+    assert hasattr(fnd, "AttachedToFloor")
+    assert fnd.ThermalBoundary == 'floor'
+
+    enc = root.Building.BuildingDetails.Enclosure
+    assert not hasattr(enc, "FrameFloors")
+    assert hasattr(enc, "Floors")
+    assert len(enc.Floors.Floor) == 4
+
+
+def test_enclosure_sip_walls():
+    root = convert_hpxml_and_parse(hpxml_dir / "enclosure_sip_wall.xml")
+
+    w1 = root.Building.BuildingDetails.Enclosure.Walls.Wall[0]
+    assert hasattr(w1.WallType, "StructuralInsulatedPanel")
+
+    w2 = root.Building.BuildingDetails.Enclosure.Walls.Wall[1]
+    assert hasattr(w2.WallType, "WoodStud")
+
+    w3 = root.Building.BuildingDetails.Enclosure.Walls.Wall[2]
+    assert hasattr(w3.WallType, "StructuralInsulatedPanel")
+
+
+def test_ducts():
+    root = convert_hpxml_and_parse(hpxml_dir / "ducts.xml")
+
+    hvacdist1 = root.Building.BuildingDetails.Systems.HVAC.HVACDistribution[0]
+    for i in (0, 1):
+        ducts = hvacdist1.DistributionSystemType.AirDistribution.Ducts[i]
+        assert hasattr(ducts, "SystemIdentifier")
+        assert ducts.SystemIdentifier.attrib['id'] == f"hvacd1_ducts{i}"
+
+    hvacdist2 = root.Building.BuildingDetails.Systems.HVAC.HVACDistribution[1]
+    for i in (0, 1):
+        ducts = hvacdist2.DistributionSystemType.AirDistribution.Ducts[i]
+        assert hasattr(ducts, "SystemIdentifier")
+        assert ducts.SystemIdentifier.attrib['id'] == f"hvacd2_ducts{i}"
+
+
 def test_mismatch_version():
     f_out = io.BytesIO()
     with pytest.raises(

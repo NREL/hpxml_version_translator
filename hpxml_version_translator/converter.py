@@ -1511,6 +1511,28 @@ def convert_hpxml3_to_4(
             )
             water_heater.remove(water_heater.StandbyLoss)
 
+    # Renamed FrameFloor to Floor
+    # Renamed StructurallyInsulatedPanel to StructuralInsulatedPanel
+    # https://github.com/hpxmlwg/hpxml/pull/332
+
+    for el in root.xpath("//h:FrameFloors", **xpkw):
+        el.tag = f"{{{hpxml4_ns}}}Floors"
+    for el in root.xpath("//h:FrameFloor", **xpkw):
+        el.tag = f"{{{hpxml4_ns}}}Floor"
+    for el in root.xpath("//h:AttachedToFrameFloor", **xpkw):
+        el.tag = f"{{{hpxml4_ns}}}AttachedToFloor"
+    for el in root.xpath("//h:StructurallyInsulatedPanel", **xpkw):
+        el.tag = f"{{{hpxml4_ns}}}StructuralInsulatedPanel"
+    for thermal_boundary in root.xpath("//h:Foundation/h:ThermalBoundary[text()='frame floor']", **xpkw):
+        thermal_boundary._setText('floor')
+
+    # Added a SystemIdentifier element for Ducts
+    # https://github.com/hpxmlwg/hpxml/pull/350
+    for hvac_dist in root.xpath("//h:HVACDistribution[h:DistributionSystemType/h:AirDistribution/h:Ducts]", **xpkw):
+        hvac_dist_id = hvac_dist.SystemIdentifier.attrib['id']
+        for i, ducts in enumerate(hvac_dist.DistributionSystemType.AirDistribution.Ducts):
+            ducts.insert(0, E.SystemIdentifier(id=f"{hvac_dist_id}_ducts{i}"))
+
     # Write out new file
     hpxml4_doc.write(pathobj_to_str(hpxml4_file), pretty_print=True, encoding="utf-8")
     hpxml4_schema.assertValid(hpxml4_doc)
