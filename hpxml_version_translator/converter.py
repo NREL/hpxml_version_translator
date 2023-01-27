@@ -1533,6 +1533,18 @@ def convert_hpxml3_to_4(
         for i, ducts in enumerate(hvac_dist.DistributionSystemType.AirDistribution.Ducts):
             ducts.insert(0, E.SystemIdentifier(id=f"{hvac_dist_id}_ducts{i}"))
 
+    # Standalone Inverter
+    # https://github.com/hpxmlwg/hpxml/pull/352
+    for pv_sys in root.xpath("//h:PVSystem[h:InverterEfficiency | h:YearInverterManufactured]", **xpkw):
+        inverter = E.Inverter(E.SystemIdentifier(id=f"{pv_sys.SystemIdentifier.attrib['id']}_inverter"))
+        if hasattr(pv_sys, "InverterEfficiency"):
+            inverter.append(E.InverterEfficiency(pv_sys.InverterEfficiency.text))
+            pv_sys.remove(pv_sys.InverterEfficiency)
+        if hasattr(pv_sys, "YearInverterManufactured"):
+            inverter.append(E.YearInverterManufactured(pv_sys.YearInverterManufactured.text))
+            pv_sys.remove(pv_sys.YearInverterManufactured)
+        pv_sys.getparent().append(inverter)
+
     # Write out new file
     hpxml4_doc.write(pathobj_to_str(hpxml4_file), pretty_print=True, encoding="utf-8")
     hpxml4_schema.assertValid(hpxml4_doc)
