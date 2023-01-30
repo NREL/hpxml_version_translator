@@ -103,6 +103,103 @@ def test_standby_loss():
     assert not hasattr(wh2, "StandbyLoss")
 
 
+def test_enclosure_floors():
+    root = convert_hpxml_and_parse(hpxml_dir / "enclosure_floors.xml")
+
+    atc = root.Building.BuildingDetails.Enclosure.Attics.Attic
+    assert not hasattr(atc, "AttachedToFrameFloor")
+    assert hasattr(atc, "AttachedToFloor")
+
+    fnd = root.Building.BuildingDetails.Enclosure.Foundations.Foundation
+    assert not hasattr(fnd, "AttachedToFrameFloor")
+    assert hasattr(fnd, "AttachedToFloor")
+    assert fnd.ThermalBoundary == 'floor'
+
+    enc = root.Building.BuildingDetails.Enclosure
+    assert not hasattr(enc, "FrameFloors")
+    assert hasattr(enc, "Floors")
+    assert len(enc.Floors.Floor) == 4
+
+
+def test_enclosure_sip_walls():
+    root = convert_hpxml_and_parse(hpxml_dir / "enclosure_sip_wall.xml")
+
+    w1 = root.Building.BuildingDetails.Enclosure.Walls.Wall[0]
+    assert hasattr(w1.WallType, "StructuralInsulatedPanel")
+
+    w2 = root.Building.BuildingDetails.Enclosure.Walls.Wall[1]
+    assert hasattr(w2.WallType, "WoodStud")
+
+    w3 = root.Building.BuildingDetails.Enclosure.Walls.Wall[2]
+    assert hasattr(w3.WallType, "StructuralInsulatedPanel")
+
+
+def test_ducts():
+    root = convert_hpxml_and_parse(hpxml_dir / "ducts.xml")
+
+    hvacdist1 = root.Building.BuildingDetails.Systems.HVAC.HVACDistribution[0]
+    for i in (0, 1):
+        ducts = hvacdist1.DistributionSystemType.AirDistribution.Ducts[i]
+        assert hasattr(ducts, "SystemIdentifier")
+        assert ducts.SystemIdentifier.attrib['id'] == f"hvacd1_ducts{i}"
+
+    hvacdist2 = root.Building.BuildingDetails.Systems.HVAC.HVACDistribution[1]
+    for i in (0, 1):
+        ducts = hvacdist2.DistributionSystemType.AirDistribution.Ducts[i]
+        assert hasattr(ducts, "SystemIdentifier")
+        assert ducts.SystemIdentifier.attrib['id'] == f"hvacd2_ducts{i}"
+
+
+def test_pv_system():
+    root = convert_hpxml_and_parse(hpxml_dir / "pv_sys.xml")
+
+    pv = root.Building[0].BuildingDetails.Systems.Photovoltaics
+
+    for i in (0, 2):
+        pv_sys = pv.PVSystem[i]
+        assert not hasattr(pv_sys, "InverterEfficiency")
+        assert not hasattr(pv_sys, "YearInverterManufactured")
+
+    assert len(pv.Inverter) == 2
+
+    inv1 = pv.Inverter[0]
+    assert hasattr(inv1, "SystemIdentifier")
+    assert inv1.InverterEfficiency == 0.95
+
+    inv2 = pv.Inverter[1]
+    assert hasattr(inv2, "SystemIdentifier")
+    assert inv2.YearInverterManufactured == 2019
+
+
+def test_count():
+    root = convert_hpxml_and_parse(hpxml_dir / "count.xml")
+
+    bd = root.Building[0].BuildingDetails
+    pd = root.Project.ProjectDetails
+
+    # These shouldn't change
+    assert hasattr(bd.BuildingSummary.BuildingConstruction, "NumberofUnits")
+    assert hasattr(pd.Measures.Measure, "Quantity")
+
+    # These should change
+    assert hasattr(bd.Enclosure.Windows.Window, "Count")
+    assert hasattr(bd.Enclosure.Skylights.Skylight, "Count")
+    assert hasattr(bd.Enclosure.Doors.Door, "Count")
+    assert hasattr(bd.Systems.MechanicalVentilation.VentilationFans.VentilationFan, "Count")
+    assert hasattr(bd.Systems.WaterHeating.WaterFixture, "Count")
+    assert hasattr(bd.Systems.ElectricVehicleChargers.ElectricVehicleCharger, "Count")
+    assert hasattr(bd.Appliances.ClothesWasher, "Count")
+    assert hasattr(bd.Appliances.ClothesDryer, "Count")
+    assert hasattr(bd.Appliances.Dishwasher, "Count")
+    assert hasattr(bd.Appliances.Refrigerator, "Count")
+    assert hasattr(bd.Appliances.Freezer, "Count")
+    assert hasattr(bd.Appliances.Dehumidifier, "Count")
+    assert hasattr(bd.Appliances.CookingRange, "Count")
+    assert hasattr(bd.Appliances.Oven, "Count")
+    assert hasattr(bd.Lighting.LightingGroup, "Count")
+    assert hasattr(bd.Lighting.CeilingFan, "Count")
+
+
 def test_mismatch_version():
     f_out = io.BytesIO()
     with pytest.raises(

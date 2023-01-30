@@ -1511,6 +1511,61 @@ def convert_hpxml3_to_4(
             )
             water_heater.remove(water_heater.StandbyLoss)
 
+    # Renamed FrameFloor to Floor
+    # Renamed StructurallyInsulatedPanel to StructuralInsulatedPanel
+    # https://github.com/hpxmlwg/hpxml/pull/332
+
+    for el in root.xpath("//h:FrameFloors", **xpkw):
+        el.tag = f"{{{hpxml4_ns}}}Floors"
+    for el in root.xpath("//h:FrameFloor", **xpkw):
+        el.tag = f"{{{hpxml4_ns}}}Floor"
+    for el in root.xpath("//h:AttachedToFrameFloor", **xpkw):
+        el.tag = f"{{{hpxml4_ns}}}AttachedToFloor"
+    for el in root.xpath("//h:StructurallyInsulatedPanel", **xpkw):
+        el.tag = f"{{{hpxml4_ns}}}StructuralInsulatedPanel"
+    for thermal_boundary in root.xpath("//h:Foundation/h:ThermalBoundary[text()='frame floor']", **xpkw):
+        thermal_boundary._setText('floor')
+
+    # Added a SystemIdentifier element for Ducts
+    # https://github.com/hpxmlwg/hpxml/pull/350
+    for hvac_dist in root.xpath("//h:HVACDistribution[h:DistributionSystemType/h:AirDistribution/h:Ducts]", **xpkw):
+        hvac_dist_id = hvac_dist.SystemIdentifier.attrib['id']
+        for i, ducts in enumerate(hvac_dist.DistributionSystemType.AirDistribution.Ducts):
+            ducts.insert(0, E.SystemIdentifier(id=f"{hvac_dist_id}_ducts{i}"))
+
+    # Standalone Inverter
+    # https://github.com/hpxmlwg/hpxml/pull/352
+    for pv_sys in root.xpath("//h:PVSystem[h:InverterEfficiency | h:YearInverterManufactured]", **xpkw):
+        inverter = E.Inverter(E.SystemIdentifier(id=f"{pv_sys.SystemIdentifier.attrib['id']}_inverter"))
+        if hasattr(pv_sys, "InverterEfficiency"):
+            inverter.append(E.InverterEfficiency(pv_sys.InverterEfficiency.text))
+            pv_sys.remove(pv_sys.InverterEfficiency)
+        if hasattr(pv_sys, "YearInverterManufactured"):
+            inverter.append(E.YearInverterManufactured(pv_sys.YearInverterManufactured.text))
+            pv_sys.remove(pv_sys.YearInverterManufactured)
+        pv_sys.getparent().append(inverter)
+
+    # Renamed NumberofUnits and Quantity to Count
+    # https://github.com/hpxmlwg/hpxml/pull/346
+    for el in root.xpath("//h:ElectricVehicleCharger[h:NumberofUnits] | \
+                          //h:ClothesWasher[h:NumberofUnits] | \
+                          //h:ClothesDryer[h:NumberofUnits] | \
+                          //h:Dishwasher[h:NumberofUnits] | \
+                          //h:Refrigerator[h:NumberofUnits] | \
+                          //h:Freezer[h:NumberofUnits] | \
+                          //h:Dehumidifier[h:NumberofUnits] | \
+                          //h:CookingRange[h:NumberofUnits] | \
+                          //h:Oven[h:NumberofUnits] | \
+                          //h:LightingGroup[h:NumberofUnits]", **xpkw):
+        el.NumberofUnits.tag = f"{{{hpxml4_ns}}}Count"
+    for el in root.xpath("//h:Window[h:Quantity] | \
+                          //h:Skylight[h:Quantity] | \
+                          //h:Door[h:Quantity] | \
+                          //h:VentilationFan[h:Quantity] | \
+                          //h:WaterFixture[h:Quantity] | \
+                          //h:CeilingFan[h:Quantity]", **xpkw):
+        el.Quantity.tag = f"{{{hpxml4_ns}}}Count"
+
     # Write out new file
     hpxml4_doc.write(pathobj_to_str(hpxml4_file), pretty_print=True, encoding="utf-8")
     hpxml4_schema.assertValid(hpxml4_doc)
