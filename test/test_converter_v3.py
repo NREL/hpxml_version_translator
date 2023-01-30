@@ -171,6 +171,35 @@ def test_pv_system():
     assert inv2.YearInverterManufactured == 2019
 
 
+def test_count():
+    root = convert_hpxml_and_parse(hpxml_dir / "count.xml")
+
+    bd = root.Building[0].BuildingDetails
+    pd = root.Project.ProjectDetails
+
+    # These shouldn't change
+    assert hasattr(bd.BuildingSummary.BuildingConstruction, "NumberofUnits")
+    assert hasattr(pd.Measures.Measure, "Quantity")
+
+    # These should change
+    assert hasattr(bd.Enclosure.Windows.Window, "Count")
+    assert hasattr(bd.Enclosure.Skylights.Skylight, "Count")
+    assert hasattr(bd.Enclosure.Doors.Door, "Count")
+    assert hasattr(bd.Systems.MechanicalVentilation.VentilationFans.VentilationFan, "Count")
+    assert hasattr(bd.Systems.WaterHeating.WaterFixture, "Count")
+    assert hasattr(bd.Systems.ElectricVehicleChargers.ElectricVehicleCharger, "Count")
+    assert hasattr(bd.Appliances.ClothesWasher, "Count")
+    assert hasattr(bd.Appliances.ClothesDryer, "Count")
+    assert hasattr(bd.Appliances.Dishwasher, "Count")
+    assert hasattr(bd.Appliances.Refrigerator, "Count")
+    assert hasattr(bd.Appliances.Freezer, "Count")
+    assert hasattr(bd.Appliances.Dehumidifier, "Count")
+    assert hasattr(bd.Appliances.CookingRange, "Count")
+    assert hasattr(bd.Appliances.Oven, "Count")
+    assert hasattr(bd.Lighting.LightingGroup, "Count")
+    assert hasattr(bd.Lighting.CeilingFan, "Count")
+
+
 def test_mismatch_version():
     f_out = io.BytesIO()
     with pytest.raises(

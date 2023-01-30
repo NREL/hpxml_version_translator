@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<HPXML xmlns="http://hpxmlonline.com/2019/10" schemaVersion="3.0">
+    <XMLTransactionHeaderInformation>
+        <XMLType></XMLType>
+        <XMLGeneratedBy></XMLGeneratedBy>
+        <CreatedDateAndTime>2021-04-05T14:17:07.685077</CreatedDateAndTime>
+        <Transaction>create</Transaction>
+    </XMLTransactionHeaderInformation>
+    <SoftwareInfo/>
+    <Building>
+        <BuildingID id='MyBuilding'/>
+        <ProjectStatus>
+            <EventType>audit</EventType>
+        </ProjectStatus>
+        <BuildingDetails>
+            <BuildingSummary>
+                <BuildingConstruction>
+                    <NumberofUnits>1</NumberofUnits>
+                </BuildingConstruction>
+            </BuildingSummary>
+            <Enclosure>
+                <Windows>
+                    <Window>
+                        <SystemIdentifier id='Window1'/>
+                        <Quantity>10</Quantity>
+                    </Window>
+                </Windows>
+                <Skylights>
+                    <Skylight>
+                        <SystemIdentifier id='Skylight1'/>
+                        <Quantity>2</Quantity>
+                    </Skylight>
+                </Skylights>
+                <Doors>
+                    <Door>
+                        <SystemIdentifier id='Door1'/>
+                        <Quantity>2</Quantity>
+                    </Door>
+                </Doors>
+            </Enclosure>
+            <Systems>
+                <MechanicalVentilation>
+                    <VentilationFans>
+                        <VentilationFan>
+                            <SystemIdentifier id='VentilationFan1'/>
+                            <Quantity>2</Quantity>
+                        </VentilationFan>
+                    </VentilationFans>
+                </MechanicalVentilation>
+                <WaterHeating>
+                    <WaterHeatingSystem>
+                        <SystemIdentifier id='WaterHeatingSystem1'/>
+                    </WaterHeatingSystem>
+                    <WaterFixture>
+                        <SystemIdentifier id='WaterFixture1'/>
+                        <WaterFixtureType>faucet</WaterFixtureType>
+                        <Quantity>2</Quantity>
+                    </WaterFixture>
+                </WaterHeating>
+                <ElectricVehicleChargers>
+                    <ElectricVehicleCharger>
+                        <SystemIdentifier id='ElectricVehicleCharger1'/>
+                        <NumberofUnits>1</NumberofUnits>
+                    </ElectricVehicleCharger>
+                </ElectricVehicleChargers>
+            </Systems>
+            <Appliances>
+                <ClothesWasher>
+                    <SystemIdentifier id='ClothesWasher1'/>
+                    <NumberofUnits>1</NumberofUnits>
+                </ClothesWasher>
+                <ClothesDryer>
+                    <SystemIdentifier id='ClothesDryer1'/>
+                    <NumberofUnits>1</NumberofUnits>
+                </ClothesDryer>
+                <Dishwasher>
+                    <SystemIdentifier id='Dishwasher1'/>
+                    <NumberofUnits>1</NumberofUnits>
+                </Dishwasher>
+                <Refrigerator>
+                    <SystemIdentifier id='Refrigerator1'/>
+                    <NumberofUnits>1</NumberofUnits>
+                </Refrigerator>
+                <Freezer>
+                    <SystemIdentifier id='Freezer1'/>
+                    <NumberofUnits>1</NumberofUnits>
+                </Freezer>
+                <Dehumidifier>
+                    <SystemIdentifier id='Dehumidifier1'/>
+                    <NumberofUnits>1</NumberofUnits>
+                </Dehumidifier>
+                <CookingRange>
+                    <SystemIdentifier id='CookingRange1'/>
+                    <NumberofUnits>1</NumberofUnits>
+                </CookingRange>
+                <Oven>
+                    <SystemIdentifier id='Oven1'/>
+                    <NumberofUnits>1</NumberofUnits>
+                </Oven>
+            </Appliances>
+            <Lighting>
+                <LightingGroup>
+                    <SystemIdentifier id='LightingGroup1'/>
+                    <NumberofUnits>10</NumberofUnits>
+                </LightingGroup>
+                <CeilingFan>
+                    <SystemIdentifier id='CeilingFan1'/>
+                    <Quantity>4</Quantity>
+                </CeilingFan>
+            </Lighting>
+        </BuildingDetails>
+    </Building>
+    <Project>
+        <ProjectID id="Project"/>
+        <PreBuildingID id="MyBuilding"/>
+        <PostBuildingID id="MyBuildingPost"/>
+        <ProjectDetails>
+            <Measures>
+                <Measure>
+                    <MeasureSystemIdentifiers>
+                        <SystemIdentifiersInfo id="Measure"/>
+                    </MeasureSystemIdentifiers>
+                    <Quantity>
+                        <Units>units</Units>
+                        <Value>1.23</Value>
+                    </Quantity>
+                </Measure>
+            </Measures>
+        </ProjectDetails>
+    </Project>
+</HPXML>

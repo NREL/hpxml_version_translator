@@ -1545,6 +1545,27 @@ def convert_hpxml3_to_4(
             pv_sys.remove(pv_sys.YearInverterManufactured)
         pv_sys.getparent().append(inverter)
 
+    # Renamed NumberofUnits and Quantity to Count
+    # https://github.com/hpxmlwg/hpxml/pull/346
+    for el in root.xpath("//h:ElectricVehicleCharger[h:NumberofUnits] | \
+                          //h:ClothesWasher[h:NumberofUnits] | \
+                          //h:ClothesDryer[h:NumberofUnits] | \
+                          //h:Dishwasher[h:NumberofUnits] | \
+                          //h:Refrigerator[h:NumberofUnits] | \
+                          //h:Freezer[h:NumberofUnits] | \
+                          //h:Dehumidifier[h:NumberofUnits] | \
+                          //h:CookingRange[h:NumberofUnits] | \
+                          //h:Oven[h:NumberofUnits] | \
+                          //h:LightingGroup[h:NumberofUnits]", **xpkw):
+        el.NumberofUnits.tag = f"{{{hpxml4_ns}}}Count"
+    for el in root.xpath("//h:Window[h:Quantity] | \
+                          //h:Skylight[h:Quantity] | \
+                          //h:Door[h:Quantity] | \
+                          //h:VentilationFan[h:Quantity] | \
+                          //h:WaterFixture[h:Quantity] | \
+                          //h:CeilingFan[h:Quantity]", **xpkw):
+        el.Quantity.tag = f"{{{hpxml4_ns}}}Count"
+
     # Write out new file
     hpxml4_doc.write(pathobj_to_str(hpxml4_file), pretty_print=True, encoding="utf-8")
     hpxml4_schema.assertValid(hpxml4_doc)
