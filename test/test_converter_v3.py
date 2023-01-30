@@ -150,6 +150,27 @@ def test_ducts():
         assert ducts.SystemIdentifier.attrib['id'] == f"hvacd2_ducts{i}"
 
 
+def test_pv_system():
+    root = convert_hpxml_and_parse(hpxml_dir / "pv_sys.xml")
+
+    pv = root.Building[0].BuildingDetails.Systems.Photovoltaics
+
+    for i in (0, 2):
+        pv_sys = pv.PVSystem[i]
+        assert not hasattr(pv_sys, "InverterEfficiency")
+        assert not hasattr(pv_sys, "YearInverterManufactured")
+
+    assert len(pv.Inverter) == 2
+
+    inv1 = pv.Inverter[0]
+    assert hasattr(inv1, "SystemIdentifier")
+    assert inv1.InverterEfficiency == 0.95
+
+    inv2 = pv.Inverter[1]
+    assert hasattr(inv2, "SystemIdentifier")
+    assert inv2.YearInverterManufactured == 2019
+
+
 def test_mismatch_version():
     f_out = io.BytesIO()
     with pytest.raises(
