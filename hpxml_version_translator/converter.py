@@ -1632,6 +1632,15 @@ def convert_hpxml3_to_4(
         el.tag = f"{{{hpxml4_ns}}}Pump"
         el.getparent().tag = f"{{{hpxml4_ns}}}Pumps"
 
+    # Replaced Operable with FractionOperable
+    # https://github.com/hpxmlwg/hpxml/pull/221
+    for el in root.xpath("//h:Window/h:Operable | //h:Skylight/h:Operable", **xpkw):
+        el.tag = f"{{{hpxml4_ns}}}FractionOperable"
+        if el.text.lower() in ('true', '1'):
+            el._setText("1")
+        else:
+            el._setText("0")
+
     # Write out new file
     hpxml4_doc.write(pathobj_to_str(hpxml4_file), pretty_print=True, encoding="utf-8")
     hpxml4_schema.assertValid(hpxml4_doc)

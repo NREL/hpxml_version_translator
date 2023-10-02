@@ -272,6 +272,15 @@ def test_cee_enumeration():
     assert root.Building.BuildingDetails.Pools.Pool[1].Pumps.Pump[0].ThirdPartyCertification == "CEE Tier 3"
 
 
+def test_operable_windows_skylights():
+    root = convert_hpxml_and_parse(hpxml_dir / "operable_windows_skylights.xml")
+
+    assert root.Building.BuildingDetails.Enclosure.Windows.Window[0].FractionOperable == 1
+    assert root.Building.BuildingDetails.Enclosure.Windows.Window[1].FractionOperable == 0
+    assert root.Building.BuildingDetails.Enclosure.Skylights.Skylight[0].FractionOperable == 0
+    assert root.Building.BuildingDetails.Enclosure.Skylights.Skylight[1].FractionOperable == 1
+
+
 def test_mismatch_version():
     f_out = io.BytesIO()
     with pytest.raises(
