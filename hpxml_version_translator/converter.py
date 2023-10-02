@@ -1616,6 +1616,11 @@ def convert_hpxml3_to_4(
             )
         del el.getparent().MaxAmbientCOinLivingSpaceDuringAudit
 
+    # Replaced PortableHeater with SpaceHeater
+    # https://github.com/hpxmlwg/hpxml/pull/231
+    for el in root.xpath("//h:HeatingSystemType/h:PortableHeater", **xpkw):
+        el.tag = f"{{{hpxml4_ns}}}SpaceHeater"
+
     # Write out new file
     hpxml4_doc.write(pathobj_to_str(hpxml4_file), pretty_print=True, encoding="utf-8")
     hpxml4_schema.assertValid(hpxml4_doc)

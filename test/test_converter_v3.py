@@ -257,6 +257,14 @@ def test_max_ambient_co_error():
         convert_hpxml_and_parse(hpxml_dir / "max_ambient_co_error.xml")
 
 
+def test_portable_heater():
+    root = convert_hpxml_and_parse(hpxml_dir / "portable_heater.xml")
+
+    for i in (0, 2):
+        htgsys = root.Building.BuildingDetails.Systems.HVAC.HVACPlant.HeatingSystem[i]
+        assert hasattr(htgsys.HeatingSystemType, "SpaceHeater")
+
+
 def test_mismatch_version():
     f_out = io.BytesIO()
     with pytest.raises(
