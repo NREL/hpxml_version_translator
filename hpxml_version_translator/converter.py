@@ -1621,6 +1621,17 @@ def convert_hpxml3_to_4(
     for el in root.xpath("//h:HeatingSystemType/h:PortableHeater", **xpkw):
         el.tag = f"{{{hpxml4_ns}}}SpaceHeater"
 
+    # Fixed case of CEE enumeration
+    # https://github.com/hpxmlwg/hpxml/pull/387
+    for el in root.xpath("//h:PoolPump[h:ThirdPartyCertification = 'Cee Tier 3']", **xpkw):
+        el.ThirdPartyCertification._setText("CEE Tier 3")
+
+    # Renamed PoolPumps/PoolPump to Pumps/Pump
+    # https://github.com/hpxmlwg/hpxml/pull/229
+    for el in root.xpath("//h:PoolPumps/h:PoolPump", **xpkw):
+        el.tag = f"{{{hpxml4_ns}}}Pump"
+        el.getparent().tag = f"{{{hpxml4_ns}}}Pumps"
+
     # Write out new file
     hpxml4_doc.write(pathobj_to_str(hpxml4_file), pretty_print=True, encoding="utf-8")
     hpxml4_schema.assertValid(hpxml4_doc)

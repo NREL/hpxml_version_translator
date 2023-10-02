@@ -265,6 +265,13 @@ def test_portable_heater():
         assert hasattr(htgsys.HeatingSystemType, "SpaceHeater")
 
 
+def test_cee_enumeration():
+    root = convert_hpxml_and_parse(hpxml_dir / "pool_pumps_and_cee_enum.xml")
+
+    assert root.Building.BuildingDetails.Pools.Pool[0].Pumps.Pump[2].ThirdPartyCertification == "CEE Tier 3"
+    assert root.Building.BuildingDetails.Pools.Pool[1].Pumps.Pump[0].ThirdPartyCertification == "CEE Tier 3"
+
+
 def test_mismatch_version():
     f_out = io.BytesIO()
     with pytest.raises(
