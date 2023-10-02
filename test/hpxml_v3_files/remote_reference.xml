@@ -1,0 +1,230 @@
+<HPXML xmlns="http://hpxmlonline.com/2019/10" schemaVersion="3.1">
+  <XMLTransactionHeaderInformation>
+    <XMLType/>
+    <XMLGeneratedBy>Super-duper audit software v1.0</XMLGeneratedBy>
+    <CreatedDateAndTime>2014-10-07T20:25:12</CreatedDateAndTime>
+    <Transaction>create</Transaction>
+  </XMLTransactionHeaderInformation>
+  <SoftwareInfo>
+    <SoftwareProgramUsed>Super-duper audit software</SoftwareProgramUsed>
+    <SoftwareProgramVersion>1.0</SoftwareProgramVersion>
+  </SoftwareInfo>
+  <Contractor>
+    <ContractorDetails>
+      <SystemIdentifier id="contractor1"/>
+      <BusinessInfo>
+        <SystemIdentifier id="business1"/>
+        <BusinessName>ACME Home Performance Company</BusinessName>
+        <BusinessContact>
+          <Person>
+            <SystemIdentifier id="contractorperson1"/>
+            <Name>
+              <FirstName>John</FirstName>
+              <LastName>Doe</LastName>
+            </Name>
+          </Person>
+        </BusinessContact>
+      </BusinessInfo>
+    </ContractorDetails>
+  </Contractor>
+  <Customer>
+    <CustomerDetails>
+      <Person>
+        <SystemIdentifier id="customer1"/>
+        <Name>
+          <FirstName>Jane</FirstName>
+          <LastName>Customer</LastName>
+        </Name>
+      </Person>
+    </CustomerDetails>
+  </Customer>
+  <Building>
+    <BuildingID id="bldg1"/>
+    <CustomerID id="customer1"/>
+    <Site>
+      <SiteID id="bldg1site"/>
+    </Site>
+    <ContractorID id="contractor1"/>
+    <ProjectStatus>
+      <EventType>audit</EventType>
+    </ProjectStatus>
+    <BuildingDetails>
+      <Enclosure>
+        <AirInfiltration>
+          <AirInfiltrationMeasurement>
+            <SystemIdentifier id="blowerdoor1"/>
+            <BusinessConductingTest id="business1"/>
+            <IndividualConductingTest id="contractorperson1"/>
+          </AirInfiltrationMeasurement>
+        </AirInfiltration>
+      </Enclosure>
+      <Systems>
+        <HVAC>
+          <HVACPlant>
+            <HeatingSystem>
+              <SystemIdentifier id="htgsys1"/>
+            </HeatingSystem>
+          </HVACPlant>
+        </HVAC>
+        <CombustionVentilation>
+          <CombustionVentilationSystem>
+            <SystemIdentifier id="combvent1"/>
+          </CombustionVentilationSystem>
+        </CombustionVentilation>
+        <WaterHeating>
+          <WaterHeatingSystem>
+            <SystemIdentifier id="dhw1"/>
+            <CombustionVentingSystem idref="combvent1"/>
+          </WaterHeatingSystem>
+        </WaterHeating>
+      </Systems>
+      <HealthAndSafety>
+        <CombustionAppliances>
+          <CombustionApplianceZone>
+            <SystemIdentifier id="cazzone1"/>
+            <CombustionApplianceTest>
+              <CAZAppliance id="dhw1"/>
+              <CombustionVentingSystem id="combvent1"/>
+            </CombustionApplianceTest>
+          </CombustionApplianceZone>
+        </CombustionAppliances>
+      </HealthAndSafety>
+    </BuildingDetails>
+  </Building>
+  <Building>
+    <BuildingID id="bldg1p"/>
+    <CustomerID id="customer1"/>
+    <Site>
+      <SiteID id="bldg1sitep"/>
+    </Site>
+    <ContractorID id="contractor1"/>
+    <ProjectStatus>
+      <EventType>proposed workscope</EventType>
+    </ProjectStatus>
+    <BuildingDetails>
+      <Enclosure>
+        <AirInfiltration>
+          <AirInfiltrationMeasurement>
+            <SystemIdentifier id="blowerdoor1p" sameas="blowerdoor1"/>
+            <BusinessConductingTest id="business1"/>
+            <IndividualConductingTest id="contractorperson1"/>
+          </AirInfiltrationMeasurement>
+        </AirInfiltration>
+      </Enclosure>
+      <Systems>
+        <HVAC>
+          <HVACPlant>
+            <HeatingSystem>
+              <SystemIdentifier id="htgsys1p"/>
+            </HeatingSystem>
+          </HVACPlant>
+        </HVAC>
+        <CombustionVentilation>
+          <CombustionVentilationSystem>
+            <SystemIdentifier id="combvent1p" sameas="combvent1"/>
+          </CombustionVentilationSystem>
+        </CombustionVentilation>
+        <WaterHeating>
+          <WaterHeatingSystem>
+            <SystemIdentifier id="dhw1p" sameas="dhw1"/>
+            <CombustionVentingSystem idref="combvent1"/>
+          </WaterHeatingSystem>
+        </WaterHeating>
+      </Systems>
+      <HealthAndSafety>
+        <CombustionAppliances>
+          <CombustionApplianceZone>
+            <SystemIdentifier id="cazzone1p" sameas="cazzone1"/>
+            <CombustionApplianceTest>
+              <CAZAppliance id="dhw1p"/>
+              <CombustionVentingSystem id="combvent1p"/>
+            </CombustionApplianceTest>
+            <CombustionApplianceTest>
+              <CAZAppliance id="htgsys1p"/>
+              <CombustionVentingSystem id="combvent1p"/>
+            </CombustionApplianceTest>
+          </CombustionApplianceZone>
+        </CombustionAppliances>
+      </HealthAndSafety>
+    </BuildingDetails>
+  </Building>
+  <Project>
+    <ProjectID id="project-1"/>
+    <PreBuildingID id="bldg1"/>
+    <PostBuildingID id="bldg1p"/>
+    <ProjectDetails>
+      <ProjectStatus>
+        <EventType>proposed workscope</EventType>
+      </ProjectStatus>
+      <Measures>
+        <Measure>
+          <MeasureSystemIdentifiers>
+            <SystemIdentifiersInfo id="insulateattic"/>
+          </MeasureSystemIdentifiers>
+          <InstallingContractor id="contractor1"/>
+          <ReplacedComponents>
+            <ReplacedComponent id="attic1ins"/>
+          </ReplacedComponents>
+          <InstalledComponents>
+            <InstalledComponent id="attic1insp"/>
+          </InstalledComponents>
+        </Measure>
+        <Measure>
+          <MeasureSystemIdentifiers>
+            <SystemIdentifiersInfo id="furnacereplacement"/>
+          </MeasureSystemIdentifiers>
+          <InstallingContractor id="contractor1"/>
+          <ReplacedComponents>
+            <ReplacedComponent id="htgsys1"/>
+          </ReplacedComponents>
+          <InstalledComponents>
+            <InstalledComponent id="htgsys1p"/>
+          </InstalledComponents>
+        </Measure>
+      </Measures>
+    </ProjectDetails>
+  </Project>
+  <Utility>
+    <UtilitiesorFuelProviders>
+      <UtilityFuelProvider>
+        <SystemIdentifier id="eleco"/>
+      </UtilityFuelProvider>
+    </UtilitiesorFuelProviders>
+  </Utility>
+  <Consumption>
+    <BuildingID id="bldg1"/>
+    <CustomerID id="customer1"/>
+    <ConsumptionDetails>
+      <ConsumptionInfo>
+        <UtilityID id="eleco"/>
+        <ConsumptionType>
+          <Energy>
+            <FuelType>electricity</FuelType>
+            <UnitofMeasure>kWh</UnitofMeasure>
+          </Energy>
+        </ConsumptionType>
+        <ConsumptionDetail>
+          <Consumption>250</Consumption>
+        </ConsumptionDetail>
+      </ConsumptionInfo>
+    </ConsumptionDetails>
+  </Consumption>
+  <Consumption>
+    <BuildingID id="bldg1p"/>
+    <CustomerID id="customer1"/>
+    <ConsumptionDetails>
+      <ConsumptionInfo>
+        <UtilityID id="eleco"/>
+        <ConsumptionType>
+          <Energy>
+            <FuelType>electricity</FuelType>
+            <UnitofMeasure>kWh</UnitofMeasure>
+          </Energy>
+        </ConsumptionType>
+        <ConsumptionDetail>
+          <Consumption>250</Consumption>
+        </ConsumptionDetail>
+      </ConsumptionInfo>
+    </ConsumptionDetails>
+  </Consumption>
+</HPXML>

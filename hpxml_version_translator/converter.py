@@ -1383,9 +1383,9 @@ def convert_hpxml3_to_4(
     hpxml4_schema = etree.XMLSchema(hpxml4_schema_doc)
 
     E = objectify.ElementMaker(
-        namespace=hpxml3_ns, nsmap={None: hpxml3_ns}, annotate=False
+        namespace=hpxml4_ns, nsmap={None: hpxml4_ns}, annotate=False
     )
-    xpkw = {"namespaces": {"h": hpxml3_ns}}
+    xpkw = {"namespaces": {"h": hpxml4_ns}}
 
     # Ensure we're working with valid HPXML v3.x
     hpxml3_doc = objectify.parse(pathobj_to_str(hpxml3_file))
@@ -1565,6 +1565,26 @@ def convert_hpxml3_to_4(
                           //h:WaterFixture[h:Quantity] | \
                           //h:CeilingFan[h:Quantity]", **xpkw):
         el.Quantity.tag = f"{{{hpxml4_ns}}}Count"
+
+    # Changed RemoteReference base element attribute from "id" to "idref"
+    # https://github.com/hpxmlwg/hpxml/pull/378
+    # FIXME: What is CombustionVentingSystem supposed to point to?
+    for el in root.xpath("//h:CombustionApplianceTest/h:CAZAppliance[@id] | \
+                         //h:CombustionApplianceTest/h:CombustionVentingSystem[@id] | \
+                         //h:Measure/h:InstallingContractor[@id] | \
+                         //h:ReplacedComponent[@id] | \
+                         //h:InstalledComponent[@id] | \
+                         //h:ConsumptionInfo/h:UtilityID[@id] | \
+                         //h:AirInfiltrationMeasurement/h:BusinessConductingTest[@id] | \
+                         //h:AirInfiltrationMeasurement/h:IndividualConductingTest[@id] | \
+                         //h:Building/h:CustomerID[@id] | \
+                         //h:Building/h:ContractorID[@id] | \
+                         //h:Project/h:PreBuildingID[@id] | \
+                         //h:Project/h:PostBuildingID[@id] | \
+                         //h:Consumption/h:BuildingID[@id] | \
+                         //h:Consumption/h:CustomerID[@id]", **xpkw):
+        el.attrib["idref"] = el.attrib["id"]
+        del el.attrib["id"]
 
     # Write out new file
     hpxml4_doc.write(pathobj_to_str(hpxml4_file), pretty_print=True, encoding="utf-8")

@@ -200,6 +200,33 @@ def test_count():
     assert hasattr(bd.Lighting.CeilingFan, "Count")
 
 
+def test_remote_reference():
+    root = convert_hpxml_and_parse(hpxml_dir / "remote_reference.xml")
+
+    for bd in root.Building:
+        assert bd.CustomerID.attrib["idref"]
+        assert bd.ContractorID.attrib["idref"]
+        for aim in bd.BuildingDetails.Enclosure.AirInfiltration.AirInfiltrationMeasurement:
+            assert aim.BusinessConductingTest.attrib["idref"]
+            assert aim.IndividualConductingTest.attrib["idref"]
+        for caz in bd.BuildingDetails.HealthAndSafety.CombustionAppliances.CombustionApplianceZone:
+            for cat in caz.CombustionApplianceTest:
+                assert cat.CAZAppliance.attrib["idref"]
+                assert cat.CombustionVentingSystem.attrib["idref"]
+
+    assert root.Project.PreBuildingID.attrib["idref"]
+    assert root.Project.PostBuildingID.attrib["idref"]
+    for meas in root.Project.ProjectDetails.Measures.Measure:
+        assert meas.InstallingContractor.attrib["idref"]
+        assert meas.ReplacedComponents.ReplacedComponent.attrib["idref"]
+        assert meas.InstalledComponents.InstalledComponent.attrib["idref"]
+
+    for cons in root.Consumption:
+        assert cons.BuildingID.attrib["idref"]
+        assert cons.CustomerID.attrib["idref"]
+        assert cons.ConsumptionDetails.ConsumptionInfo.UtilityID.attrib["idref"]
+
+
 def test_mismatch_version():
     f_out = io.BytesIO()
     with pytest.raises(
