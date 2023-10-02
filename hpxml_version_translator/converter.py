@@ -1585,6 +1585,23 @@ def convert_hpxml3_to_4(
         el.attrib["idref"] = el.attrib["id"]
         del el.attrib["id"]
 
+    # New GeothermalLoop element added
+    # https://github.com/hpxmlwg/hpxml/pull/367
+    for el in root.xpath("//h:HeatPump[h:GeothermalLoop]", **xpkw):
+        hvac_plant = el.getparent()
+        add_before(hvac_plant,
+                   ["extension"],
+                   E.GeothermalLoop(
+                       E.SystemIdentifier(id=f"{el.SystemIdentifier.attrib['id']}-geothermal-loop"),
+                       E.LoopType(el.GeothermalLoop.text)
+                     ),
+                   )
+        add_before(el,
+                   ["extension"],
+                   E.AttachedToGeothermalLoop(idref=f"{el.SystemIdentifier.attrib['id']}-geothermal-loop")
+                   )
+        del el.GeothermalLoop
+
     # Write out new file
     hpxml4_doc.write(pathobj_to_str(hpxml4_file), pretty_print=True, encoding="utf-8")
     hpxml4_schema.assertValid(hpxml4_doc)

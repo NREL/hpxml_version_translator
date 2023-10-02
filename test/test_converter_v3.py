@@ -227,6 +227,21 @@ def test_remote_reference():
         assert cons.ConsumptionDetails.ConsumptionInfo.UtilityID.attrib["idref"]
 
 
+def test_geothermal_loop():
+    root = convert_hpxml_and_parse(hpxml_dir / "geothermal_loop.xml")
+
+    hvac_plant = root.Building.BuildingDetails.Systems.HVAC.HVACPlant
+    for i in (0, 1):
+        gshp = hvac_plant.HeatPump[i]
+        assert gshp.AttachedToGeothermalLoop.attrib['idref'] == f"gshp{i+1}-geothermal-loop"
+        
+        geo_loop = hvac_plant.GeothermalLoop[i]
+        assert geo_loop.SystemIdentifier.attrib['id'] == f"gshp{i+1}-geothermal-loop"
+        if i == 0:
+            assert geo_loop.LoopType == 'closed'
+        else:
+            assert geo_loop.LoopType == 'open'
+
 def test_mismatch_version():
     f_out = io.BytesIO()
     with pytest.raises(
