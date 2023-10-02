@@ -1568,7 +1568,6 @@ def convert_hpxml3_to_4(
 
     # Changed RemoteReference base element attribute from "id" to "idref"
     # https://github.com/hpxmlwg/hpxml/pull/378
-    # FIXME: What is CombustionVentingSystem supposed to point to?
     for el in root.xpath("//h:CombustionApplianceTest/h:CAZAppliance[@id] | \
                          //h:CombustionApplianceTest/h:CombustionVentingSystem[@id] | \
                          //h:Measure/h:InstallingContractor[@id] | \
