@@ -1602,6 +1602,20 @@ def convert_hpxml3_to_4(
                    )
         del el.GeothermalLoop
 
+    # Moved MaxAmbientCOinLivingSpaceDuringAudit element
+    # https://github.com/hpxmlwg/hpxml/pull/377
+    co_value = None
+    for el in root.xpath("//h:CarbonMonoxideTest/h:MaxAmbientCOinLivingSpaceDuringAudit", **xpkw):
+        if co_value is None:
+            co_value = el.text
+            comb_appls = el.getparent().getparent().getparent().getparent()
+            comb_appls.insert(0, E.MaxAmbientCOinLivingSpaceDuringAudit(co_value))
+        elif co_value != el.text:
+            raise exc.HpxmlTranslationError(
+                "All MaxAmbientCOinLivingSpaceDuringAudit elements must have the same value."
+            )
+        del el.getparent().MaxAmbientCOinLivingSpaceDuringAudit
+
     # Write out new file
     hpxml4_doc.write(pathobj_to_str(hpxml4_file), pretty_print=True, encoding="utf-8")
     hpxml4_schema.assertValid(hpxml4_doc)

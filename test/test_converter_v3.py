@@ -234,13 +234,28 @@ def test_geothermal_loop():
     for i in (0, 1):
         gshp = hvac_plant.HeatPump[i]
         assert gshp.AttachedToGeothermalLoop.attrib['idref'] == f"gshp{i+1}-geothermal-loop"
-        
+
         geo_loop = hvac_plant.GeothermalLoop[i]
         assert geo_loop.SystemIdentifier.attrib['id'] == f"gshp{i+1}-geothermal-loop"
         if i == 0:
             assert geo_loop.LoopType == 'closed'
         else:
             assert geo_loop.LoopType == 'open'
+
+
+def test_max_ambient_co():
+    root = convert_hpxml_and_parse(hpxml_dir / "max_ambient_co.xml")
+
+    assert root.Building.BuildingDetails.HealthAndSafety.CombustionAppliances.MaxAmbientCOinLivingSpaceDuringAudit == 2
+
+
+def test_max_ambient_co_error():
+    with pytest.raises(
+        exc.HpxmlTranslationError,
+        match=r"All MaxAmbientCOinLivingSpaceDuringAudit elements must have the same value.",
+    ):
+        convert_hpxml_and_parse(hpxml_dir / "max_ambient_co_error.xml")
+
 
 def test_mismatch_version():
     f_out = io.BytesIO()
