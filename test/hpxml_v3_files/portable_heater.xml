@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<HPXML xmlns="http://hpxmlonline.com/2019/10" schemaVersion="3.0">
+  <XMLTransactionHeaderInformation>
+    <XMLType></XMLType>
+    <XMLGeneratedBy></XMLGeneratedBy>
+    <CreatedDateAndTime>2021-04-05T14:17:07.685077</CreatedDateAndTime>
+    <Transaction>create</Transaction>
+  </XMLTransactionHeaderInformation>
+    <SoftwareInfo/>
+  <Building>
+    <BuildingID id="bldg1"></BuildingID>
+    <ProjectStatus>
+      <EventType>audit</EventType>
+    </ProjectStatus>
+    <BuildingDetails>
+      <Systems>
+        <HVAC>
+          <HVACPlant>
+            <HeatingSystem>
+              <SystemIdentifier id='htgsys1'/>
+              <HeatingSystemType>
+                <PortableHeater />
+              </HeatingSystemType>
+            </HeatingSystem>
+            <HeatingSystem>
+              <SystemIdentifier id='htgsys2'/>
+              <HeatingSystemType>
+                <Furnace />
+              </HeatingSystemType>
+            </HeatingSystem>
+            <HeatingSystem>
+              <SystemIdentifier id='htgsys3'/>
+              <HeatingSystemType>
+                <PortableHeater />
+              </HeatingSystemType>
+            </HeatingSystem>
+            <extension>
+              <foo />
+            </extension>
+          </HVACPlant>
+        </HVAC>
+      </Systems>
+    </BuildingDetails>
+  </Building>
+</HPXML>

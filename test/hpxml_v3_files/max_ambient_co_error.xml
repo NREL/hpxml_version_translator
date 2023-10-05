@@ -1,0 +1,81 @@
+<HPXML xmlns="http://hpxmlonline.com/2019/10" schemaVersion="3.1">
+  <XMLTransactionHeaderInformation>
+    <XMLType/>
+    <XMLGeneratedBy>Super-duper audit software v1.0</XMLGeneratedBy>
+    <CreatedDateAndTime>2014-10-07T20:25:12</CreatedDateAndTime>
+    <Transaction>create</Transaction>
+  </XMLTransactionHeaderInformation>
+  <SoftwareInfo>
+    <SoftwareProgramUsed>Super-duper audit software</SoftwareProgramUsed>
+    <SoftwareProgramVersion>1.0</SoftwareProgramVersion>
+  </SoftwareInfo>
+  <Building>
+    <BuildingID id="bldg1p"/>
+    <ProjectStatus>
+      <EventType>proposed workscope</EventType>
+    </ProjectStatus>
+    <BuildingDetails>
+      <HealthAndSafety>
+        <CombustionAppliances>
+          <CombustionApplianceZone>
+            <SystemIdentifier id="cazzone1p" sameas="cazzone1"/>
+            <CAZDepressurizationLimit>1</CAZDepressurizationLimit>
+            <PoorCaseTest>
+              <Pressure>50</Pressure>
+            </PoorCaseTest>
+            <DepressurizationFindingPoorCase>pass</DepressurizationFindingPoorCase>
+            <AmountAmbientCOinCAZduringTesting>2</AmountAmbientCOinCAZduringTesting>
+            <CombustionApplianceTest>
+              <CAZAppliance id="dhw1p"/>
+              <FlueDraftTest>
+                <PoorScenario>456</PoorScenario>
+                <CurrentCondition>123</CurrentCondition>
+                <TestResult>passed</TestResult>
+              </FlueDraftTest>
+              <SpillageTest>
+                <PoorScenario>456</PoorScenario>
+                <CurrentCondition>123</CurrentCondition>
+                <TestResult>passed</TestResult>
+              </SpillageTest>
+              <CarbonMonoxideTest>
+                <PoorScenario>456.7</PoorScenario>
+                <CurrentCondition>123.4</CurrentCondition>
+                <TestResult>passed</TestResult>
+                <MaxAmbientCOinLivingSpaceDuringAudit>2</MaxAmbientCOinLivingSpaceDuringAudit>
+              </CarbonMonoxideTest>
+              <FuelLeaks>
+                <FuelType>natural gas</FuelType>
+                <LeaksIdentified>false</LeaksIdentified>
+                <LeaksAddressed>false</LeaksAddressed>
+              </FuelLeaks>
+            </CombustionApplianceTest>
+            <CombustionApplianceTest>
+              <CAZAppliance id="htgsys1p"/>
+              <FlueDraftTest>
+                <PoorScenario>456</PoorScenario>
+                <CurrentCondition>123</CurrentCondition>
+                <TestResult>passed</TestResult>
+              </FlueDraftTest>
+              <SpillageTest>
+                <PoorScenario>456</PoorScenario>
+                <CurrentCondition>123</CurrentCondition>
+                <TestResult>passed</TestResult>
+              </SpillageTest>
+              <CarbonMonoxideTest>
+                <PoorScenario>456.7</PoorScenario>
+                <CurrentCondition>123.4</CurrentCondition>
+                <TestResult>passed</TestResult>
+                <MaxAmbientCOinLivingSpaceDuringAudit>0</MaxAmbientCOinLivingSpaceDuringAudit>
+              </CarbonMonoxideTest>
+              <FuelLeaks>
+                <FuelType>natural gas</FuelType>
+                <LeaksIdentified>false</LeaksIdentified>
+                <LeaksAddressed>false</LeaksAddressed>
+              </FuelLeaks>
+            </CombustionApplianceTest>
+          </CombustionApplianceZone>
+        </CombustionAppliances>
+      </HealthAndSafety>
+    </BuildingDetails>
+  </Building>
+</HPXML>

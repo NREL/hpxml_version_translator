@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<HPXML xmlns="http://hpxmlonline.com/2019/10" schemaVersion="3.0">
+    <XMLTransactionHeaderInformation>
+        <XMLType></XMLType>
+        <XMLGeneratedBy></XMLGeneratedBy>
+        <CreatedDateAndTime>2021-04-05T14:17:07.685077</CreatedDateAndTime>
+        <Transaction>create</Transaction>
+    </XMLTransactionHeaderInformation>
+    <SoftwareInfo/>
+    <Building>
+        <BuildingID id="bldg1"></BuildingID>
+        <ProjectStatus>
+            <EventType>audit</EventType>
+        </ProjectStatus>
+        <BuildingDetails>
+            <Pools>
+                <Pool>
+                    <SystemIdentifier id="pool-1"/>
+                    <PoolPumps>
+                        <PoolPump>
+                            <SystemIdentifier id="pool-1-pump-1"/>
+                            <ThirdPartyCertification>CEE Tier 1</ThirdPartyCertification>
+                        </PoolPump>
+                        <PoolPump>
+                            <SystemIdentifier id="pool-1-pump-2"/>
+                            <ThirdPartyCertification>CEE Tier 2</ThirdPartyCertification>
+                        </PoolPump>
+                        <PoolPump>
+                            <SystemIdentifier id="pool-1-pump-3"/>
+                            <ThirdPartyCertification>Cee Tier 3</ThirdPartyCertification>
+                        </PoolPump>
+                    </PoolPumps>
+                </Pool>
+                <Pool>
+                    <SystemIdentifier id="pool-2"/>
+                    <PoolPumps>
+                        <PoolPump>
+                            <SystemIdentifier id="pool-2-pump-1"/>
+                            <ThirdPartyCertification>Cee Tier 3</ThirdPartyCertification>
+                        </PoolPump>
+                        <PoolPump>
+                            <SystemIdentifier id="pool-2-pump-2"/>
+                            <ThirdPartyCertification>CEE Tier 2</ThirdPartyCertification>
+                        </PoolPump>
+                        <PoolPump>
+                            <SystemIdentifier id="pool-2-pump-3"/>
+                            <ThirdPartyCertification>CEE Tier 1</ThirdPartyCertification>
+                        </PoolPump>
+                    </PoolPumps>
+                </Pool>
+            </Pools>
+        </BuildingDetails>
+    </Building>
+</HPXML>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<HPXML xmlns="http://hpxmlonline.com/2019/10" schemaVersion="3.0">
+    <XMLTransactionHeaderInformation>
+        <XMLType></XMLType>
+        <XMLGeneratedBy></XMLGeneratedBy>
+        <CreatedDateAndTime>2021-04-05T14:17:07.685077</CreatedDateAndTime>
+        <Transaction>create</Transaction>
+    </XMLTransactionHeaderInformation>
+    <SoftwareInfo/>
+    <Building>
+        <BuildingID id="bldg1"></BuildingID>
+        <ProjectStatus>
+            <EventType>audit</EventType>
+        </ProjectStatus>
+        <BuildingDetails>
+            <Enclosure>
+                <Windows>
+                    <Window>
+                        <SystemIdentifier id="window1"/>
+                        <Operable>true</Operable>
+                    </Window>
+                    <Window>
+                        <SystemIdentifier id="window2"/>
+                        <Operable>false</Operable>
+                    </Window>
+                </Windows>
+                <Skylights>
+                    <Skylight>
+                        <SystemIdentifier id="skylight1"/>
+                        <Operable>false</Operable>
+                    </Skylight>
+                    <Skylight>
+                        <SystemIdentifier id="skylight2"/>
+                        <Operable>true</Operable>
+                    </Skylight>
+                </Skylights>
+            </Enclosure>
+        </BuildingDetails>
+    </Building>
+</HPXML>

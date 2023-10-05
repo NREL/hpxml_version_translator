@@ -227,6 +227,60 @@ def test_remote_reference():
         assert cons.ConsumptionDetails.ConsumptionInfo.UtilityID.attrib["idref"]
 
 
+def test_geothermal_loop():
+    root = convert_hpxml_and_parse(hpxml_dir / "geothermal_loop.xml")
+
+    hvac_plant = root.Building.BuildingDetails.Systems.HVAC.HVACPlant
+    for i in (0, 1):
+        gshp = hvac_plant.HeatPump[i]
+        assert gshp.AttachedToGeothermalLoop.attrib['idref'] == f"gshp{i+1}-geothermal-loop"
+
+        geo_loop = hvac_plant.GeothermalLoop[i]
+        assert geo_loop.SystemIdentifier.attrib['id'] == f"gshp{i+1}-geothermal-loop"
+        if i == 0:
+            assert geo_loop.LoopType == 'closed'
+        else:
+            assert geo_loop.LoopType == 'open'
+
+
+def test_max_ambient_co():
+    root = convert_hpxml_and_parse(hpxml_dir / "max_ambient_co.xml")
+
+    assert root.Building.BuildingDetails.HealthAndSafety.CombustionAppliances.MaxAmbientCOinLivingSpaceDuringAudit == 2
+
+
+def test_max_ambient_co_error():
+    with pytest.raises(
+        exc.HpxmlTranslationError,
+        match=r"All MaxAmbientCOinLivingSpaceDuringAudit elements must have the same value.",
+    ):
+        convert_hpxml_and_parse(hpxml_dir / "max_ambient_co_error.xml")
+
+
+def test_portable_heater():
+    root = convert_hpxml_and_parse(hpxml_dir / "portable_heater.xml")
+
+    for i in (0, 2):
+        htgsys = root.Building.BuildingDetails.Systems.HVAC.HVACPlant.HeatingSystem[i]
+        assert hasattr(htgsys.HeatingSystemType, "SpaceHeater")
+
+
+def test_cee_enumeration():
+    root = convert_hpxml_and_parse(hpxml_dir / "pool_pumps_and_cee_enum.xml")
+
+    assert root.Building.BuildingDetails.Pools.Pool[0].Pumps.Pump[2].ThirdPartyCertification == "CEE Tier 3"
+    assert root.Building.BuildingDetails.Pools.Pool[1].Pumps.Pump[0].ThirdPartyCertification == "CEE Tier 3"
+
+
+def test_operable_windows_skylights():
+    root = convert_hpxml_and_parse(hpxml_dir / "operable_windows_skylights.xml")
+
+    assert root.Building.BuildingDetails.Enclosure.Windows.Window[0].FractionOperable == 1
+    assert root.Building.BuildingDetails.Enclosure.Windows.Window[1].FractionOperable == 0
+    assert root.Building.BuildingDetails.Enclosure.Skylights.Skylight[0].FractionOperable == 0
+    assert root.Building.BuildingDetails.Enclosure.Skylights.Skylight[1].FractionOperable == 1
+
+
 def test_mismatch_version():
     f_out = io.BytesIO()
     with pytest.raises(
