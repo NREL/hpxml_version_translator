@@ -1585,6 +1585,62 @@ def convert_hpxml3_to_4(
         el.attrib["idref"] = el.attrib["id"]
         del el.attrib["id"]
 
+    # New GeothermalLoop element added
+    # https://github.com/hpxmlwg/hpxml/pull/367
+    for el in root.xpath("//h:HeatPump[h:GeothermalLoop]", **xpkw):
+        hvac_plant = el.getparent()
+        add_before(hvac_plant,
+                   ["extension"],
+                   E.GeothermalLoop(
+                       E.SystemIdentifier(id=f"{el.SystemIdentifier.attrib['id']}-geothermal-loop"),
+                       E.LoopType(el.GeothermalLoop.text)
+                     ),
+                   )
+        add_before(el,
+                   ["extension"],
+                   E.AttachedToGeothermalLoop(idref=f"{el.SystemIdentifier.attrib['id']}-geothermal-loop")
+                   )
+        del el.GeothermalLoop
+
+    # Moved MaxAmbientCOinLivingSpaceDuringAudit element
+    # https://github.com/hpxmlwg/hpxml/pull/377
+    co_value = None
+    for el in root.xpath("//h:CarbonMonoxideTest/h:MaxAmbientCOinLivingSpaceDuringAudit", **xpkw):
+        if co_value is None:
+            co_value = el.text
+            comb_appls = el.getparent().getparent().getparent().getparent()
+            comb_appls.insert(0, E.MaxAmbientCOinLivingSpaceDuringAudit(co_value))
+        elif co_value != el.text:
+            raise exc.HpxmlTranslationError(
+                "All MaxAmbientCOinLivingSpaceDuringAudit elements must have the same value."
+            )
+        del el.getparent().MaxAmbientCOinLivingSpaceDuringAudit
+
+    # Replaced PortableHeater with SpaceHeater
+    # https://github.com/hpxmlwg/hpxml/pull/231
+    for el in root.xpath("//h:HeatingSystemType/h:PortableHeater", **xpkw):
+        el.tag = f"{{{hpxml4_ns}}}SpaceHeater"
+
+    # Fixed case of CEE enumeration
+    # https://github.com/hpxmlwg/hpxml/pull/387
+    for el in root.xpath("//h:PoolPump[h:ThirdPartyCertification = 'Cee Tier 3']", **xpkw):
+        el.ThirdPartyCertification._setText("CEE Tier 3")
+
+    # Renamed PoolPumps/PoolPump to Pumps/Pump
+    # https://github.com/hpxmlwg/hpxml/pull/229
+    for el in root.xpath("//h:PoolPumps/h:PoolPump", **xpkw):
+        el.tag = f"{{{hpxml4_ns}}}Pump"
+        el.getparent().tag = f"{{{hpxml4_ns}}}Pumps"
+
+    # Replaced Operable with FractionOperable
+    # https://github.com/hpxmlwg/hpxml/pull/221
+    for el in root.xpath("//h:Window/h:Operable | //h:Skylight/h:Operable", **xpkw):
+        el.tag = f"{{{hpxml4_ns}}}FractionOperable"
+        if el.text.lower() in ('true', '1'):
+            el._setText("1")
+        else:
+            el._setText("0")
+
     # Write out new file
     hpxml4_doc.write(pathobj_to_str(hpxml4_file), pretty_print=True, encoding="utf-8")
     hpxml4_schema.assertValid(hpxml4_doc)
