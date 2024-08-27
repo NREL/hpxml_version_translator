@@ -386,7 +386,7 @@ def test_enclosure_attics_and_roofs():
         convert_hpxml_and_parse(hpxml_dir / "enclosure_missing_attic_type.xml")
     assert execinfo.value.args[0] == (
         "enclosure_missing_attic_type.xml was not able to be translated "
-        "because 'AtticType' of attic-1 is unknown."
+        "because 'AtticType' of attic-1 is not provided."
     )
 
 
