@@ -701,8 +701,7 @@ def convert_hpxml2_to_3(
                 )
         else:
             raise exc.HpxmlTranslationError(
-                f"{pathobj_to_str(hpxml2_file)} was not able to be translated "
-                f"because 'AtticType' of {this_attic.SystemIdentifier.attrib['id']} is not provided."
+                f"{this_attic.SystemIdentifier.attrib['id']} must have its 'AtticType' element provided."
             )
 
         if not hasattr(enclosure, "Attics"):
