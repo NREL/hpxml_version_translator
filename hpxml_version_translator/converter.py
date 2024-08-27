@@ -701,8 +701,7 @@ def convert_hpxml2_to_3(
                 )
         else:
             raise exc.HpxmlTranslationError(
-                f"{hpxml2_file.name} was not able to be translated "
-                f"because 'AtticType' of {this_attic.SystemIdentifier.attrib['id']} is unknown."
+                f"{this_attic.SystemIdentifier.attrib['id']} must have its 'AtticType' element provided."
             )
 
         if not hasattr(enclosure, "Attics"):
@@ -781,15 +780,15 @@ def convert_hpxml2_to_3(
         if hasattr(this_attic, "AtticRoofInsulation"):
             roof_insulation = deepcopy(this_attic.AtticRoofInsulation)
             roof_insulation.tag = f"{{{hpxml3_ns}}}Insulation"
-            roof_idref = this_attic.AttachedToRoof.attrib["idref"]
             try:
+                roof_idref = this_attic.AttachedToRoof.attrib["idref"]
                 roof_attached_to_this_attic = root.xpath(
                     "h:Building/h:BuildingDetails/h:Enclosure/h:AtticAndRoof/\
                         h:Roofs/h:Roof[h:SystemIdentifier/@id=$sysid]",
                     sysid=roof_idref,
                     **xpkw,
                 )[0]
-            except IndexError:
+            except (IndexError, AttributeError):
                 warnings.warn(
                     f"Cannot find a roof attached to {this_attic.SystemIdentifier.attrib['id']}."
                 )
