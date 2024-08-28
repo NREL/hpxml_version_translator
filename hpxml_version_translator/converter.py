@@ -1640,6 +1640,20 @@ def convert_hpxml3_to_4(
         else:
             el._setText("0")
 
+    # Convert WaterHeaterImprovement/PipeInsulated to boolean
+    # https://github.com/hpxmlwg/hpxml/pull/401
+    for el in root.xpath("//h:WaterHeaterImprovement/h:PipeInsulated", **xpkw):
+        if el.text is None:
+            el._setText("true")
+        elif el.text.lower() in ('false', '0'):
+            el._setText("false")
+        elif el.text.lower() in ('true', '1'):
+            el._setText("true")
+        else:
+            raise exc.HpxmlTranslationError(
+                f"Cannot translate PipeInsulated with value '{el.text}'."
+            )
+
     # Write out new file
     hpxml4_doc.write(pathobj_to_str(hpxml4_file), pretty_print=True, encoding="utf-8")
     hpxml4_schema.assertValid(hpxml4_doc)

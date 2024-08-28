@@ -281,6 +281,15 @@ def test_operable_windows_skylights():
     assert root.Building.BuildingDetails.Enclosure.Skylights.Skylight[1].FractionOperable == 1
 
 
+def test_pipe_insulated():
+    root = convert_hpxml_and_parse(hpxml_dir / "pipe_insulated.xml")
+
+    water_heating = root.Building.BuildingDetails.Systems.WaterHeating
+    assert water_heating.WaterHeatingSystem[0].WaterHeaterImprovement.PipeInsulated
+    assert not water_heating.WaterHeatingSystem[1].WaterHeaterImprovement.PipeInsulated
+    assert water_heating.WaterHeatingSystem[2].WaterHeaterImprovement.PipeInsulated
+
+
 def test_mismatch_version():
     f_out = io.BytesIO()
     with pytest.raises(
