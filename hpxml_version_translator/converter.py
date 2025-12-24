@@ -1358,7 +1358,7 @@ def convert_hpxml2_to_3(
 
 
 def convert_hpxml3_to_4(
-    hpxml3_file: File, hpxml4_file: File, version: str = "4.0"
+    hpxml3_file: File, hpxml4_file: File, version: str = "4.2"
 ) -> None:
     """Convert an HPXML v3 file to HPXML v4
 
@@ -1377,7 +1377,7 @@ def convert_hpxml3_to_4(
     hpxml3_schema_doc = etree.parse(str(schemas_dir / "v3.1" / "HPXML.xsd"))
     hpxml3_ns = hpxml3_schema_doc.getroot().attrib["targetNamespace"]
     hpxml3_schema = etree.XMLSchema(hpxml3_schema_doc)
-    hpxml4_schema_doc = etree.parse(str(schemas_dir / "v4.0" / "HPXML.xsd"))
+    hpxml4_schema_doc = etree.parse(str(schemas_dir / "v4.2" / "HPXML.xsd"))
     hpxml4_ns = hpxml4_schema_doc.getroot().attrib["targetNamespace"]
     hpxml4_schema = etree.XMLSchema(hpxml4_schema_doc)
 
@@ -1401,7 +1401,7 @@ def convert_hpxml3_to_4(
     root = hpxml4_doc.getroot()
 
     # Change version
-    root.attrib["schemaVersion"] = "4.0"
+    root.attrib["schemaVersion"] = version
 
     # Move some FoundationWall/Slab insulation properties into their Layer elements
     # https://github.com/hpxmlwg/hpxml/pull/215

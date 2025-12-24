@@ -14,7 +14,7 @@ from hpxml_version_translator import exceptions as exc
 hpxml_dir = pathlib.Path(__file__).resolve().parent / "hpxml_v3_files"
 
 
-def convert_hpxml_and_parse(input_filename, version="4.0"):
+def convert_hpxml_and_parse(input_filename, version="4.2"):
     with tempfile.NamedTemporaryFile("w+b") as f_out:
         convert_hpxml_to_version(version, input_filename, f_out)
         f_out.seek(0)
@@ -24,7 +24,7 @@ def convert_hpxml_and_parse(input_filename, version="4.0"):
 
 def test_version_change_to_4():
     root = convert_hpxml_and_parse(hpxml_dir / "version_change.xml")
-    assert root.attrib["schemaVersion"] == "4.0"
+    assert root.attrib["schemaVersion"] == "4.2"
 
 
 def test_enclosure_foundation():
