@@ -17,12 +17,12 @@ def test_cli(capsysbinary):
         output_filename = str(tmppath / "out.xml")
         main([input_filename, "-o", output_filename])
         root = objectify.parse(output_filename).getroot()
-        assert root.attrib["schemaVersion"] == "4.0"
+        assert root.attrib["schemaVersion"] == "4.2"
 
     main([input_filename])
     f = io.BytesIO(capsysbinary.readouterr().out)
     root = objectify.parse(f).getroot()
-    assert root.attrib["schemaVersion"] == "4.0"
+    assert root.attrib["schemaVersion"] == "4.2"
 
 
 def test_cli_to_v2(capsysbinary):

@@ -14,7 +14,7 @@ from hpxml_version_translator import exceptions as exc
 hpxml_dir = pathlib.Path(__file__).resolve().parent / "hpxml_v3_files"
 
 
-def convert_hpxml_and_parse(input_filename, version="4.0"):
+def convert_hpxml_and_parse(input_filename, version="4.2"):
     with tempfile.NamedTemporaryFile("w+b") as f_out:
         convert_hpxml_to_version(version, input_filename, f_out)
         f_out.seek(0)
@@ -24,7 +24,7 @@ def convert_hpxml_and_parse(input_filename, version="4.0"):
 
 def test_version_change_to_4():
     root = convert_hpxml_and_parse(hpxml_dir / "version_change.xml")
-    assert root.attrib["schemaVersion"] == "4.0"
+    assert root.attrib["schemaVersion"] == "4.2"
 
 
 def test_enclosure_foundation():
@@ -113,7 +113,7 @@ def test_enclosure_floors():
     fnd = root.Building.BuildingDetails.Enclosure.Foundations.Foundation
     assert not hasattr(fnd, "AttachedToFrameFloor")
     assert hasattr(fnd, "AttachedToFloor")
-    assert fnd.ThermalBoundary == 'floor'
+    assert fnd.ThermalBoundary == "floor"
 
     enc = root.Building.BuildingDetails.Enclosure
     assert not hasattr(enc, "FrameFloors")
@@ -141,13 +141,13 @@ def test_ducts():
     for i in (0, 1):
         ducts = hvacdist1.DistributionSystemType.AirDistribution.Ducts[i]
         assert hasattr(ducts, "SystemIdentifier")
-        assert ducts.SystemIdentifier.attrib['id'] == f"hvacd1_ducts{i}"
+        assert ducts.SystemIdentifier.attrib["id"] == f"hvacd1_ducts{i}"
 
     hvacdist2 = root.Building.BuildingDetails.Systems.HVAC.HVACDistribution[1]
     for i in (0, 1):
         ducts = hvacdist2.DistributionSystemType.AirDistribution.Ducts[i]
         assert hasattr(ducts, "SystemIdentifier")
-        assert ducts.SystemIdentifier.attrib['id'] == f"hvacd2_ducts{i}"
+        assert ducts.SystemIdentifier.attrib["id"] == f"hvacd2_ducts{i}"
 
 
 def test_pv_system():
@@ -185,7 +185,9 @@ def test_count():
     assert hasattr(bd.Enclosure.Windows.Window, "Count")
     assert hasattr(bd.Enclosure.Skylights.Skylight, "Count")
     assert hasattr(bd.Enclosure.Doors.Door, "Count")
-    assert hasattr(bd.Systems.MechanicalVentilation.VentilationFans.VentilationFan, "Count")
+    assert hasattr(
+        bd.Systems.MechanicalVentilation.VentilationFans.VentilationFan, "Count"
+    )
     assert hasattr(bd.Systems.WaterHeating.WaterFixture, "Count")
     assert hasattr(bd.Systems.ElectricVehicleChargers.ElectricVehicleCharger, "Count")
     assert hasattr(bd.Appliances.ClothesWasher, "Count")
@@ -206,10 +208,16 @@ def test_remote_reference():
     for bd in root.Building:
         assert bd.CustomerID.attrib["idref"]
         assert bd.ContractorID.attrib["idref"]
-        for aim in bd.BuildingDetails.Enclosure.AirInfiltration.AirInfiltrationMeasurement:
+        for (
+            aim
+        ) in bd.BuildingDetails.Enclosure.AirInfiltration.AirInfiltrationMeasurement:
             assert aim.BusinessConductingTest.attrib["idref"]
             assert aim.IndividualConductingTest.attrib["idref"]
-        for caz in bd.BuildingDetails.HealthAndSafety.CombustionAppliances.CombustionApplianceZone:
+        for (
+            caz
+        ) in (
+            bd.BuildingDetails.HealthAndSafety.CombustionAppliances.CombustionApplianceZone
+        ):
             for cat in caz.CombustionApplianceTest:
                 assert cat.CAZAppliance.attrib["idref"]
                 assert cat.CombustionVentingSystem.attrib["idref"]
@@ -233,20 +241,26 @@ def test_geothermal_loop():
     hvac_plant = root.Building.BuildingDetails.Systems.HVAC.HVACPlant
     for i in (0, 1):
         gshp = hvac_plant.HeatPump[i]
-        assert gshp.AttachedToGeothermalLoop.attrib['idref'] == f"gshp{i+1}-geothermal-loop"
+        assert (
+            gshp.AttachedToGeothermalLoop.attrib["idref"]
+            == f"gshp{i+1}-geothermal-loop"
+        )
 
         geo_loop = hvac_plant.GeothermalLoop[i]
-        assert geo_loop.SystemIdentifier.attrib['id'] == f"gshp{i+1}-geothermal-loop"
+        assert geo_loop.SystemIdentifier.attrib["id"] == f"gshp{i+1}-geothermal-loop"
         if i == 0:
-            assert geo_loop.LoopType == 'closed'
+            assert geo_loop.LoopType == "closed"
         else:
-            assert geo_loop.LoopType == 'open'
+            assert geo_loop.LoopType == "open"
 
 
 def test_max_ambient_co():
     root = convert_hpxml_and_parse(hpxml_dir / "max_ambient_co.xml")
 
-    assert root.Building.BuildingDetails.HealthAndSafety.CombustionAppliances.MaxAmbientCOinLivingSpaceDuringAudit == 2
+    assert (
+        root.Building.BuildingDetails.HealthAndSafety.CombustionAppliances.MaxAmbientCOinLivingSpaceDuringAudit
+        == 2
+    )
 
 
 def test_max_ambient_co_error():
@@ -268,17 +282,37 @@ def test_portable_heater():
 def test_cee_enumeration():
     root = convert_hpxml_and_parse(hpxml_dir / "pool_pumps_and_cee_enum.xml")
 
-    assert root.Building.BuildingDetails.Pools.Pool[0].Pumps.Pump[2].ThirdPartyCertification == "CEE Tier 3"
-    assert root.Building.BuildingDetails.Pools.Pool[1].Pumps.Pump[0].ThirdPartyCertification == "CEE Tier 3"
+    assert (
+        root.Building.BuildingDetails.Pools.Pool[0]
+        .Pumps.Pump[2]
+        .ThirdPartyCertification
+        == "CEE Tier 3"
+    )
+    assert (
+        root.Building.BuildingDetails.Pools.Pool[1]
+        .Pumps.Pump[0]
+        .ThirdPartyCertification
+        == "CEE Tier 3"
+    )
 
 
 def test_operable_windows_skylights():
     root = convert_hpxml_and_parse(hpxml_dir / "operable_windows_skylights.xml")
 
-    assert root.Building.BuildingDetails.Enclosure.Windows.Window[0].FractionOperable == 1
-    assert root.Building.BuildingDetails.Enclosure.Windows.Window[1].FractionOperable == 0
-    assert root.Building.BuildingDetails.Enclosure.Skylights.Skylight[0].FractionOperable == 0
-    assert root.Building.BuildingDetails.Enclosure.Skylights.Skylight[1].FractionOperable == 1
+    assert (
+        root.Building.BuildingDetails.Enclosure.Windows.Window[0].FractionOperable == 1
+    )
+    assert (
+        root.Building.BuildingDetails.Enclosure.Windows.Window[1].FractionOperable == 0
+    )
+    assert (
+        root.Building.BuildingDetails.Enclosure.Skylights.Skylight[0].FractionOperable
+        == 0
+    )
+    assert (
+        root.Building.BuildingDetails.Enclosure.Skylights.Skylight[1].FractionOperable
+        == 1
+    )
 
 
 def test_pipe_insulated():

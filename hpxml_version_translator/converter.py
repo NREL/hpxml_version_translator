@@ -1293,7 +1293,9 @@ def convert_hpxml2_to_3(
                 ],
                 E.PipeInsulation(E.PipeRValue(float(pipe.PipeRValue))),
             )
-        except IndexError:  # handles when there is no attached hot water distribution system
+        except (
+            IndexError
+        ):  # handles when there is no attached hot water distribution system
             add_after(
                 waterheating,
                 ["WaterHeatingSystem", "WaterHeatingControl"],
@@ -1346,8 +1348,11 @@ def convert_hpxml2_to_3(
     # Convert DSE to fractions if needed
     # https://github.com/hpxmlwg/hpxml/pull/246
 
-    for dist_system_eff in root.xpath('//h:AnnualHeatingDistributionSystemEfficiency | \
-                                      //h:AnnualCoolingDistributionSystemEfficiency', **xpkw):
+    for dist_system_eff in root.xpath(
+        "//h:AnnualHeatingDistributionSystemEfficiency | \
+                                      //h:AnnualCoolingDistributionSystemEfficiency",
+        **xpkw,
+    ):
         if dist_system_eff > 1:
             frac_dist_system_eff = float(dist_system_eff) / 100
             dist_system_eff._setText(str(frac_dist_system_eff))
@@ -1358,7 +1363,7 @@ def convert_hpxml2_to_3(
 
 
 def convert_hpxml3_to_4(
-    hpxml3_file: File, hpxml4_file: File, version: str = "4.0"
+    hpxml3_file: File, hpxml4_file: File, version: str = "4.2"
 ) -> None:
     """Convert an HPXML v3 file to HPXML v4
 
@@ -1377,7 +1382,7 @@ def convert_hpxml3_to_4(
     hpxml3_schema_doc = etree.parse(str(schemas_dir / "v3.1" / "HPXML.xsd"))
     hpxml3_ns = hpxml3_schema_doc.getroot().attrib["targetNamespace"]
     hpxml3_schema = etree.XMLSchema(hpxml3_schema_doc)
-    hpxml4_schema_doc = etree.parse(str(schemas_dir / "v4.0" / "HPXML.xsd"))
+    hpxml4_schema_doc = etree.parse(str(schemas_dir / "v4.2" / "HPXML.xsd"))
     hpxml4_ns = hpxml4_schema_doc.getroot().attrib["targetNamespace"]
     hpxml4_schema = etree.XMLSchema(hpxml4_schema_doc)
 
@@ -1401,7 +1406,7 @@ def convert_hpxml3_to_4(
     root = hpxml4_doc.getroot()
 
     # Change version
-    root.attrib["schemaVersion"] = "4.0"
+    root.attrib["schemaVersion"] = version
 
     # Move some FoundationWall/Slab insulation properties into their Layer elements
     # https://github.com/hpxmlwg/hpxml/pull/215
@@ -1485,13 +1490,13 @@ def convert_hpxml3_to_4(
             add_before(
                 dehumidifier,
                 [
-                 "IntegratedEnergyFactor",
-                 "DehumidistatSetpoint",
-                 "Airflow",
-                 "FractionDehumidificationLoadServed",
-                 "extension"
+                    "IntegratedEnergyFactor",
+                    "DehumidistatSetpoint",
+                    "Airflow",
+                    "FractionDehumidificationLoadServed",
+                    "extension",
                 ],
-                E.EnergyFactor(value)
+                E.EnergyFactor(value),
             )
 
     # Replaced StandbyLoss with StandbyLoss[Units]/Value
@@ -1503,10 +1508,7 @@ def convert_hpxml3_to_4(
             add_after(
                 water_heater,
                 ["StandbyLoss"],
-                E.StandbyLoss(
-                    E.Units("F/hr"),
-                    E.Value(value)
-                )
+                E.StandbyLoss(E.Units("F/hr"), E.Value(value)),
             )
             water_heater.remove(water_heater.StandbyLoss)
 
@@ -1522,31 +1524,45 @@ def convert_hpxml3_to_4(
         el.tag = f"{{{hpxml4_ns}}}AttachedToFloor"
     for el in root.xpath("//h:StructurallyInsulatedPanel", **xpkw):
         el.tag = f"{{{hpxml4_ns}}}StructuralInsulatedPanel"
-    for thermal_boundary in root.xpath("//h:Foundation/h:ThermalBoundary[text()='frame floor']", **xpkw):
-        thermal_boundary._setText('floor')
+    for thermal_boundary in root.xpath(
+        "//h:Foundation/h:ThermalBoundary[text()='frame floor']", **xpkw
+    ):
+        thermal_boundary._setText("floor")
 
     # Added a SystemIdentifier element for Ducts
     # https://github.com/hpxmlwg/hpxml/pull/350
-    for hvac_dist in root.xpath("//h:HVACDistribution[h:DistributionSystemType/h:AirDistribution/h:Ducts]", **xpkw):
-        hvac_dist_id = hvac_dist.SystemIdentifier.attrib['id']
-        for i, ducts in enumerate(hvac_dist.DistributionSystemType.AirDistribution.Ducts):
+    for hvac_dist in root.xpath(
+        "//h:HVACDistribution[h:DistributionSystemType/h:AirDistribution/h:Ducts]",
+        **xpkw,
+    ):
+        hvac_dist_id = hvac_dist.SystemIdentifier.attrib["id"]
+        for i, ducts in enumerate(
+            hvac_dist.DistributionSystemType.AirDistribution.Ducts
+        ):
             ducts.insert(0, E.SystemIdentifier(id=f"{hvac_dist_id}_ducts{i}"))
 
     # Standalone Inverter
     # https://github.com/hpxmlwg/hpxml/pull/352
-    for pv_sys in root.xpath("//h:PVSystem[h:InverterEfficiency | h:YearInverterManufactured]", **xpkw):
-        inverter = E.Inverter(E.SystemIdentifier(id=f"{pv_sys.SystemIdentifier.attrib['id']}_inverter"))
+    for pv_sys in root.xpath(
+        "//h:PVSystem[h:InverterEfficiency | h:YearInverterManufactured]", **xpkw
+    ):
+        inverter = E.Inverter(
+            E.SystemIdentifier(id=f"{pv_sys.SystemIdentifier.attrib['id']}_inverter")
+        )
         if hasattr(pv_sys, "InverterEfficiency"):
             inverter.append(E.InverterEfficiency(pv_sys.InverterEfficiency.text))
             pv_sys.remove(pv_sys.InverterEfficiency)
         if hasattr(pv_sys, "YearInverterManufactured"):
-            inverter.append(E.YearInverterManufactured(pv_sys.YearInverterManufactured.text))
+            inverter.append(
+                E.YearInverterManufactured(pv_sys.YearInverterManufactured.text)
+            )
             pv_sys.remove(pv_sys.YearInverterManufactured)
         pv_sys.getparent().append(inverter)
 
     # Renamed NumberofUnits and Quantity to Count
     # https://github.com/hpxmlwg/hpxml/pull/346
-    for el in root.xpath("//h:ElectricVehicleCharger[h:NumberofUnits] | \
+    for el in root.xpath(
+        "//h:ElectricVehicleCharger[h:NumberofUnits] | \
                           //h:ClothesWasher[h:NumberofUnits] | \
                           //h:ClothesDryer[h:NumberofUnits] | \
                           //h:Dishwasher[h:NumberofUnits] | \
@@ -1555,19 +1571,25 @@ def convert_hpxml3_to_4(
                           //h:Dehumidifier[h:NumberofUnits] | \
                           //h:CookingRange[h:NumberofUnits] | \
                           //h:Oven[h:NumberofUnits] | \
-                          //h:LightingGroup[h:NumberofUnits]", **xpkw):
+                          //h:LightingGroup[h:NumberofUnits]",
+        **xpkw,
+    ):
         el.NumberofUnits.tag = f"{{{hpxml4_ns}}}Count"
-    for el in root.xpath("//h:Window[h:Quantity] | \
+    for el in root.xpath(
+        "//h:Window[h:Quantity] | \
                           //h:Skylight[h:Quantity] | \
                           //h:Door[h:Quantity] | \
                           //h:VentilationFan[h:Quantity] | \
                           //h:WaterFixture[h:Quantity] | \
-                          //h:CeilingFan[h:Quantity]", **xpkw):
+                          //h:CeilingFan[h:Quantity]",
+        **xpkw,
+    ):
         el.Quantity.tag = f"{{{hpxml4_ns}}}Count"
 
     # Changed RemoteReference base element attribute from "id" to "idref"
     # https://github.com/hpxmlwg/hpxml/pull/378
-    for el in root.xpath("//h:CombustionApplianceTest/h:CAZAppliance[@id] | \
+    for el in root.xpath(
+        "//h:CombustionApplianceTest/h:CAZAppliance[@id] | \
                          //h:CombustionApplianceTest/h:CombustionVentingSystem[@id] | \
                          //h:Measure/h:InstallingContractor[@id] | \
                          //h:ReplacedComponent[@id] | \
@@ -1580,7 +1602,9 @@ def convert_hpxml3_to_4(
                          //h:Project/h:PreBuildingID[@id] | \
                          //h:Project/h:PostBuildingID[@id] | \
                          //h:Consumption/h:BuildingID[@id] | \
-                         //h:Consumption/h:CustomerID[@id]", **xpkw):
+                         //h:Consumption/h:CustomerID[@id]",
+        **xpkw,
+    ):
         el.attrib["idref"] = el.attrib["id"]
         del el.attrib["id"]
 
@@ -1588,23 +1612,31 @@ def convert_hpxml3_to_4(
     # https://github.com/hpxmlwg/hpxml/pull/367
     for el in root.xpath("//h:HeatPump[h:GeothermalLoop]", **xpkw):
         hvac_plant = el.getparent()
-        add_before(hvac_plant,
-                   ["extension"],
-                   E.GeothermalLoop(
-                       E.SystemIdentifier(id=f"{el.SystemIdentifier.attrib['id']}-geothermal-loop"),
-                       E.LoopType(el.GeothermalLoop.text)
-                     ),
-                   )
-        add_before(el,
-                   ["extension"],
-                   E.AttachedToGeothermalLoop(idref=f"{el.SystemIdentifier.attrib['id']}-geothermal-loop")
-                   )
+        add_before(
+            hvac_plant,
+            ["extension"],
+            E.GeothermalLoop(
+                E.SystemIdentifier(
+                    id=f"{el.SystemIdentifier.attrib['id']}-geothermal-loop"
+                ),
+                E.LoopType(el.GeothermalLoop.text),
+            ),
+        )
+        add_before(
+            el,
+            ["extension"],
+            E.AttachedToGeothermalLoop(
+                idref=f"{el.SystemIdentifier.attrib['id']}-geothermal-loop"
+            ),
+        )
         del el.GeothermalLoop
 
     # Moved MaxAmbientCOinLivingSpaceDuringAudit element
     # https://github.com/hpxmlwg/hpxml/pull/377
     co_value = None
-    for el in root.xpath("//h:CarbonMonoxideTest/h:MaxAmbientCOinLivingSpaceDuringAudit", **xpkw):
+    for el in root.xpath(
+        "//h:CarbonMonoxideTest/h:MaxAmbientCOinLivingSpaceDuringAudit", **xpkw
+    ):
         if co_value is None:
             co_value = el.text
             comb_appls = el.getparent().getparent().getparent().getparent()
@@ -1622,7 +1654,9 @@ def convert_hpxml3_to_4(
 
     # Fixed case of CEE enumeration
     # https://github.com/hpxmlwg/hpxml/pull/387
-    for el in root.xpath("//h:PoolPump[h:ThirdPartyCertification = 'Cee Tier 3']", **xpkw):
+    for el in root.xpath(
+        "//h:PoolPump[h:ThirdPartyCertification = 'Cee Tier 3']", **xpkw
+    ):
         el.ThirdPartyCertification._setText("CEE Tier 3")
 
     # Renamed PoolPumps/PoolPump to Pumps/Pump
@@ -1635,7 +1669,7 @@ def convert_hpxml3_to_4(
     # https://github.com/hpxmlwg/hpxml/pull/221
     for el in root.xpath("//h:Window/h:Operable | //h:Skylight/h:Operable", **xpkw):
         el.tag = f"{{{hpxml4_ns}}}FractionOperable"
-        if el.text.lower() in ('true', '1'):
+        if el.text.lower() in ("true", "1"):
             el._setText("1")
         else:
             el._setText("0")
@@ -1645,9 +1679,9 @@ def convert_hpxml3_to_4(
     for el in root.xpath("//h:WaterHeaterImprovement/h:PipeInsulated", **xpkw):
         if el.text is None:
             el._setText("true")
-        elif el.text.lower() in ('false', '0'):
+        elif el.text.lower() in ("false", "0"):
             el._setText("false")
-        elif el.text.lower() in ('true', '1'):
+        elif el.text.lower() in ("true", "1"):
             el._setText("true")
         else:
             raise exc.HpxmlTranslationError(
