@@ -894,3 +894,21 @@ def test_dse():
     hvacdist2 = root.Building[0].BuildingDetails.Systems.HVAC.HVACDistribution[1]
     assert hvacdist2.AnnualHeatingDistributionSystemEfficiency == 0.66
     assert hvacdist2.AnnualCoolingDistributionSystemEfficiency == 0.77
+
+
+def test_multiple_knee_walls():
+    root = convert_hpxml_and_parse(hpxml_dir / "multiple_knee_walls.xml")
+
+    attic = root.Building[0].BuildingDetails.Enclosure.Attics.Attic[0]
+
+    wall2 = root.Building[0].BuildingDetails.Enclosure.Walls.Wall[1]
+    assert (
+        wall2.SystemIdentifier.attrib["id"] == attic.AttachedToWall[0].attrib["idref"]
+    )
+    assert wall2.AtticWallType == "knee wall"
+
+    wall3 = root.Building[0].BuildingDetails.Enclosure.Walls.Wall[2]
+    assert (
+        wall3.SystemIdentifier.attrib["id"] == attic.AttachedToWall[1].attrib["idref"]
+    )
+    assert wall3.AtticWallType == "knee wall"

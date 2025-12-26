@@ -720,8 +720,8 @@ def convert_hpxml2_to_3(
             )
 
         # find the wall with the same id and add AtticWallType = knee wall
-        if hasattr(this_attic, "AtticKneeWall"):
-            knee_wall_id = this_attic.AtticKneeWall.attrib["idref"]
+        for attic_knee_wall in this_attic.xpath("h:AtticKneeWall", **xpkw):
+            knee_wall_id = attic_knee_wall.attrib["idref"]
             try:
                 knee_wall = root.xpath(
                     "h:Building/h:BuildingDetails/h:Enclosure/h:Walls/h:Wall[h:SystemIdentifier/@id=$sysid]",
@@ -906,7 +906,7 @@ def convert_hpxml2_to_3(
             "Rafters",
         ]
         for el in el_not_in_v3:
-            if hasattr(this_attic, el):
+            while hasattr(this_attic, el):
                 this_attic.remove(this_attic[el])
 
         enclosure.Attics.append(this_attic)
