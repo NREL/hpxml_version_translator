@@ -8,7 +8,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
+        python-version: ["3.10", "3.11", "3.12", "3.13", "3.14"]
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python ${{ matrix.python-version }}
@@ -44,5 +44,5 @@ jobs:
           minimum_coverage: 98
           skip_covered: false
           show_missing: true
-      - name: Style Checks
-        run: python -m flake8 --show-source --statistics
+      - name: Linting
+        uses: psf/black@stable
