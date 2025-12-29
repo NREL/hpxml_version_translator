@@ -25,7 +25,6 @@ setuptools.setup(
             "pytest-mock",
             "pytest-xdist",
             "pytest-cov",
-            "flake8",
             "rope",
             "black",
         ]
