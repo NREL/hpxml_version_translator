@@ -38,6 +38,7 @@ def pathobj_to_str(x: File) -> Union[str, BinaryIO]:
     else:  # tempfile.NamedTemporaryFile
         return x.name
 
+
 def convert_str_version_to_tuple(version: str) -> Tuple[int]:
     schema_version = list(map(int, version.split(".")))
     schema_version.extend((3 - len(schema_version)) * [0])
