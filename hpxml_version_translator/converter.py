@@ -1742,10 +1742,14 @@ def convert_hpxml4_to_5(
 
     # Convert none to not present
     # https://github.com/hpxmlwg/hpxml/pull/451
-    for el in root.xpath("//h:InteriorShading/h:Type | //h:ExteriorShading/h:Type", **xpkw):
+    for el in root.xpath(
+        "//h:InteriorShading/h:Type | //h:ExteriorShading/h:Type", **xpkw
+    ):
         if el.text == "none":
             el._setText("not present")
-    for el in root.xpath("//h:Wall/h:Siding | //h:Wall/h:InteriorFinish/h:Type", **xpkw):
+    for el in root.xpath(
+        "//h:Wall/h:Siding | //h:Wall/h:InteriorFinish/h:Type", **xpkw
+    ):
         if el.text == "none":
             el._setText("not present")
     for el in root.xpath("//h:Floor/h:FloorCovering", **xpkw):
@@ -1757,7 +1761,10 @@ def convert_hpxml4_to_5(
     for el in root.xpath("//h:Pool/h:Type | //h:PermanentSpa/h:Type", **xpkw):
         if el.text == "none":
             el._setText("not present")
-    for el in root.xpath("//h:FilterType | //h:Pump/h:Type | //h:Cleaner/h:Type | //h:Heater/h:Type", **xpkw):
+    for el in root.xpath(
+        "//h:FilterType | //h:Pump/h:Type | //h:Cleaner/h:Type | //h:Heater/h:Type",
+        **xpkw,
+    ):
         if el.text == "none":
             el._setText("not present")
     for el in root.xpath("//h:InsulationMaterial/h:None", **xpkw):
@@ -1776,12 +1783,14 @@ def convert_hpxml4_to_5(
         if el.text is None or el.text.lower() in ("true", "1"):
             add_before(
                 skylight,
-                ["Pitch",
-                 "AttachedToRoof",
-                 "AttachedToFloor",
-                 "AnnualEnergyUse",
-                 "extension"],
-                E.SkylightType("tubular")
+                [
+                    "Pitch",
+                    "AttachedToRoof",
+                    "AttachedToFloor",
+                    "AnnualEnergyUse",
+                    "extension",
+                ],
+                E.SkylightType("tubular"),
             )
         del skylight.SolarTube
 
