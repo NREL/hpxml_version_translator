@@ -39,9 +39,9 @@ def test_attempt_to_change_to_same_version():
 def test_attempt_to_use_nonexistent_version():
     with pytest.raises(
         exc.HpxmlTranslationError,
-        match=r"HPXML version 5\.0 is not valid\. Must be one of",
+        match=r"HPXML version 9\.0 is not valid\. Must be one of",
     ):
-        convert_hpxml_and_parse(hpxml_dir / "version_change.xml", version="5.0")
+        convert_hpxml_and_parse(hpxml_dir / "version_change.xml", version="9.0")
 
 
 def test_convert_hpxml_to_3():

@@ -1,0 +1,35 @@
+<HPXML xmlns="http://hpxmlonline.com/2023/09" schemaVersion="4.0">
+    <XMLTransactionHeaderInformation>
+        <XMLType/>
+        <XMLGeneratedBy/>
+        <CreatedDateAndTime>2014-08-21T11:41:49.968796</CreatedDateAndTime>
+        <Transaction>create</Transaction>
+    </XMLTransactionHeaderInformation>
+    <SoftwareInfo/>
+    <Building>
+        <BuildingID id="bldg1"/>
+        <ProjectStatus>
+            <EventType>audit</EventType>
+            <Date>2014-12-02</Date>
+        </ProjectStatus>
+        <BuildingDetails>
+            <Appliances>
+                <Refrigerator>
+                    <SystemIdentifier id="fridge1"/>
+                    <Type>uncategorized</Type>
+                </Refrigerator>
+                <Refrigerator>
+                    <SystemIdentifier id="fridge2"/>
+                </Refrigerator>
+                <Refrigerator>
+                    <SystemIdentifier id="fridge3"/>
+                    <Type>uncategorized</Type>
+                </Refrigerator>
+                <Refrigerator>
+                    <SystemIdentifier id="fridge4"/>
+                    <Type>bottom freezer</Type>
+                </Refrigerator>
+            </Appliances>
+        </BuildingDetails>
+    </Building>
+</HPXML>
