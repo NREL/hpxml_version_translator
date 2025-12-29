@@ -1,0 +1,300 @@
+<HPXML xmlns="http://hpxmlonline.com/2023/09" schemaVersion="4.0">
+    <XMLTransactionHeaderInformation>
+        <XMLType/>
+        <XMLGeneratedBy/>
+        <CreatedDateAndTime>2014-08-21T11:41:49.968796</CreatedDateAndTime>
+        <Transaction>create</Transaction>
+    </XMLTransactionHeaderInformation>
+    <SoftwareInfo/>
+    <Building>
+        <BuildingID id="bldg1"/>
+        <ProjectStatus>
+            <EventType>audit</EventType>
+            <Date>2014-12-02</Date>
+        </ProjectStatus>
+        <BuildingDetails>
+            <Enclosure>
+                <Attics>
+                    <Attic>
+                        <SystemIdentifier id="attic1"/>
+                        <AtticType>
+                            <Attic>
+                                <Vented>true</Vented>
+                            </Attic>
+                        </AtticType>
+                        <AttachedToRoof idref="roof1"/>
+                        <AttachedToFloor idref="framefloor1"/>
+                    </Attic>
+                </Attics>
+                <Foundations>
+                    <Foundation>
+                        <SystemIdentifier id="belly1"/>
+                        <FoundationType>
+                            <BellyAndWing>
+                                <BellyWrapCondition>none</BellyWrapCondition>
+                            </BellyAndWing>
+                        </FoundationType>
+                        <AttachedToFloor idref="framefloor2"/>
+                    </Foundation>
+                    <Foundation>
+                        <SystemIdentifier id="belly2"/>
+                        <FoundationType>
+                            <BellyAndWing>
+                                <BellyWrapCondition>none</BellyWrapCondition>
+                            </BellyAndWing>
+                        </FoundationType>
+                        <AttachedToFloor idref="framefloor3"/>
+                    </Foundation>
+                </Foundations>
+                <Roofs>
+                    <Roof>
+                        <SystemIdentifier id="roof1"/>
+                        <RoofType>asphalt or fiberglass shingles</RoofType>
+                        <RoofColor>medium</RoofColor>
+                        <RadiantBarrier>false</RadiantBarrier>
+                        <Insulation>
+                            <SystemIdentifier id="attic1roofins"/>
+                            <Layer>
+                                <InsulationMaterial>
+                                    <None/>
+                                </InsulationMaterial>
+                                <NominalRValue>0</NominalRValue>
+                            </Layer>
+                        </Insulation>
+                    </Roof>
+                </Roofs>
+                <Walls>
+                    <Wall>
+                        <SystemIdentifier id="wall1"/>
+                        <ExteriorAdjacentTo>outside</ExteriorAdjacentTo>
+                        <InteriorAdjacentTo>living space</InteriorAdjacentTo>
+                        <WallType>
+                            <WoodStud/>
+                        </WallType>
+                        <Siding>none</Siding>
+                        <InteriorFinish>
+                            <Type>none</Type>
+                        </InteriorFinish>
+                        <Insulation>
+                            <SystemIdentifier id="wall1ins"/>
+                            <Layer>
+                                <InstallationType>cavity</InstallationType>
+                                <NominalRValue>11</NominalRValue>
+                            </Layer>
+                        </Insulation>
+                    </Wall>
+                    <Wall>
+                        <SystemIdentifier id="wall2"/>
+                        <ExteriorAdjacentTo>outside</ExteriorAdjacentTo>
+                        <InteriorAdjacentTo>living space</InteriorAdjacentTo>
+                        <WallType>
+                            <WoodStud/>
+                        </WallType>
+                        <Siding>none</Siding>
+                        <InteriorFinish>
+                            <Type>none</Type>
+                        </InteriorFinish>
+                        <Insulation>
+                            <SystemIdentifier id="wall2ins"/>
+                            <Layer>
+                                <InstallationType>cavity</InstallationType>
+                                <NominalRValue>11</NominalRValue>
+                            </Layer>
+                        </Insulation>
+                    </Wall>
+                </Walls>
+                <Floors>
+                    <Floor>
+                        <SystemIdentifier id="framefloor1"/>
+                        <FloorCovering>none</FloorCovering>
+                        <Area>1200</Area>
+                        <Insulation>
+                            <SystemIdentifier id="attic1flrins"/>
+                            <Layer>
+                                <NominalRValue>49</NominalRValue>
+                            </Layer>
+                        </Insulation>
+                    </Floor>
+                    <Floor>
+                        <SystemIdentifier id="framefloor2"/>
+                        <FloorCovering>none</FloorCovering>
+                        <Area>1200</Area>
+                        <Insulation>
+                            <SystemIdentifier id="belly1flrins"/>
+                            <Layer>
+                                <InsulationMaterial>
+                                    <None/>
+                                </InsulationMaterial>
+                                <NominalRValue>0</NominalRValue>
+                            </Layer>
+                        </Insulation>
+                    </Floor>
+                    <Floor>
+                        <SystemIdentifier id="framefloor3"/>
+                        <FloorCovering>none</FloorCovering>
+                        <Area>1200</Area>
+                        <Insulation>
+                            <SystemIdentifier id="belly2flrins"/>
+                            <Layer>
+                                <InsulationMaterial>
+                                    <None/>
+                                </InsulationMaterial>
+                                <NominalRValue>0</NominalRValue>
+                            </Layer>
+                        </Insulation>
+                    </Floor>
+                </Floors>
+                <Windows>
+                    <Window>
+                        <SystemIdentifier id="window1"/>
+                        <ExteriorShading>
+                            <SystemIdentifier id="window1extshad"/>
+                            <Type>none</Type>
+                        </ExteriorShading>
+                        <InteriorShading>
+                            <SystemIdentifier id="window1intshad"/>
+                            <Type>none</Type>
+                        </InteriorShading>
+                    </Window>
+                    <Window>
+                        <SystemIdentifier id="window2"/>
+                        <ExteriorShading>
+                            <SystemIdentifier id="window2extshad"/>
+                            <Type>solar film</Type>
+                        </ExteriorShading>
+                        <InteriorShading>
+                            <SystemIdentifier id="window2intshad"/>
+                            <Type>dark shades</Type>
+                        </InteriorShading>
+                    </Window>
+                    <Window>
+                        <SystemIdentifier id="window3"/>
+                    </Window>
+                </Windows>
+                <Skylights>
+                    <Skylight>
+                        <SystemIdentifier id="skylight1"/>
+                        <ExteriorShading>
+                            <SystemIdentifier id="skylight1extshad"/>
+                            <Type>none</Type>
+                        </ExteriorShading>
+                        <InteriorShading>
+                            <SystemIdentifier id="skylight1intshad"/>
+                            <Type>none</Type>
+                        </InteriorShading>
+                    </Skylight>
+                    <Skylight>
+                        <SystemIdentifier id="skylight2"/>
+                        <ExteriorShading>
+                            <SystemIdentifier id="skylight2extshad"/>
+                            <Type>solar film</Type>
+                        </ExteriorShading>
+                        <InteriorShading>
+                            <SystemIdentifier id="skylight2intshad"/>
+                            <Type>dark shades</Type>
+                        </InteriorShading>
+                    </Skylight>
+                    <Skylight>
+                        <SystemIdentifier id="skylight3"/>
+                    </Skylight>
+                </Skylights>
+            </Enclosure>
+            <Pools>
+                <Pool>
+                    <SystemIdentifier id="pool1"/>
+                    <Type>none</Type>
+                    <FilterType>none</FilterType>
+                    <Pumps>
+                        <Pump>
+                            <SystemIdentifier id="poolpump1a"/>
+                            <Type>none</Type>
+                        </Pump>
+                        <Pump>
+                            <SystemIdentifier id="poolpump1b"/>
+                            <Type>none</Type>
+                        </Pump>
+                    </Pumps>
+                    <Cleaner>
+                        <SystemIdentifier id="poolcleaner1"/>
+                        <Type>none</Type>
+                    </Cleaner>
+                    <Heater>
+                        <SystemIdentifier id="poolheater1"/>
+                        <Type>none</Type>
+                    </Heater>
+                </Pool>
+                <Pool>
+                    <SystemIdentifier id="pool2"/>
+                    <Type>none</Type>
+                    <FilterType>none</FilterType>
+                    <Pumps>
+                        <Pump>
+                            <SystemIdentifier id="poolpump2a"/>
+                            <Type>none</Type>
+                        </Pump>
+                        <Pump>
+                            <SystemIdentifier id="poolpump2b"/>
+                            <Type>none</Type>
+                        </Pump>
+                    </Pumps>
+                    <Cleaner>
+                        <SystemIdentifier id="poolcleaner2"/>
+                        <Type>none</Type>
+                    </Cleaner>
+                    <Heater>
+                        <SystemIdentifier id="poolheater2"/>
+                        <Type>none</Type>
+                    </Heater>
+                </Pool>
+            </Pools>
+            <Spas>
+                <PermanentSpa>
+                    <SystemIdentifier id="spa1"/>
+                    <Type>none</Type>
+                    <FilterType>none</FilterType>
+                    <Pumps>
+                        <Pump>
+                            <SystemIdentifier id="spapump1a"/>
+                            <Type>none</Type>
+                        </Pump>
+                        <Pump>
+                            <SystemIdentifier id="spapump1b"/>
+                            <Type>none</Type>
+                        </Pump>
+                    </Pumps>
+                    <Cleaner>
+                        <SystemIdentifier id="spacleaner1"/>
+                        <Type>none</Type>
+                    </Cleaner>
+                    <Heater>
+                        <SystemIdentifier id="spaheater1"/>
+                        <Type>none</Type>
+                    </Heater>
+                </PermanentSpa>
+                <PermanentSpa>
+                    <SystemIdentifier id="spa2"/>
+                    <Type>none</Type>
+                    <FilterType>none</FilterType>
+                    <Pumps>
+                        <Pump>
+                            <SystemIdentifier id="spapump2a"/>
+                            <Type>none</Type>
+                        </Pump>
+                        <Pump>
+                            <SystemIdentifier id="spapump2b"/>
+                            <Type>none</Type>
+                        </Pump>
+                    </Pumps>
+                    <Cleaner>
+                        <SystemIdentifier id="spacleaner2"/>
+                        <Type>none</Type>
+                    </Cleaner>
+                    <Heater>
+                        <SystemIdentifier id="spaheater2"/>
+                        <Type>none</Type>
+                    </Heater>
+                </PermanentSpa>
+            </Spas>
+        </BuildingDetails>
+    </Building>
+</HPXML>
