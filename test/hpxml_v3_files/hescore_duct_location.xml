@@ -1,0 +1,91 @@
+<HPXML xmlns="http://hpxmlonline.com/2019/10" schemaVersion="3.0">
+    <XMLTransactionHeaderInformation>
+        <XMLType/>
+        <XMLGeneratedBy/>
+        <CreatedDateAndTime>2023-06-27T16:52:25.731265</CreatedDateAndTime>
+        <Transaction>create</Transaction>
+    </XMLTransactionHeaderInformation>
+    <SoftwareInfo/>
+    <Building>
+        <BuildingID id="bldg1"/>
+        <ProjectStatus>
+            <EventType>audit</EventType>
+        </ProjectStatus>
+        <BuildingDetails>
+            <Systems>
+                <HVAC>
+                    <HVACDistribution>
+                        <SystemIdentifier id="hvacd1"/>
+                        <DistributionSystemType>
+                            <AirDistribution>
+                                <Ducts>
+                                    <FractionDuctArea>1</FractionDuctArea>
+                                    <extension>
+                                        <DuctLocation>manufactured home belly</DuctLocation>
+                                    </extension>
+                                </Ducts>
+                                <Ducts>
+                                    <DuctSurfaceArea>100</DuctSurfaceArea>
+                                    <extension>
+                                        <DuctLocation>somewhere else</DuctLocation>
+                                    </extension>
+                                </Ducts>
+                                <Ducts>
+                                    <DuctInsulationCondition>poor</DuctInsulationCondition>
+                                    <extension>
+                                        <DuctLocation>manufactured home belly</DuctLocation>
+                                        <SomethingElse>test</SomethingElse>
+                                    </extension>
+                                </Ducts>
+                                <Ducts>
+                                    <DuctLocation>conditioned space</DuctLocation>
+                                </Ducts>
+                            </AirDistribution>
+                        </DistributionSystemType>
+                    </HVACDistribution>
+                </HVAC>
+            </Systems>
+        </BuildingDetails>
+    </Building>
+    <Building>
+        <BuildingID id="bldg2"/>
+        <ProjectStatus>
+            <EventType>audit</EventType>
+        </ProjectStatus>
+        <BuildingDetails>
+            <Systems>
+                <HVAC>
+                    <HVACDistribution>
+                        <SystemIdentifier id="hvacd2"/>
+                        <DistributionSystemType>
+                            <AirDistribution>
+                                <Ducts>
+                                    <FractionDuctArea>1</FractionDuctArea>
+                                    <extension>
+                                        <DuctLocation>manufactured home belly</DuctLocation>
+                                    </extension>
+                                </Ducts>
+                                <Ducts>
+                                    <DuctSurfaceArea>100</DuctSurfaceArea>
+                                    <extension>
+                                        <DuctLocation>somewhere else</DuctLocation>
+                                    </extension>
+                                </Ducts>
+                                <Ducts>
+                                    <DuctInsulationCondition>poor</DuctInsulationCondition>
+                                    <extension>
+                                        <DuctLocation>manufactured home belly</DuctLocation>
+                                        <SomethingElse>test</SomethingElse>
+                                    </extension>
+                                </Ducts>
+                                <Ducts>
+                                    <DuctLocation>conditioned space</DuctLocation>
+                                </Ducts>
+                            </AirDistribution>
+                        </DistributionSystemType>
+                    </HVACDistribution>
+                </HVAC>
+            </Systems>
+        </BuildingDetails>
+    </Building>
+</HPXML>
