@@ -73,6 +73,7 @@ def get_hpxml_versions(major_version: Union[int, None] = None) -> List[str]:
                     schema_versions,
                 )
             )
+    schema_versions.sort(key=lambda v: tuple(map(int, v.split("."))))
     return schema_versions
 
 
