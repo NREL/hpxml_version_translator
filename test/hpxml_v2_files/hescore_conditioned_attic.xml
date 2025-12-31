@@ -1,0 +1,95 @@
+<HPXML xmlns="http://hpxmlonline.com/2014/6" schemaVersion="2.3">
+    <XMLTransactionHeaderInformation>
+        <XMLType/>
+        <XMLGeneratedBy/>
+        <CreatedDateAndTime>2025-12-17T11:41:49.968796</CreatedDateAndTime>
+        <Transaction>create</Transaction>
+    </XMLTransactionHeaderInformation>
+    <SoftwareInfo/>
+    <Building>
+        <BuildingID id="bldg1"/>
+        <ProjectStatus>
+            <EventType>construction-period testing/daily test out</EventType>
+        </ProjectStatus>
+        <BuildingDetails>
+            <Enclosure>
+                <AtticAndRoof>
+                    <Attics>
+                        <Attic>
+                            <SystemIdentifier id="attic1"/>
+                            <AtticType>vented attic</AtticType>
+                            <extension>
+                                <Conditioned>true</Conditioned>
+                            </extension>
+                        </Attic>
+                        <Attic>
+                            <SystemIdentifier id="attic2"/>
+                            <AtticType>flat roof</AtticType>
+                            <extension>
+                                <Conditioned>true</Conditioned>
+                            </extension>
+                        </Attic>
+                        <Attic>
+                            <SystemIdentifier id="attic3"/>
+                            <AtticType>vented attic</AtticType>
+                            <extension>
+                                <Conditioned>false</Conditioned>
+                            </extension>
+                        </Attic>
+                        <Attic>
+                            <SystemIdentifier id="attic4"/>
+                            <AtticType>vented attic</AtticType>
+                            <extension>
+                                <Conditioned/>
+                                <SomethingElse>test</SomethingElse>
+                            </extension>
+                        </Attic>
+                    </Attics>
+                </AtticAndRoof>
+            </Enclosure>
+        </BuildingDetails>
+    </Building>
+    <Building>
+        <BuildingID id="bldg2"/>
+        <ProjectStatus>
+            <EventType>construction-period testing/daily test out</EventType>
+        </ProjectStatus>
+        <BuildingDetails>
+            <Enclosure>
+                <AtticAndRoof>
+                    <Attics>
+                        <Attic>
+                            <SystemIdentifier id="attic5"/>
+                            <AtticType>vented attic</AtticType>
+                            <extension>
+                                <Conditioned>true</Conditioned>
+                            </extension>
+                        </Attic>
+                        <Attic>
+                            <SystemIdentifier id="attic6"/>
+                            <AtticType>flat roof</AtticType>
+                            <extension>
+                                <Conditioned>true</Conditioned>
+                            </extension>
+                        </Attic>
+                        <Attic>
+                            <SystemIdentifier id="attic7"/>
+                            <AtticType>vented attic</AtticType>
+                            <extension>
+                                <Conditioned>false</Conditioned>
+                            </extension>
+                        </Attic>
+                        <Attic>
+                            <SystemIdentifier id="attic8"/>
+                            <AtticType>vented attic</AtticType>
+                            <extension>
+                                <Conditioned/>
+                                <SomethingElse>test</SomethingElse>
+                            </extension>
+                        </Attic>
+                    </Attics>
+                </AtticAndRoof>
+            </Enclosure>
+        </BuildingDetails>
+    </Building>
+</HPXML>

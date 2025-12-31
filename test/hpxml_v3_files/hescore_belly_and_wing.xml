@@ -1,0 +1,73 @@
+<HPXML xmlns="http://hpxmlonline.com/2019/10" schemaVersion="3.0">
+    <XMLTransactionHeaderInformation>
+        <XMLType/>
+        <XMLGeneratedBy/>
+        <CreatedDateAndTime>2023-06-27T16:52:25.731265</CreatedDateAndTime>
+        <Transaction>create</Transaction>
+    </XMLTransactionHeaderInformation>
+    <SoftwareInfo/>
+    <Building>
+        <BuildingID id="bldg1"/>
+        <ProjectStatus>
+            <EventType>audit</EventType>
+        </ProjectStatus>
+        <BuildingDetails>
+            <Enclosure>
+                <Foundations>
+                    <Foundation>
+                        <SystemIdentifier id="bsmt1"/>
+                        <FoundationType>
+                            <Other>
+                                <extension>
+                                    <BellyAndWing/>
+                                </extension>
+                            </Other>
+                        </FoundationType>
+                    </Foundation>
+                    <Foundation>
+                        <SystemIdentifier id="bsmt2"/>
+                        <FoundationType>
+                            <Other>
+                                <extension>
+                                    <SomethingElse/>
+                                </extension>
+                            </Other>
+                        </FoundationType>
+                    </Foundation>
+                </Foundations>
+            </Enclosure>
+        </BuildingDetails>
+    </Building>
+    <Building>
+        <BuildingID id="bldg2"/>
+        <ProjectStatus>
+            <EventType>audit</EventType>
+        </ProjectStatus>
+        <BuildingDetails>
+            <Enclosure>
+                <Foundations>
+                    <Foundation>
+                        <SystemIdentifier id="bsmt3"/>
+                        <FoundationType>
+                            <Other>
+                                <extension>
+                                    <BellyAndWing/>
+                                </extension>
+                            </Other>
+                        </FoundationType>
+                    </Foundation>
+                    <Foundation>
+                        <SystemIdentifier id="bsmt4"/>
+                        <FoundationType>
+                            <Other>
+                                <extension>
+                                    <SomethingElse/>
+                                </extension>
+                            </Other>
+                        </FoundationType>
+                    </Foundation>
+                </Foundations>
+            </Enclosure>
+        </BuildingDetails>
+    </Building>
+</HPXML>

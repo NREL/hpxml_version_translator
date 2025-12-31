@@ -1,0 +1,73 @@
+<HPXML xmlns="http://hpxmlonline.com/2019/10" schemaVersion="3.0">
+    <XMLTransactionHeaderInformation>
+        <XMLType/>
+        <XMLGeneratedBy/>
+        <CreatedDateAndTime>2023-06-27T16:52:25.731265</CreatedDateAndTime>
+        <Transaction>create</Transaction>
+    </XMLTransactionHeaderInformation>
+    <SoftwareInfo/>
+    <Building>
+        <BuildingID id="bldg1"/>
+        <ProjectStatus>
+            <EventType>audit</EventType>
+        </ProjectStatus>
+        <BuildingDetails>
+            <BuildingSummary>
+                <BuildingConstruction>
+                    <YearBuilt>2004</YearBuilt>
+                    <ResidentialFacilityType>manufactured home</ResidentialFacilityType>
+                    <NumberofConditionedFloorsAboveGrade>1</NumberofConditionedFloorsAboveGrade>
+                    <AverageCeilingHeight>7</AverageCeilingHeight>
+                    <NumberofBedrooms>4</NumberofBedrooms>
+                    <ConditionedFloorArea>1200</ConditionedFloorArea>
+                    <extension>
+                        <ManufacturedHomeSections>double-wide</ManufacturedHomeSections>
+                    </extension>
+                </BuildingConstruction>
+            </BuildingSummary>
+        </BuildingDetails>
+    </Building>
+    <Building>
+        <BuildingID id="bldg2"/>
+        <ProjectStatus>
+            <EventType>audit</EventType>
+        </ProjectStatus>
+        <BuildingDetails>
+            <BuildingSummary>
+                <BuildingConstruction>
+                    <YearBuilt>2004</YearBuilt>
+                    <ResidentialFacilityType>manufactured home</ResidentialFacilityType>
+                    <NumberofConditionedFloorsAboveGrade>1</NumberofConditionedFloorsAboveGrade>
+                    <AverageCeilingHeight>7</AverageCeilingHeight>
+                    <NumberofBedrooms>4</NumberofBedrooms>
+                    <ConditionedFloorArea>1200</ConditionedFloorArea>
+                    <extension>
+                        <ManufacturedHomeSections>single-wide</ManufacturedHomeSections>
+                        <AnotherElement>test</AnotherElement>
+                    </extension>
+                </BuildingConstruction>
+            </BuildingSummary>
+        </BuildingDetails>
+    </Building>
+    <Building>
+        <BuildingID id="bldg3"/>
+        <ProjectStatus>
+            <EventType>audit</EventType>
+        </ProjectStatus>
+        <BuildingDetails>
+            <BuildingSummary>
+                <BuildingConstruction>
+                    <YearBuilt>2004</YearBuilt>
+                    <ResidentialFacilityType>manufactured home</ResidentialFacilityType>
+                    <NumberofConditionedFloorsAboveGrade>1</NumberofConditionedFloorsAboveGrade>
+                    <AverageCeilingHeight>7</AverageCeilingHeight>
+                    <NumberofBedrooms>4</NumberofBedrooms>
+                    <ConditionedFloorArea>1200</ConditionedFloorArea>
+                    <extension>
+                        <ManufacturedHomeSections>something else</ManufacturedHomeSections>
+                    </extension>
+                </BuildingConstruction>
+            </BuildingSummary>
+        </BuildingDetails>
+    </Building>
+</HPXML>
