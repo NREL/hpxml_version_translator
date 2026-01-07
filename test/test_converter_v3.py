@@ -324,6 +324,67 @@ def test_pipe_insulated():
     assert water_heating.WaterHeatingSystem[2].WaterHeaterImprovement.PipeInsulated
 
 
+def test_hescore_manufactured_home_sections():
+    root = convert_hpxml_and_parse(hpxml_dir / "hescore_manufactured_home_sections.xml")
+
+    bldgconst1 = root.Building[0].BuildingDetails.BuildingSummary.BuildingConstruction
+    assert bldgconst1.ManufacturedHomeSections == "double-wide"
+    assert not hasattr(bldgconst1, "extension")
+
+    bldgconst2 = root.Building[1].BuildingDetails.BuildingSummary.BuildingConstruction
+    assert bldgconst2.ManufacturedHomeSections == "single-wide"
+    assert bldgconst2.extension.AnotherElement == "test"
+
+    bldgconst3 = root.Building[2].BuildingDetails.BuildingSummary.BuildingConstruction
+    assert not hasattr(bldgconst3, "ManufacturedHomeSections")
+    assert bldgconst3.extension.ManufacturedHomeSections == "something else"
+
+
+def test_hescore_belly_and_wing():
+    root = convert_hpxml_and_parse(hpxml_dir / "hescore_belly_and_wing.xml")
+
+    for i in (0, 1):
+        fnd1 = root.Building[i].BuildingDetails.Enclosure.Foundations.Foundation[0]
+        assert hasattr(fnd1.FoundationType, "BellyAndWing")
+        assert not hasattr(fnd1.FoundationType, "Other")
+
+        fnd2 = root.Building[i].BuildingDetails.Enclosure.Foundations.Foundation[1]
+        assert hasattr(fnd2.FoundationType.Other.extension, "SomethingElse")
+
+
+def test_hescore_bowstring_roof():
+    root = convert_hpxml_and_parse(hpxml_dir / "hescore_bowstring_roof.xml")
+
+    for i in (0, 1):
+        atc1 = root.Building[i].BuildingDetails.Enclosure.Attics.Attic[0]
+        assert hasattr(atc1.AtticType, "BowstringRoof")
+        assert not hasattr(atc1.AtticType, "Other")
+
+        atc2 = root.Building[i].BuildingDetails.Enclosure.Attics.Attic[1]
+        assert hasattr(atc2.AtticType.Other.extension, "SomethingElse")
+
+
+def test_hescore_duct_location():
+    root = convert_hpxml_and_parse(hpxml_dir / "hescore_duct_location.xml")
+
+    for i in (0, 1):
+        hvacdist = root.Building[i].BuildingDetails.Systems.HVAC.HVACDistribution
+        duct1 = hvacdist.DistributionSystemType.AirDistribution.Ducts[0]
+        assert duct1.DuctLocation == "manufactured home belly"
+        assert not hasattr(duct1, "extension")
+
+        duct2 = hvacdist.DistributionSystemType.AirDistribution.Ducts[1]
+        assert duct2.extension.DuctLocation == "somewhere else"
+        assert not hasattr(duct2, "DuctLocation")
+
+        duct3 = hvacdist.DistributionSystemType.AirDistribution.Ducts[2]
+        assert duct3.DuctLocation == "manufactured home belly"
+        assert duct3.extension.SomethingElse == "test"
+
+        duct4 = hvacdist.DistributionSystemType.AirDistribution.Ducts[3]
+        assert duct4.DuctLocation == "conditioned space"
+
+
 def test_mismatch_version():
     f_out = io.BytesIO()
     with pytest.raises(
