@@ -74,6 +74,16 @@ def test_project_ids2():
     assert root.Project.PostBuildingID.attrib["id"] == "bldg2"
 
 
+def test_project_ids3():
+    with pytest.warns(Warning) as record:
+        root = convert_hpxml_and_parse(hpxml_dir / "project_ids3.xml")
+    assert len(record) == 1
+    assert (
+        record[0].message.args[0]
+        == "Project(s) defined but only one Building found; Project(s) will be dropped."
+    )
+
+
 def test_project_ids_fail1():
     with pytest.raises(
         exc.HpxmlTranslationError,
