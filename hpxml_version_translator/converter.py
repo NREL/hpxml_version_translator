@@ -327,7 +327,19 @@ def convert_hpxml2_to_3(
         else:
             return None
 
+    num_buildings = root.xpath("count(h:Building)", **xpkw)
+    project_warning = False
+
     for i, project in enumerate(root.xpath("h:Project", **xpkw), 1):
+
+        if num_buildings < 2:
+            if not project_warning:
+                warnings.warn(
+                    f"Project(s) defined but only one Building found; Project(s) will be dropped."
+                )
+            project_warning = True
+            project.getparent().remove(project)
+            continue
 
         # Add the ProjectID element if it isn't there
         if not hasattr(project, "ProjectID"):
