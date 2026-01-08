@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<HPXML xmlns="http://hpxmlonline.com/2014/6" schemaVersion="2.3">
+    <XMLTransactionHeaderInformation>
+        <XMLType></XMLType>
+        <XMLGeneratedBy></XMLGeneratedBy>
+        <CreatedDateAndTime>2021-05-06T14:37:29.242869</CreatedDateAndTime>
+        <Transaction>create</Transaction>
+    </XMLTransactionHeaderInformation>
+    <SoftwareInfo/>
+    <Building>
+        <BuildingID id="bldg1"/>
+        <ProjectStatus>
+            <EventType>proposed workscope</EventType>
+        </ProjectStatus>
+        <BuildingDetails/>
+    </Building>
+    <Project>
+        <BuildingID id="bldg1"/>
+        <ProjectDetails>
+            <ProjectSystemIdentifiers/>
+            <ProjectStatus>
+              <EventType>audit</EventType>
+            </ProjectStatus>
+        </ProjectDetails>
+    </Project>
+    <Project>
+        <BuildingID id="bldg1"/>
+        <ProjectDetails>
+            <ProjectSystemIdentifiers/>
+            <ProjectStatus>
+              <EventType>audit</EventType>
+            </ProjectStatus>
+        </ProjectDetails>
+    </Project>
+</HPXML>
