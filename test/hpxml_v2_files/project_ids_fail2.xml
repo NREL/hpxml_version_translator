@@ -8,6 +8,13 @@
     </XMLTransactionHeaderInformation>
     <SoftwareInfo/>
     <Building>
+        <BuildingID id="bldg1"/>
+        <ProjectStatus>
+            <EventType>audit</EventType>
+        </ProjectStatus>
+        <BuildingDetails/>
+    </Building>
+    <Building>
         <BuildingID id="bldg2"/>
         <ProjectStatus>
             <EventType>proposed workscope</EventType>
@@ -21,8 +28,15 @@
         </ProjectStatus>
         <BuildingDetails></BuildingDetails>
     </Building>
+    <Building>
+        <BuildingID id="bldg4"/>
+        <ProjectStatus>
+            <EventType>preconstruction</EventType>
+        </ProjectStatus>
+        <BuildingDetails></BuildingDetails>
+    </Building>
     <Project>
-        <BuildingID id='bldg2'/>
+        <BuildingID id='bldg1'/>
         <ProjectDetails>
             <ProjectSystemIdentifiers/>
         </ProjectDetails>
