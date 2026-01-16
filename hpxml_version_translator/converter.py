@@ -1596,9 +1596,8 @@ def convert_hpxml3_to_4(
     for pv_sys in root.xpath(
         "//h:PVSystem[h:InverterEfficiency | h:YearInverterManufactured]", **xpkw
     ):
-        inverter = E.Inverter(
-            E.SystemIdentifier(id=f"{pv_sys.SystemIdentifier.attrib['id']}_inverter")
-        )
+        inv_id = f"{pv_sys.SystemIdentifier.attrib['id']}_inverter"
+        inverter = E.Inverter(E.SystemIdentifier(id=inv_id))
         if hasattr(pv_sys, "InverterEfficiency"):
             inverter.append(E.InverterEfficiency(pv_sys.InverterEfficiency.text))
             pv_sys.remove(pv_sys.InverterEfficiency)
@@ -1607,6 +1606,7 @@ def convert_hpxml3_to_4(
                 E.YearInverterManufactured(pv_sys.YearInverterManufactured.text)
             )
             pv_sys.remove(pv_sys.YearInverterManufactured)
+        add_before(pv_sys, ["extension"], E.AttachedToInverter(idref=inv_id))
         pv_sys.getparent().append(inverter)
 
     # Renamed NumberofUnits and Quantity to Count
