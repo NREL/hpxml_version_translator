@@ -159,6 +159,10 @@ def test_pv_system():
         pv_sys = pv.PVSystem[i]
         assert not hasattr(pv_sys, "InverterEfficiency")
         assert not hasattr(pv_sys, "YearInverterManufactured")
+        if i == 1:
+            assert not hasattr(pv_sys, "AttachedToInverter")
+        else:
+            assert pv_sys.AttachedToInverter.attrib["idref"] == f"pv{i+1}_inverter"
 
     assert len(pv.Inverter) == 2
 
