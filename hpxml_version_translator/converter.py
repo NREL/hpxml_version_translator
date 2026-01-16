@@ -327,19 +327,7 @@ def convert_hpxml2_to_3(
         else:
             return None
 
-    num_buildings = root.xpath("count(h:Building)", **xpkw)
-    project_warning = False
-
     for i, project in enumerate(root.xpath("h:Project", **xpkw), 1):
-
-        if num_buildings < 2:
-            if not project_warning:
-                warnings.warn(
-                    f"Project(s) defined but only one Building found; Project(s) will be dropped."
-                )
-            project_warning = True
-            project.getparent().remove(project)
-            continue
 
         # Add the ProjectID element if it isn't there
         if not hasattr(project, "ProjectID"):
@@ -365,7 +353,7 @@ def convert_hpxml2_to_3(
 
         # If there are more than one of each pre and post, throw an error
         if len(building_ids_by_pre_post["pre"]) == 0:
-            raise exc.HpxmlTranslationError(
+            warnings.warn(
                 f"Project[{i}] has no references to Building nodes with an 'audit' or 'preconstruction' EventType."
             )
         elif len(building_ids_by_pre_post["pre"]) > 1:
@@ -374,29 +362,37 @@ def convert_hpxml2_to_3(
                 "'audit' or 'preconstruction' EventType."
             )
         if len(building_ids_by_pre_post["post"]) == 0:
-            raise exc.HpxmlTranslationError(
+            warnings.warn(
                 f"Project[{i}] has no references to Building nodes with a post retrofit EventType."
             )
         elif len(building_ids_by_pre_post["post"]) > 1:
             raise exc.HpxmlTranslationError(
                 f"Project[{i}] has more than one reference to Building nodes with a post retrofit EventType."
             )
-        pre_building_id = building_ids_by_pre_post["pre"].pop()
-        post_building_id = building_ids_by_pre_post["post"].pop()
 
         # Add the pre building
-        project.ProjectID.addnext(E.PreBuildingID(id=pre_building_id))
-        for el in root.xpath(
-            "h:Building/h:BuildingID[@id=$bldgid]/*", bldgid=pre_building_id, **xpkw
-        ):
-            project.PreBuildingID.append(deepcopy(el))
+        if len(building_ids_by_pre_post["pre"]) > 0:
+            pre_building_id = building_ids_by_pre_post["pre"].pop()
+            project.ProjectID.addnext(E.PreBuildingID(id=pre_building_id))
+            for el in root.xpath(
+                "h:Building/h:BuildingID[@id=$bldgid]/*", bldgid=pre_building_id, **xpkw
+            ):
+                project.PreBuildingID.append(deepcopy(el))
+        else:
+            project.ProjectID.addnext(E.PreBuildingID())
 
         # Add the post building
-        project.PreBuildingID.addnext(E.PostBuildingID(id=post_building_id))
-        for el in root.xpath(
-            "h:Building/h:BuildingID[@id=$bldgid]/*", bldgid=post_building_id, **xpkw
-        ):
-            project.PostBuildingID.append(deepcopy(el))
+        if len(building_ids_by_pre_post["post"]) > 0:
+            post_building_id = building_ids_by_pre_post["post"].pop()
+            project.PreBuildingID.addnext(E.PostBuildingID(id=post_building_id))
+            for el in root.xpath(
+                "h:Building/h:BuildingID[@id=$bldgid]/*",
+                bldgid=post_building_id,
+                **xpkw,
+            ):
+                project.PostBuildingID.append(deepcopy(el))
+        else:
+            project.PreBuildingID.addnext(E.PostBuildingID())
 
         # Move the ambiguous BuildingID to an extension
         if not hasattr(project, "extension"):
@@ -457,7 +453,10 @@ def convert_hpxml2_to_3(
         root.xpath("h:Project/h:ProjectDetails/h:ProgramCertificate", **xpkw), 1
     ):
         project_details = prog_cert.getparent()
-        bldg_id = project_details.getparent().PostBuildingID.attrib["id"]
+        if "id" in project_details.getparent().PostBuildingID.attrib:
+            bldg_id = project_details.getparent().PostBuildingID.attrib["id"]
+        else:
+            bldg_id = project_details.getparent().PreBuildingID.attrib["id"]
         bldg_details = root.xpath(
             "h:Building[h:BuildingID/@id=$bldgid]/h:BuildingDetails",
             bldgid=bldg_id,
@@ -496,7 +495,10 @@ def convert_hpxml2_to_3(
     for i, es_home_ver in enumerate(
         root.xpath("h:Project/h:ProjectDetails/h:EnergyStarHomeVersion", **xpkw)
     ):
-        bldg_id = es_home_ver.getparent().getparent().PostBuildingID.attrib["id"]
+        if "id" in es_home_ver.getparent().getparent().PostBuildingID.attrib:
+            bldg_id = es_home_ver.getparent().getparent().PostBuildingID.attrib["id"]
+        else:
+            bldg_id = es_home_ver.getparent().getparent().PreBuildingID.attrib["id"]
         bldg_details = root.xpath(
             "h:Building[h:BuildingID/@id=$bldgid]/h:BuildingDetails",
             bldgid=bldg_id,

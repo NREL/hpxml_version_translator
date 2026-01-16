@@ -77,11 +77,43 @@ def test_project_ids2():
 def test_project_ids3():
     with pytest.warns(Warning) as record:
         root = convert_hpxml_and_parse(hpxml_dir / "project_ids3.xml")
+    assert len(record) == 2
+    assert (
+        record[0].message.args[0]
+        == "Project[1] has no references to Building nodes with an 'audit' or 'preconstruction' EventType."
+    )
+    assert (
+        record[1].message.args[0]
+        == "Project[2] has no references to Building nodes with an 'audit' or 'preconstruction' EventType."
+    )
+    assert "id" not in root.Project[0].PreBuildingID.attrib
+    assert root.Project[0].PostBuildingID.attrib["id"] == "bldg1"
+    assert "id" not in root.Project[1].PreBuildingID.attrib
+    assert root.Project[1].PostBuildingID.attrib["id"] == "bldg1"
+
+
+def test_project_ids4():
+    with pytest.warns(Warning) as record:
+        root = convert_hpxml_and_parse(hpxml_dir / "project_ids4.xml")
     assert len(record) == 1
     assert (
         record[0].message.args[0]
-        == "Project(s) defined but only one Building found; Project(s) will be dropped."
+        == "Project[1] has no references to Building nodes with an 'audit' or 'preconstruction' EventType."
     )
+    assert "id" not in root.Project[0].PreBuildingID.attrib
+    assert root.Project[0].PostBuildingID.attrib["id"] == "bldg2"
+
+
+def test_project_ids5():
+    with pytest.warns(Warning) as record:
+        root = convert_hpxml_and_parse(hpxml_dir / "project_ids5.xml")
+    assert len(record) == 1
+    assert (
+        record[0].message.args[0]
+        == "Project[1] has no references to Building nodes with a post retrofit EventType."
+    )
+    assert root.Project[0].PreBuildingID.attrib["id"] == "bldg1"
+    assert "id" not in root.Project[0].PostBuildingID.attrib
 
 
 def test_project_ids_fail1():
@@ -94,25 +126,10 @@ def test_project_ids_fail1():
 
 def test_project_ids_fail2():
     with pytest.raises(
-        exc.HpxmlTranslationError, match=r"Project\[\d\] has no references.*audit"
-    ):
-        convert_hpxml_and_parse(hpxml_dir / "project_ids_fail2.xml")
-
-
-def test_project_ids_fail3():
-    with pytest.raises(
         exc.HpxmlTranslationError,
         match=r"Project\[\d\] has more than one reference.*post retrofit",
     ):
-        convert_hpxml_and_parse(hpxml_dir / "project_ids_fail3.xml")
-
-
-def test_project_ids_fail4():
-    with pytest.raises(
-        exc.HpxmlTranslationError,
-        match=r"Project\[\d\] has no references.*post retrofit",
-    ):
-        convert_hpxml_and_parse(hpxml_dir / "project_ids_fail4.xml")
+        convert_hpxml_and_parse(hpxml_dir / "project_ids_fail2.xml")
 
 
 def test_green_building_verification():
@@ -165,6 +182,15 @@ def test_green_building_verification():
     assert gbv6.Rating == "Gold"
     assert gbv6.URL == "http://usgbc.org"
     assert gbv6.Year == 2019
+
+
+def test_green_building_verification2():
+    root = convert_hpxml_and_parse(hpxml_dir / "green_building_verification2.xml")
+
+    gbv = root.Building[
+        0
+    ].BuildingDetails.GreenBuildingVerifications.GreenBuildingVerification[0]
+    assert gbv.Type == "Home Performance with ENERGY STAR"
 
 
 def test_inconsistencies():
